@@ -1,0 +1,10 @@
+PREFIX=configuration
+PORT=3000
+DOMAINS=http://localhost:3001
+NODE_ENV=development
+MONGO_URI=
+JWT_KEY=M7cmamKT6hpñ1DI4HuE8
+REQUIRE_ENCRYPTION=false
+REQUIRE_AUTH=false
+ENCRYPTION_KEY=6J8GbwñtpJ9NBP7h20yWPo6YeqXEIDJD
+REDIS_URL=redis://huantall.site
