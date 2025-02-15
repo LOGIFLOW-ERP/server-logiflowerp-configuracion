@@ -24,7 +24,7 @@ export class UseCaseInsertOne {
 		const url = `${env.DNI_LOOKUP_API_URL}/v2/reniec/dni?numero=${dni}`
 		const headers = { Authorization: `Bearer ${env.DNI_LOOKUP_API_TOKEN}` }
 		const result = await this.adapterApiRequest.get<IRENIECPersonalData>(url, { headers })
-		return result
+		return await validateCustom(result, IRENIECPersonalData, UnprocessableEntityException)
 	}
 
 	private completeUserData(entity: UserENTITY, RENIECPersonalData: IRENIECPersonalData) {
