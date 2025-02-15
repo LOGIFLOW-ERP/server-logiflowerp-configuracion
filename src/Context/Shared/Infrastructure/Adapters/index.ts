@@ -1,3 +1,4 @@
+export * from './Mail'
 export * from './MongoDB'
 export * from './Redis'
 export * from './Socket'
