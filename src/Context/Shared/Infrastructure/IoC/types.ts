@@ -4,6 +4,7 @@ export const SHARED_TYPES = {
     AdapterSocket: Symbol.for('AdapterSocket'),
     AdapterRedis: Symbol.for('AdapterRedis'),
     AdapterMail: Symbol.for('AdapterMail'),
+    AdapterApiRequest: Symbol.for('AdapterApiRequest'),
     database_test: Symbol.for('database_test'),
     collection_user: Symbol.for('collection_user'),
     collection_endpoint: Symbol.for('collection_endpoint'),

@@ -34,7 +34,7 @@ export class UserController extends BaseHttpController {
         await this.useCaseFind.exec(req, res)
     }
 
-    @httpPost('insert-one', VRB.bind(null, UserENTITY, BRE))
+    @httpPost('insert-one', /*VRB.bind(null, UserENTITY, BRE)*/)
     async saveOne(@request() req: Request<any, any, UserENTITY>, @response() res: Response) {
         const newDoc = await this.useCaseSaveOne.exec(req.body)
         res.status(201).json(newDoc)

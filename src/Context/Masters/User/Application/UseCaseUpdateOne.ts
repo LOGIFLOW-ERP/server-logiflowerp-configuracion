@@ -14,7 +14,7 @@ export class UseCaseUpdateOne {
 	async exec(id: ObjectId, dto: UserENTITY) {
 
 		const filter = { _id: id }
-		const update = { $set: { nombres: dto.nombres } }
+		const update = { $set: { names: dto.names } }
 
 		return await this.repository.updateOne(filter, update)
 

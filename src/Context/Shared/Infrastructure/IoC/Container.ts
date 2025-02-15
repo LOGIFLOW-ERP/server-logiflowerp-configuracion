@@ -1,6 +1,7 @@
 import { ContainerModule } from 'inversify'
 import { SHARED_TYPES } from './types'
 import {
+    AdapterApiRequest,
     AdapterMail,
     AdapterMongoDB,
     AdapterRedis,
@@ -19,6 +20,7 @@ export const containerModule = new ContainerModule(bind => {
     bind(SHARED_TYPES.AdapterSocket).to(AdapterSocket).inSingletonScope()
     bind(SHARED_TYPES.AdapterRedis).to(AdapterRedis).inSingletonScope()
     bind(SHARED_TYPES.AdapterMail).to(AdapterMail).inSingletonScope()
+    bind(SHARED_TYPES.AdapterApiRequest).to(AdapterApiRequest).inSingletonScope()
     bind(SHARED_TYPES.database_test).toConstantValue(database_test)
     bind(SHARED_TYPES.collection_user).toConstantValue(collection_user)
     bind(SHARED_TYPES.collection_endpoint).toConstantValue(collection_endpoint)

@@ -16,4 +16,6 @@ export const env = {
     SMTP_HOST: get('SMTP_HOST').required().asString(),
     SMTP_PORT: get('SMTP_PORT').required().asInt(),
     SMTP_SECURE: get('SMTP_SECURE').required().asBool(),
+    DNI_LOOKUP_API_URL: get('DNI_LOOKUP_API_URL').required().asUrlString(),
+    DNI_LOOKUP_API_TOKEN: get('DNI_LOOKUP_API_TOKEN').required().asString(),
 }
