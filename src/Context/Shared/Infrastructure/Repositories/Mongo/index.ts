@@ -1,0 +1,70 @@
+import { ContainerGlobal } from '@Config'
+import { IMongoRepository } from '@Shared/Domain'
+import { AdapterMongoDB, AdapterRedis, SHARED_TYPES } from '@Shared/Infrastructure'
+import { Request, Response } from 'express'
+import { Document, Filter, OptionalUnlessRequiredId, UpdateFilter } from 'mongodb'
+import { _find, _insertOne, _updateOne } from './Transactions'
+
+export class MongoRepository<T extends Document> implements IMongoRepository<T> {
+
+    protected database: string
+    protected collection: string
+    protected adapterMongo: AdapterMongoDB
+    protected adapterRedis: AdapterRedis
+
+    constructor(database: string, collection: string) {
+        this.database = database
+        this.collection = collection
+        this.adapterMongo = ContainerGlobal.get(SHARED_TYPES.AdapterMongoDB)
+        this.adapterRedis = ContainerGlobal.get(SHARED_TYPES.AdapterRedis)
+    }
+
+    async find(pipeline: Document[], req: Request, res: Response) {
+        try {
+            const client = await this.adapterMongo.connection()
+            const col = client.db(this.database).collection(this.collection)
+            await _find({ collection: col, pipeline, req, res })
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async insertOne(doc: OptionalUnlessRequiredId<T>) {
+        const client = await this.adapterMongo.connection()
+        const session = await this.adapterMongo.openSession(client)
+        try {
+            const col = client.db(this.database).collection<T>(this.collection)
+            await this.adapterMongo.openTransaction(session)
+            const result = await _insertOne<T>({ client, col, session, doc, adapterMongo: this.adapterMongo })
+            await this.adapterRedis.deleteKeysCollection(col)
+            await this.adapterMongo.commitTransaction(session)
+            return result
+        } catch (error) {
+            await this.adapterMongo.rollbackTransaction(session)
+            throw error
+        } finally {
+            await this.adapterMongo.closeSession(session)
+            await this.adapterMongo.closeConnection()
+        }
+    }
+
+    async updateOne(filter: Filter<T>, update: T[] | UpdateFilter<T>) {
+        const client = await this.adapterMongo.connection()
+        const session = await this.adapterMongo.openSession(client)
+        try {
+            const col = client.db(this.database).collection<T>(this.collection)
+            await this.adapterMongo.openTransaction(session)
+            const result = await _updateOne<T>({ client, col, session, filter, update, adapterMongo: this.adapterMongo })
+            await this.adapterRedis.deleteKeysCollection(col)
+            await this.adapterMongo.commitTransaction(session)
+            return result
+        } catch (error) {
+            await this.adapterMongo.rollbackTransaction(session)
+            throw error
+        } finally {
+            await this.adapterMongo.closeSession(session)
+            await this.adapterMongo.closeConnection()
+        }
+    }
+
+}
