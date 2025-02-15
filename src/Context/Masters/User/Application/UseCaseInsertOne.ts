@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify'
 import { IRENIECPersonalData, IUserMongoRepository } from '../Domain'
 import { USER_TYPES } from '../Infrastructure'
-import { UserENTITY, validateCustom } from 'logiflowerp-sdk'
+import { CreateUserDTO, UserENTITY, validateCustom } from 'logiflowerp-sdk'
 import { AdapterApiRequest, SHARED_TYPES } from '@Shared/Infrastructure'
 import { env, UnprocessableEntityException } from '@Config'
 
@@ -13,9 +13,9 @@ export class UseCaseInsertOne {
 		@inject(SHARED_TYPES.AdapterApiRequest) private readonly adapterApiRequest: AdapterApiRequest,
 	) { }
 
-	async exec(entity: UserENTITY) {
-		const RENIECPersonalData = await this.RENIECPersonalDataConsultation(entity.identity)
-		this.completeUserData(entity, RENIECPersonalData)
+	async exec(dto: CreateUserDTO) {
+		const RENIECPersonalData = await this.RENIECPersonalDataConsultation(dto.identity)
+		const entity = this.completeUserData(dto, RENIECPersonalData)
 		const validatedEntity = await validateCustom(entity, UserENTITY, UnprocessableEntityException)
 		return await this.repository.insertOne(validatedEntity)
 	}
@@ -27,9 +27,16 @@ export class UseCaseInsertOne {
 		return await validateCustom(result, IRENIECPersonalData, UnprocessableEntityException)
 	}
 
-	private completeUserData(entity: UserENTITY, RENIECPersonalData: IRENIECPersonalData) {
-		entity.names = RENIECPersonalData.nombres
-		entity.surnames = `${RENIECPersonalData.apellidoPaterno} ${RENIECPersonalData.apellidoMaterno}`
+	private completeUserData(dto: CreateUserDTO, RENIECPersonalData: IRENIECPersonalData) {
+		const newUser = new UserENTITY()
+		newUser.names = RENIECPersonalData.nombres
+		newUser.surnames = `${RENIECPersonalData.apellidoPaterno} ${RENIECPersonalData.apellidoMaterno}`
+		newUser._idcompany = dto._idcompany
+		newUser.email = dto.email
+		newUser.identity = dto.identity
+		newUser.pais = dto.pais
+		newUser.password = dto.password
+		return newUser
 	}
 
 }

@@ -13,6 +13,7 @@ export class UseCaseSaveRoutes {
 
     async exec(rawData: RouteInfo[], rootPath: string) {
         const transformedData: EndpointENTITY[] = rawData.map(data => ({
+            _id: undefined,
             controller: data.controller,
             endpoints: data.endpoints.map(endpoint => {
                 const [method, pathParts] = endpoint.route.split(' ')
