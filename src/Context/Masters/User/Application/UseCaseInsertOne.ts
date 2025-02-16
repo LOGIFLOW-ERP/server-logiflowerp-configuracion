@@ -31,11 +31,7 @@ export class UseCaseInsertOne {
 		const newUser = new UserENTITY()
 		newUser.names = RENIECPersonalData.nombres
 		newUser.surnames = `${RENIECPersonalData.apellidoPaterno} ${RENIECPersonalData.apellidoMaterno}`
-		newUser._idcompany = dto._idcompany
-		newUser.email = dto.email
-		newUser.identity = dto.identity
-		newUser.pais = dto.pais
-		newUser.password = dto.password
+		newUser.set(dto)
 		return newUser
 	}
 
