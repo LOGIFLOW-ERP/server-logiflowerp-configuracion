@@ -4,6 +4,7 @@ import {
     AdapterApiRequest,
     AdapterMail,
     AdapterMongoDB,
+    AdapterRabbitMQ,
     AdapterRedis,
     AdapterSocket,
     AdapterToken
@@ -21,6 +22,7 @@ export const containerModule = new ContainerModule(bind => {
     bind(SHARED_TYPES.AdapterRedis).to(AdapterRedis).inSingletonScope()
     bind(SHARED_TYPES.AdapterMail).to(AdapterMail).inSingletonScope()
     bind(SHARED_TYPES.AdapterApiRequest).to(AdapterApiRequest).inSingletonScope()
+    bind(SHARED_TYPES.AdapterRabbitMQ).to(AdapterRabbitMQ).inSingletonScope()
     bind(SHARED_TYPES.database_test).toConstantValue(database_test)
     bind(SHARED_TYPES.collection_user).toConstantValue(collection_user)
     bind(SHARED_TYPES.collection_endpoint).toConstantValue(collection_endpoint)

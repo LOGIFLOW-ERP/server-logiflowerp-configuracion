@@ -6,6 +6,7 @@ export const env = {
     DOMAINS: get('DOMAINS').required().asArray(),
     NODE_ENV: get('NODE_ENV').required().asEnum(['development', 'qa', 'production']),
     MONGO_URI: get('MONGO_URI').required().asUrlString(),
+    RABBITMQ_URL: get('RABBITMQ_URL').required().asUrlString(),
     REDIS_URL: get('REDIS_URL').required().asUrlString(),
     JWT_KEY: get('JWT_KEY').required().asString(),
     ENCRYPTION_KEY: get('ENCRYPTION_KEY').required().asString(),
@@ -18,4 +19,5 @@ export const env = {
     SMTP_SECURE: get('SMTP_SECURE').required().asBool(),
     DNI_LOOKUP_API_URL: get('DNI_LOOKUP_API_URL').required().asUrlString(),
     DNI_LOOKUP_API_TOKEN: get('DNI_LOOKUP_API_TOKEN').required().asString(),
+    DEVELOPERS_MAILS: get('DEVELOPERS_MAILS').required().asArray(),
 }

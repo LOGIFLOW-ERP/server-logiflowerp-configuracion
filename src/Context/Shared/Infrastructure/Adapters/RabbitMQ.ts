@@ -1,0 +1,80 @@
+import { inject, injectable } from 'inversify'
+import { Channel, connect, Connection, ConsumeMessage } from 'amqplib'
+import { env } from '@Config'
+import { IParamsPublish, IParamsSubscribe } from '@Shared/Domain'
+import { AdapterMail } from './Mail'
+import { SHARED_TYPES } from '../IoC'
+
+@injectable()
+export class AdapterRabbitMQ {
+
+    private connection!: Connection
+    private channel!: Channel
+
+    constructor(
+        @inject(SHARED_TYPES.AdapterMail) private readonly adapterMail: AdapterMail,
+    ) {
+        this.connect()
+    }
+
+    private async connect(url: string = env.RABBITMQ_URL) {
+        try {
+            this.connection = await connect(url)
+            this.channel = await this.connection.createChannel()
+            this.channel.prefetch(1)
+            console.log('\x1b[32m%s\x1b[0m', 'Conectado a RabbitMQ')
+        } catch (error) {
+            console.error(error)
+            process.exit(1)
+        }
+    }
+
+    async publish(params: IParamsPublish) {
+        const { queue, message, user } = params
+        await this.channel.assertQueue(queue, { durable: true })
+        const result = this.channel.sendToQueue(
+            queue,
+            Buffer.from(JSON.stringify(message)),
+            {
+                persistent: true,
+                headers: { user }
+            }
+        )
+        if (!result) {
+            throw new Error(`Error al publicar en RabbitMQ (queue: ${queue})`)
+        }
+    }
+
+    async subscribe(params: IParamsSubscribe) {
+        const { queue } = params
+        await this.channel.assertQueue(queue, { durable: true })
+        this.channel.consume(queue, this.onMessage.bind(null, params))
+    }
+
+    private async onMessage(params: IParamsSubscribe, msg: ConsumeMessage | null) {
+        const { onMessage, queue } = params
+        try {
+            if (!msg) return
+            try {
+                const message = msg ? msg.content : null
+                const user = msg && msg.properties.headers ? msg.properties.headers.user : null
+                const result = await onMessage({ message, user })
+            } catch (error) {
+
+            }
+            this.channel.ack(msg)
+        } catch (error) {
+            try {
+                await this.adapterMail.send(
+                    env.DEVELOPERS_MAILS,
+                    `Error al ejecutar onMessage`,
+                    undefined,
+                    `Se produjo un error al ejecutar onMessage en queue ${queue}`
+                )
+            } catch (error) {
+                console.error(error)
+            }
+        }
+    }
+
+}
