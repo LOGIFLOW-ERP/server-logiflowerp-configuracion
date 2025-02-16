@@ -4,6 +4,7 @@ import { env } from '@Config'
 import { IParamsPublish, IParamsSubscribe } from '@Shared/Domain'
 import { AdapterMail } from './Mail'
 import { SHARED_TYPES } from '../IoC'
+import { isJSON } from 'logiflowerp-sdk'
 
 @injectable()
 export class AdapterRabbitMQ {
@@ -57,8 +58,12 @@ export class AdapterRabbitMQ {
         try {
             if (!msg) return
             try {
-                const message = msg ?JSON.parse(msg.content.toString()) : null
-                const user = msg && msg.properties.headers ? msg.properties.headers.user : null
+                const message = msg
+                    ? isJSON(msg.content.toString()) ? JSON.parse(msg.content.toString()) : msg
+                    : null
+                const user = msg && msg.properties.headers
+                    ? msg.properties.headers.user
+                    : null
                 const result = await onMessage({ message, user })
             } catch (error) {
 
