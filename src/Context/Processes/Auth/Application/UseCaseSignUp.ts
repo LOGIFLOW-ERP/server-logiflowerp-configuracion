@@ -29,9 +29,9 @@ export class UseCaseSignUp {
 
 	private completeUserData(dto: CreateUserDTO, RENIECPersonalData: IRENIECPersonalData) {
 		const newUser = new UserENTITY()
+		newUser.set(dto)
 		newUser.names = RENIECPersonalData.nombres
 		newUser.surnames = `${RENIECPersonalData.apellidoPaterno} ${RENIECPersonalData.apellidoMaterno}`
-		newUser.set(dto)
 		return newUser
 	}
 

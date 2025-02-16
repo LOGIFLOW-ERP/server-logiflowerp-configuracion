@@ -11,7 +11,8 @@ import {
     registerContainer,
     initCollections,
     initSocket,
-    registerRoutes
+    registerRoutes,
+    subscribeRabbitMQ
 } from '@Config'
 
 const Bootstrap = async () => {
@@ -25,6 +26,7 @@ const Bootstrap = async () => {
     await registerContainer()
     await initCollections()
     await initController()
+    await subscribeRabbitMQ()
 
     const rootPath = `/api/${PREFIX}`
     const app = express()

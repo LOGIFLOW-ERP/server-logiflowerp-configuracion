@@ -30,15 +30,15 @@
 			"@Config": [
 				"src/Config/index.ts"
 			],
-			"@Shared/Bootstraping": [
-				"src/Context/Shared/Bootstraping"
+			"@Shared/*": [
+				"src/Context/Shared/*"
 			],
-			"@Shared/Domain": [
-				"src/Context/Shared/Domain"
-			],
-			"@Shared/Infrastructure": [
-				"src/Context/Shared/Infrastructure"
-			],
+			// "@Shared/Domain": [
+			// 	"src/Context/Shared/Domain"
+			// ],
+			// "@Shared/Infrastructure/*": [
+			// 	"src/Context/Shared/Infrastructure/*"
+			// ],
 			"@Masters/*": [
 				"src/Context/Masters/*"
 			]

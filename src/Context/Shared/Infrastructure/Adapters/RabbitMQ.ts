@@ -13,16 +13,16 @@ export class AdapterRabbitMQ {
 
     constructor(
         @inject(SHARED_TYPES.AdapterMail) private readonly adapterMail: AdapterMail,
-    ) {
-        this.connect()
-    }
+    ) { }
 
     private async connect(url: string = env.RABBITMQ_URL) {
         try {
-            this.connection = await connect(url)
-            this.channel = await this.connection.createChannel()
-            this.channel.prefetch(1)
-            console.log('\x1b[32m%s\x1b[0m', 'Conectado a RabbitMQ')
+            if (!this.connection || !this.channel) {
+                this.connection = await connect(url)
+                this.channel = await this.connection.createChannel()
+                this.channel.prefetch(1)
+                console.log('\x1b[32m%s\x1b[0m', 'Conectado a RabbitMQ')
+            }
         } catch (error) {
             console.error(error)
             process.exit(1)
@@ -46,9 +46,10 @@ export class AdapterRabbitMQ {
     }
 
     async subscribe(params: IParamsSubscribe) {
+        await this.connect()
         const { queue } = params
         await this.channel.assertQueue(queue, { durable: true })
-        this.channel.consume(queue, this.onMessage.bind(null, params))
+        this.channel.consume(queue, this.onMessage.bind(this, params))
     }
 
     private async onMessage(params: IParamsSubscribe, msg: ConsumeMessage | null) {

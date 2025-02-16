@@ -10,7 +10,7 @@
     "autoBarrel.files.keepExtensionOnExport": false,
     "autoBarrel.files.exportDefaultFilename": "filename",
     "autoBarrel.files.useNamedExports": false,
-    "autoBarrel.formatting.excludeSemiColonAtEndOfLine": true,
+    // "autoBarrel.formatting.excludeSemiColonAtEndOfLine": true,
     "autoBarrel.formatting.useSingleQuotes": true,
     "autoBarrel.language.defaultLanguage": "TypeScript"
 }
