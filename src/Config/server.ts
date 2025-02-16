@@ -108,7 +108,7 @@ function customLogger(req: Request, res: Response, next: NextFunction) {
 }
 
 function authMiddleware(app: Application) {
-    app.use((req, _res, next) => {
+    app.use(async (req, _res, next) => {
         try {
             let serviceNoAuth: boolean = true
 
@@ -125,7 +125,7 @@ function authMiddleware(app: Application) {
             }
 
             const adapterToken = ContainerGlobal.get<AdapterToken>(SHARED_TYPES.AdapterToken)
-            const decoded = adapterToken.verifyToken(token)
+            const decoded = await adapterToken.verify(token)
 
             if (!decoded) {
                 next(new ForbiddenException('Token inválido o expirado'))

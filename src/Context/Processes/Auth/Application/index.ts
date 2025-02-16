@@ -1,1 +1,2 @@
-export * from './UseCaseSignUp'
+export * from './UseCaseSignUp';
+export * from './UseCaseVerifyEmail';

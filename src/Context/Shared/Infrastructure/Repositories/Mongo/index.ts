@@ -3,7 +3,7 @@ import { IMongoRepository } from '@Shared/Domain'
 import { AdapterMongoDB, AdapterRedis, SHARED_TYPES } from '@Shared/Infrastructure'
 import { Request, Response } from 'express'
 import { Document, Filter, OptionalUnlessRequiredId, UpdateFilter } from 'mongodb'
-import { _find, _insertOne, _updateOne } from './Transactions'
+import { _find, _insertOne, _select, _updateOne } from './Transactions'
 
 export class MongoRepository<T extends Document> implements IMongoRepository<T> {
 
@@ -26,6 +26,16 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
             await _find({ collection: col, pipeline, req, res })
         } catch (error) {
             throw error
+        }
+    }
+
+    async select<ReturnType extends Document = T>(pipeline: Document[], collection: string = this.collection, database: string = this.database) {
+        try {
+            const client = await this.adapterMongo.connection()
+            const col = client.db(database).collection(collection)
+            return await _select<ReturnType>({ collection: col, pipeline })
+        } finally {
+            await this.adapterMongo.closeConnection()
         }
     }
 
