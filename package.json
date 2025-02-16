@@ -5,6 +5,8 @@
   "main": "server.js",
   "scripts": {
     "build": "npx tsc && tsc-alias",
+    "prebuild": "npm run copy-html-once",
+    "copy-html-once": "copyfiles -u 1 public/*.html build/public",
     "start": "node build/server.js",
     "dev": "ts-node-dev --files -r tsconfig-paths/register --respawn server.ts"
   },
@@ -44,6 +46,7 @@
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.8",
     "@types/nodemailer": "^6.4.17",
+    "copyfiles": "^2.4.1",
     "ts-node-dev": "^2.0.0",
     "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0",
