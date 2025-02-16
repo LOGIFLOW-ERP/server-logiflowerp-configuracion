@@ -56,7 +56,10 @@ export class AdapterRabbitMQ {
     private async onMessage(params: IParamsSubscribe, msg: ConsumeMessage | null) {
         const { onMessage, queue } = params
         try {
-            if (!msg) return
+            if (!msg) {
+                console.error('No hay mensaje')
+                return
+            }
             try {
                 const message = msg
                     ? isJSON(msg.content.toString()) ? JSON.parse(msg.content.toString()) : msg
@@ -66,7 +69,7 @@ export class AdapterRabbitMQ {
                     : null
                 const result = await onMessage({ message, user })
             } catch (error) {
-
+                console.error(error)
             }
             this.channel.ack(msg)
         } catch (error) {
