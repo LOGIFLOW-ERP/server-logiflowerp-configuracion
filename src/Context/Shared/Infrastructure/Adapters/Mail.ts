@@ -9,12 +9,13 @@ export class AdapterMail {
 
     constructor() {
         this.transporter = this.createTransporter()
+        // console.log(this.transporter)
     }
 
     private createTransporter() {
         return createTransport({
             host: env.SMTP_HOST,
-            port: env.PORT,
+            port: env.SMTP_PORT,
             secure: env.SMTP_SECURE,
             auth: {
                 user: env.EMAIL_USER,
@@ -31,7 +32,7 @@ export class AdapterMail {
     ) {
         try {
             const info = await this.transporter.sendMail({
-                from: `"Nombre del Remitente" <Logiflow ERP>`,
+                from: `"Logiflow ERP" <${env.EMAIL_USER}>`,
                 to: recipients,
                 subject,
                 text: plaintextMessage,

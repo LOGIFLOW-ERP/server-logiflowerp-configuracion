@@ -57,7 +57,7 @@ export class AdapterRabbitMQ {
         try {
             if (!msg) return
             try {
-                const message = msg ? msg.content : null
+                const message = msg ?JSON.parse(msg.content.toString()) : null
                 const user = msg && msg.properties.headers ? msg.properties.headers.user : null
                 const result = await onMessage({ message, user })
             } catch (error) {
