@@ -10,11 +10,9 @@ import {
 } from 'inversify-express-utils'
 import {
     UseCaseFind,
-    UseCaseInsertOne,
     UseCaseUpdateOne
 } from '../Application'
 import {
-    CreateUserDTO,
     UserENTITY,
     validateObjectIdParam as VOIP,
     validateRequestBody as VRB
@@ -24,7 +22,6 @@ export class UserController extends BaseHttpController {
 
     constructor(
         @inject(USER_TYPES.UseCaseFind) private readonly useCaseFind: UseCaseFind,
-        @inject(USER_TYPES.UseCaseInsertOne) private readonly useCaseSaveOne: UseCaseInsertOne,
         @inject(USER_TYPES.UseCaseUpdateOne) private readonly useCaseUpdateOne: UseCaseUpdateOne,
     ) {
         super()
@@ -33,12 +30,6 @@ export class UserController extends BaseHttpController {
     @httpPost('find')
     async find(@request() req: Request, @response() res: Response) {
         await this.useCaseFind.exec(req, res)
-    }
-
-    @httpPost('insert-one', VRB.bind(null, CreateUserDTO, BRE))
-    async saveOne(@request() req: Request<any, any, UserENTITY>, @response() res: Response) {
-        const newDoc = await this.useCaseSaveOne.exec(req.body)
-        res.status(201).json(newDoc)
     }
 
     @httpPost('update-one/:id', VOIP.bind(null, BRE), VRB.bind(null, UserENTITY, BRE))

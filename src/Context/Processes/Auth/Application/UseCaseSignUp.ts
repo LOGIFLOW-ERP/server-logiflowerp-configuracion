@@ -1,14 +1,14 @@
-import { inject, injectable } from 'inversify'
-import { IRENIECPersonalData, IUserMongoRepository } from '../Domain'
-import { USER_TYPES } from '../Infrastructure'
-import { CreateUserDTO, UserENTITY, validateCustom } from 'logiflowerp-sdk'
-import { AdapterApiRequest, SHARED_TYPES } from '@Shared/Infrastructure'
 import { env, UnprocessableEntityException } from '@Config'
+import { IRENIECPersonalData, IUserMongoRepository } from '@Masters/User/Domain'
+import { USER_TYPES } from '@Masters/User/Infrastructure'
+import { AdapterApiRequest, SHARED_TYPES } from '@Shared/Infrastructure'
+import { inject, injectable } from 'inversify'
+import { CreateUserDTO, UserENTITY, validateCustom } from 'logiflowerp-sdk'
 
 @injectable()
-export class UseCaseInsertOne {
+export class UseCaseSignUp { 
 
-	constructor(
+    constructor(
 		@inject(USER_TYPES.MongoRepository) private readonly repository: IUserMongoRepository,
 		@inject(SHARED_TYPES.AdapterApiRequest) private readonly adapterApiRequest: AdapterApiRequest,
 	) { }
