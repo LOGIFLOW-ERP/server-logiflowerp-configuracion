@@ -15,7 +15,7 @@ export class UseCaseSendMailRegisterUser {
     ) { }
 
     async exec(entity: UserENTITY) {
-        const payload = this.generarPayloadToken(entity)
+        const payload = this.generatePayloadToken(entity)
         const token = await this.adapterToken.create(payload, undefined, 600)
         const HTMLMessage = this.prepareHTMLmessage(token)
         const subject = `¡Bienvenido, ${entity.names}! Activa tu cuenta en Logiflow ERP`
@@ -23,7 +23,7 @@ export class UseCaseSendMailRegisterUser {
         return `${this.constructor.name} ejecutado correctamente.`
     }
 
-    private generarPayloadToken(entity: UserENTITY) {
+    private generatePayloadToken(entity: UserENTITY) {
         const payload = new TokenPayloadDTO()
         payload.user.set(entity)
         return payload
