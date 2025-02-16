@@ -1,7 +1,7 @@
 import { Response, Request } from 'express'
 import { inject, injectable } from 'inversify'
 import { IUserMongoRepository } from '../Domain'
-import { USER_TYPES } from '../Infrastructure'
+import { USER_TYPES } from '../Infrastructure/IoC/types'
 
 @injectable()
 export class UseCaseFind {

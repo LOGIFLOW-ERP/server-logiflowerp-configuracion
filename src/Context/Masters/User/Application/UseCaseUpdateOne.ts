@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify'
 import { IUserMongoRepository } from '../Domain'
-import { USER_TYPES } from '../Infrastructure'
+import { USER_TYPES } from '../Infrastructure/IoC/types'
 import { ObjectId } from 'mongodb'
 import { UserENTITY } from 'logiflowerp-sdk'
 
