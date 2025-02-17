@@ -9,6 +9,7 @@ import {
     response
 } from 'inversify-express-utils'
 import {
+    UseCaseRequestPasswordReset,
     UseCaseSignIn,
     UseCaseSignUp,
     UseCaseVerifyEmail
@@ -19,7 +20,7 @@ import {
     validateRequestBody as VRB
 } from 'logiflowerp-sdk'
 import { AdapterRabbitMQ, SHARED_QUEUES, SHARED_TYPES } from '@Shared/Infrastructure'
-import { DataVerifyEmailDTO } from '../Domain'
+import { DataRequestPasswordResetDTO, DataVerifyEmailDTO } from '../Domain'
 
 export class AuthController extends BaseHttpController {
 
@@ -28,6 +29,7 @@ export class AuthController extends BaseHttpController {
         @inject(AUTH_TYPES.UseCaseSignIn) private readonly useCaseSignIn: UseCaseSignIn,
         @inject(AUTH_TYPES.UseCaseVerifyEmail) private readonly useCaseVerifyEmail: UseCaseVerifyEmail,
         @inject(SHARED_TYPES.AdapterRabbitMQ) private readonly adapterRabbitMQ: AdapterRabbitMQ,
+        @inject(AUTH_TYPES.UseCaseRequestPasswordReset) private readonly useCaseRequestPasswordReset: UseCaseRequestPasswordReset,
     ) {
         super()
     }
@@ -42,7 +44,13 @@ export class AuthController extends BaseHttpController {
     @httpPost('verify-email', VRB.bind(null, DataVerifyEmailDTO, BRE))
     async verifyEmail(@request() req: Request, @response() res: Response) {
         await this.useCaseVerifyEmail.exec(req.body)
-        res.status(200).end()
+        res.sendStatus(204)
+    }
+
+    @httpPost('request-password-reset', VRB.bind(null, DataRequestPasswordResetDTO, BRE))
+    async requestPasswordReset(@request() req: Request, @response() res: Response) {
+        await this.useCaseRequestPasswordReset.exec(req.body.email)
+        res.sendStatus(204)
     }
 
     @httpPost('sign-in', VRB.bind(null, SignInDTO, BRE))

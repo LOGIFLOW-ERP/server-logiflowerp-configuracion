@@ -1,6 +1,7 @@
 import { ContainerModule } from 'inversify'
 import { AUTH_TYPES } from './types'
 import {
+    UseCaseRequestPasswordReset,
     UseCaseSignIn,
     UseCaseSignUp,
     UseCaseVerifyEmail
@@ -10,4 +11,5 @@ export const containerModule = new ContainerModule(bind => {
     bind(AUTH_TYPES.UseCaseSignUp).to(UseCaseSignUp)
     bind(AUTH_TYPES.UseCaseSignIn).to(UseCaseSignIn)
     bind(AUTH_TYPES.UseCaseVerifyEmail).to(UseCaseVerifyEmail)
+    bind(AUTH_TYPES.UseCaseRequestPasswordReset).to(UseCaseRequestPasswordReset)
 })
