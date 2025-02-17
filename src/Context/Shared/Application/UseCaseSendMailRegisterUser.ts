@@ -30,7 +30,7 @@ export class UseCaseSendMailRegisterUser {
     }
 
     private prepareHTMLmessage(token: string) {
-        const filePath = path.join(__dirname, '../../../../public/registerUser.html')
+        const filePath = path.join(__dirname, '../../../../public/RegisterUser.html')
         const html = fs.readFileSync(filePath, 'utf-8')
             .replace('{ENLACE_ACTIVACION}', `http://google.com?token=${token}`)
         return html
