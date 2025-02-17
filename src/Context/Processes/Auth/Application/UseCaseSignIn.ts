@@ -14,13 +14,13 @@ export class UseCaseSignIn {
     ) { }
 
     async exec(dto: SignInDTO) {
-        if (!dto.state) {
+        const user = await this.searchUser(dto.email)
+        if (!user.state) {
             throw new ForbiddenException('El usuario está inactivo.')
         }
-        if (!dto.emailVerified) {
+        if (!user.emailVerified) {
             throw new UnauthorizedException('Correo no veirifcado.')
         }
-        const user = await this.searchUser(dto.email)
         this.verifyPassword(dto, user)
         const payload = this.generatePayloadToken(user)
         const token = await this.adapterToken.create(payload)
@@ -36,7 +36,7 @@ export class UseCaseSignIn {
     private verifyPassword(dto: SignInDTO, user: UserENTITY) {
         // const isValid = await this.hashService.compare(password, user.password);
         // if (!isValid) throw new AuthError('Credenciales inválidas');
-        const isValid = dto.password !== user.password
+        const isValid = dto.password === user.password
         if (!isValid) {
             throw new UnauthorizedException('Credenciales inválidas.')
         }
