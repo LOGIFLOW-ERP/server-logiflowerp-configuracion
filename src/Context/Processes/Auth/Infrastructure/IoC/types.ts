@@ -3,4 +3,5 @@ export const AUTH_TYPES = {
     UseCaseSignIn: Symbol.for(`UseCaseSignIn`),
     UseCaseVerifyEmail: Symbol.for(`UseCaseVerifyEmail`),
     UseCaseRequestPasswordReset: Symbol.for(`UseCaseRequestPasswordReset`),
+    UseCaseResetPassword: Symbol.for(`UseCaseResetPassword`),
 }
