@@ -1,7 +1,7 @@
 import { inject } from 'inversify'
 import { AUTH_TYPES } from './IoC'
 import { Request, Response } from 'express'
-import { BadRequestException as BRE, env } from '@Config'
+import { BadRequestException as BRE } from '@Config'
 import {
     BaseHttpController,
     httpPost,
@@ -33,7 +33,7 @@ export class AuthController extends BaseHttpController {
     }
 
     @httpPost('sign-up', VRB.bind(null, CreateUserDTO, BRE))
-    async saveOne(@request() req: Request<any, any, CreateUserDTO>, @response() res: Response) {
+    async saveOne(@request() req: Request, @response() res: Response) {
         const newDoc = await this.useCaseSignUp.exec(req.body)
         await this.adapterRabbitMQ.publish({ queue: SHARED_QUEUES.MAIL_REGISTER_USER, message: newDoc })
         res.status(201).json(newDoc)
@@ -46,7 +46,7 @@ export class AuthController extends BaseHttpController {
     }
 
     @httpPost('sign-in', VRB.bind(null, SignInDTO, BRE))
-    async saveIn(@request() req: Request<any, any, CreateUserDTO>, @response() res: Response) {
+    async signIn(@request() req: Request, @response() res: Response) {
         const token = await this.useCaseSignIn.exec(req.body)
         res.cookie(
             'authToken',
@@ -57,6 +57,12 @@ export class AuthController extends BaseHttpController {
                 sameSite: 'strict'
             }
         )
+        res.sendStatus(204)
+    }
+
+    @httpPost('sign-out')
+    async signOut(@request() _req: Request, @response() res: Response) {
+        res.clearCookie('authToken')
         res.sendStatus(204)
     }
 
