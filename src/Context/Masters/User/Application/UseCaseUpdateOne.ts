@@ -11,7 +11,7 @@ export class UseCaseUpdateOne {
 		@inject(USER_TYPES.MongoRepository) private readonly repository: IUserMongoRepository,
 	) { }
 
-	async exec(id: ObjectId, dto: UserENTITY) {
+	async exec(id: string, dto: UserENTITY) {
 
 		const filter = { _id: id }
 		const update = { $set: { names: dto.names } }

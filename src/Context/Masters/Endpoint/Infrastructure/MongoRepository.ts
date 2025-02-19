@@ -16,7 +16,7 @@ export class EndpointMongoRepository extends MongoRepository<EndpointENTITY> imp
 
     async save(data: EndpointENTITY[]) {
         const client = await this.adapterMongo.connection()
-        const col = client.db(this.database).collection(this.collection)
+        const col = client.db(this.database).collection<EndpointENTITY>(this.collection)
         try {
             const controllers = data.map(item => item.controller)
             const existingDocs = await col.find({ controller: { $in: controllers } }).toArray()
