@@ -1,4 +1,4 @@
-import { ConflictException, NotFoundException } from '@Config';
+import { ConflictException, env, NotFoundException } from '@Config';
 import { IUserMongoRepository } from '@Masters/User/Domain';
 import { USER_TYPES } from '@Masters/User/Infrastructure';
 import { AdapterMail, AdapterToken, SHARED_TYPES } from '@Shared/Infrastructure';
@@ -46,7 +46,7 @@ export class UseCaseRequestPasswordReset {
     private prepareHTMLmessage(token: string, user: UserENTITY) {
         const filePath = path.join(__dirname, '../../../../../public/RequestPasswordReset.html')
         const html = fs.readFileSync(filePath, 'utf-8')
-            .replace('{{ENLACE_RESTABLECER_CONTRASEÑA}}', `http://google.com?token=${token}`)
+            .replace('{{ENLACE_RESTABLECER_CONTRASEÑA}}', `${env.FRONTEND_URL}/verify-email?token=${token}`)
             .replace('{{names}}', user.names)
         return html
     }
