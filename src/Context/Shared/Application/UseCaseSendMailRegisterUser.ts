@@ -17,7 +17,7 @@ export class UseCaseSendMailRegisterUser {
 
     async exec(entity: UserENTITY) {
         const payload = this.generatePayloadToken(entity)
-        const token = await this.adapterToken.create(payload, undefined, 600)
+        const token = await this.adapterToken.create(payload, undefined, 86400)
         const HTMLMessage = this.prepareHTMLmessage(token)
         const subject = `¡Bienvenido, ${entity.names}! Activa tu cuenta en Logiflow ERP`
         await this.adapterMail.send(entity.email, subject, undefined, HTMLMessage)
