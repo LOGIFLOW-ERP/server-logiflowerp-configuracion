@@ -46,7 +46,7 @@ export class UseCaseRequestPasswordReset {
     private prepareHTMLmessage(token: string, user: UserENTITY) {
         const filePath = path.join(__dirname, '../../../../../public/RequestPasswordReset.html')
         const html = fs.readFileSync(filePath, 'utf-8')
-            .replace('{{ENLACE_RESTABLECER_CONTRASEÑA}}', `${env.FRONTEND_URL}/verify-email?token=${token}`)
+            .replace('{{ENLACE_RESTABLECER_CONTRASEÑA}}', `${env.FRONTEND_URL}/reset-password?token=${token}`)
             .replace('{{names}}', user.names)
         return html
     }
