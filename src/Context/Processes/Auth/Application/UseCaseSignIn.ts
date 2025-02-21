@@ -19,7 +19,7 @@ export class UseCaseSignIn {
             throw new ForbiddenException('El usuario está inactivo.')
         }
         if (!user.emailVerified) {
-            throw new UnauthorizedException('Correo no veirifcado.')
+            throw new UnauthorizedException('Correo no verificado.')
         }
         this.verifyPassword(dto, user)
         const payload = this.generatePayloadToken(user)
