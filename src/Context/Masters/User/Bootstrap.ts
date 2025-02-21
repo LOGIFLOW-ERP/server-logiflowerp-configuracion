@@ -10,10 +10,15 @@ export class ManagerEntity {
     private indexes: IndexEntity[] = [
         {
             campos: [
-                { nombre: 'Codigo', direccion: 1 },
-                { nombre: 'Codigo1', direccion: 1 },
+                { nombre: 'identity', direccion: 1 }
             ],
-            opciones: { name: 'key' }
+            opciones: { name: `idx_identity`, unique: true }
+        },
+        {
+            campos: [
+                { nombre: 'email', direccion: 1 }
+            ],
+            opciones: { name: `idx_email`, unique: true }
         }
     ]
 
