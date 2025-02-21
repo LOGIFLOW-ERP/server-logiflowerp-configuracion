@@ -24,7 +24,7 @@ export class UseCaseSignIn {
         this.verifyPassword(dto, user)
         const payload = this.generatePayloadToken(user)
         const token = await this.adapterToken.create(payload)
-        return token
+        return { token, user: payload.user }
     }
 
     private generatePayloadToken(entity: UserENTITY) {
