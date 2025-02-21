@@ -4,7 +4,7 @@ import {
     UnprocessableEntityException
 } from '@Config'
 import { IParamsTransaction, LogEntity } from '@Shared/Domain'
-import { Document, Filter, ObjectId } from 'mongodb'
+import { Document, Filter } from 'mongodb'
 
 export async function _insertOne<T extends Document>(params: IParamsTransaction<T>) {
 
@@ -19,7 +19,7 @@ export async function _insertOne<T extends Document>(params: IParamsTransaction<
         throw new UnprocessableEntityException('No se pudo guardar el documento')
     }
 
-    const filter = { _id: new ObjectId(response.insertedId) } as Filter<T>
+    const filter = { _id: response.insertedId } as Filter<T>
     const newDocument = await col.findOne(filter, { session, readPreference: 'primary' })
     if (!newDocument) {
         throw new InternalServerException('El documento no se encontró después de la inserción')

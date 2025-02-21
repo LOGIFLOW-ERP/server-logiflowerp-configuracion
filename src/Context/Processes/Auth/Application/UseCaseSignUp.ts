@@ -6,9 +6,9 @@ import { inject, injectable } from 'inversify'
 import { CreateUserDTO, UserENTITY, validateCustom } from 'logiflowerp-sdk'
 
 @injectable()
-export class UseCaseSignUp { 
+export class UseCaseSignUp {
 
-    constructor(
+	constructor(
 		@inject(USER_TYPES.MongoRepository) private readonly repository: IUserMongoRepository,
 		@inject(SHARED_TYPES.AdapterApiRequest) private readonly adapterApiRequest: AdapterApiRequest,
 	) { }
@@ -29,6 +29,7 @@ export class UseCaseSignUp {
 
 	private completeUserData(dto: CreateUserDTO, RENIECPersonalData: IRENIECPersonalData) {
 		const newUser = new UserENTITY()
+		newUser._id = crypto.randomUUID()
 		newUser.set(dto)
 		newUser.names = RENIECPersonalData.nombres
 		newUser.surnames = `${RENIECPersonalData.apellidoPaterno} ${RENIECPersonalData.apellidoMaterno}`
