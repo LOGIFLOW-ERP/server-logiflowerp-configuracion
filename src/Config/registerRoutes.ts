@@ -10,9 +10,9 @@ export async function registerRoutes(rootPath: string) {
     const routes = getRouteInfo(ContainerGlobal)
     try {
         await ContainerGlobal.get<UseCaseSaveRoutes>(ENDPOINT_TYPES.UseCaseSaveRoutes).exec(routes, rootPath)
-        await ContainerGlobal.get<UseCaseSave>(SYSTEM_OPTION_TYPES.UseCaseSave).exec(routes, env.PREFIX)
+        await ContainerGlobal.get<UseCaseSave>(SYSTEM_OPTION_TYPES.UseCaseSave).exec(routes, rootPath, env.PREFIX)
     } catch (error) {
-        console.error(error)        
+        console.error(error)
         process.exit(1)
     }
 }

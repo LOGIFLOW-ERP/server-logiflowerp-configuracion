@@ -12,7 +12,7 @@ export class UseCaseSave {
         @inject(SYSTEM_OPTION_TYPES.MongoRepository) private readonly repository: ISystemOptionMongoRepository,
     ) { }
 
-    async exec(rawData: RouteInfo[], prefix: string) {
+    async exec(rawData: RouteInfo[], rootPath: string, prefix: string) {
         const dataDB = await this.repository.select([])
         const dataDBSet = new Set(dataDB.map(e => e.key))
         const mapaLocal = new Set<string>()
@@ -36,6 +36,10 @@ export class UseCaseSave {
                         _newEntity.father = father
                         _newEntity.name = this.separarPalabras(element)
                         _newEntity.prefix = prefix
+                        if (i === partsRoute.length - 1) {
+                            const [method, pathParts] = endpoint.route.split(' ')
+                            _newEntity.route = `${method} ${rootPath}${pathParts}`
+                        }
                         const newItem = await validateCustom(_newEntity, SystemOptionENTITY, UnprocessableEntityException)
                         newData.push(newItem)
                     }

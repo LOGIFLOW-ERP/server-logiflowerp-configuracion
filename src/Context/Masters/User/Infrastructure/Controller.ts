@@ -13,8 +13,9 @@ import {
     UseCaseUpdateOne
 } from '../Application'
 import {
+    UpdateUserDTO,
     UserENTITY,
-    validateObjectIdParam as VOIP,
+    validateUUIDv4Param as VUUID,
     validateRequestBody as VRB
 } from 'logiflowerp-sdk'
 
@@ -29,11 +30,13 @@ export class UserController extends BaseHttpController {
 
     @httpPost('find')
     async find(@request() req: Request, @response() res: Response) {
+        console.log(req.originalUrl)
         await this.useCaseFind.exec(req, res)
     }
 
-    @httpPost('update-one/:id', VOIP.bind(null, BRE), VRB.bind(null, UserENTITY, BRE))
+    @httpPost('update-one/:id', VUUID.bind(null, BRE), VRB.bind(null, UpdateUserDTO, BRE))
     async updateOne(@request() req: Request<any, any, UserENTITY>, @response() res: Response) {
+        console.log(req.originalUrl)
         const updatedDoc = await this.useCaseUpdateOne.exec(req.params.id, req.body)
         res.json(updatedDoc)
     }
