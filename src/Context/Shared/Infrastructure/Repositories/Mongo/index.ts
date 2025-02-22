@@ -3,7 +3,7 @@ import { IMongoRepository } from '@Shared/Domain'
 import { AdapterMongoDB, AdapterRedis, SHARED_TYPES } from '@Shared/Infrastructure'
 import { Request, Response } from 'express'
 import { Document, Filter, OptionalUnlessRequiredId, UpdateFilter } from 'mongodb'
-import { _find, _insertMany, _insertOne, _select, _updateOne } from './Transactions'
+import { _deleteMany, _find, _insertMany, _insertOne, _select, _updateOne } from './Transactions'
 
 export class MongoRepository<T extends Document> implements IMongoRepository<T> {
 
@@ -65,6 +65,25 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
             const col = client.db(this.database).collection<T>(this.collection)
             await this.adapterMongo.openTransaction(session)
             const result = await _insertMany<T>({ client, col, session, docs, adapterMongo: this.adapterMongo })
+            await this.adapterRedis.deleteKeysCollection(col)
+            await this.adapterMongo.commitTransaction(session)
+            return result
+        } catch (error) {
+            await this.adapterMongo.rollbackTransaction(session)
+            throw error
+        } finally {
+            await this.adapterMongo.closeSession(session)
+            await this.adapterMongo.closeConnection()
+        }
+    }
+
+    async deleteMany(filter: Filter<T>) {
+        const client = await this.adapterMongo.connection()
+        const session = await this.adapterMongo.openSession(client)
+        try {
+            const col = client.db(this.database).collection<T>(this.collection)
+            await this.adapterMongo.openTransaction(session)
+            const result = await _deleteMany<T>({ client, col, session, filter, adapterMongo: this.adapterMongo })
             await this.adapterRedis.deleteKeysCollection(col)
             await this.adapterMongo.commitTransaction(session)
             return result

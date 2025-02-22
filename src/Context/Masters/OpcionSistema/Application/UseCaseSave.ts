@@ -12,13 +12,9 @@ export class UseCaseSave {
         @inject(OPCION_SISTEMA_TYPES.MongoRepository) private readonly repository: IOpcionSistemaMongoRepository,
     ) { }
 
-    private getKey(e: OpcionSistemaENTITY) {
-        return `${e.name}|${e.father}|${e.prefix}`
-    }
-
     async exec(rawData: RouteInfo[], prefix: string) {
         const dataDB = await this.repository.select([])
-        const dataDBSet = new Set(dataDB.map(e => this.getKey(e)))
+        const dataDBSet = new Set(dataDB.map(e => e.key))
         const mapaLocal = new Set<string>()
         const newData: OpcionSistemaENTITY[] = []
 
@@ -37,7 +33,6 @@ export class UseCaseSave {
 
                     if (!dataDBSet.has(key)) {
                         const _newEntity = new OpcionSistemaENTITY()
-                        _newEntity._id = crypto.randomUUID()
                         _newEntity.father = father
                         _newEntity.name = element
                         _newEntity.prefix = prefix
@@ -48,11 +43,10 @@ export class UseCaseSave {
             }
         }
 
-        const _ids = dataDB.filter(e => !mapaLocal.has(this.getKey(e))).map(e => e._id)
+        const _ids = dataDB.filter(e => !mapaLocal.has(e.key)).map(e => e._id)
 
         if (_ids.length) {
-            // Eliminar registros en la DB
-            // await this.repository.deleteMany(_ids)
+            await this.repository.deleteMany({ _id: { $in: _ids } })
         }
 
         if (newData.length) {
