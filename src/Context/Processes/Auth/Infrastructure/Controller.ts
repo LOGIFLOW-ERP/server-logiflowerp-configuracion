@@ -63,7 +63,7 @@ export class AuthController extends BaseHttpController {
 
     @httpPost('sign-in', VRB.bind(null, SignInDTO, BRE))
     async signIn(@request() req: Request, @response() res: Response) {
-        const { token, user } = await this.useCaseSignIn.exec(req.body)
+        const { token, user, dataSystemOptions } = await this.useCaseSignIn.exec(req.body)
         res.cookie(
             'authToken',
             token,
@@ -73,7 +73,7 @@ export class AuthController extends BaseHttpController {
                 sameSite: 'strict'
             }
         )
-        res.status(200).json(user)
+        res.status(200).json({ user, dataSystemOptions })
     }
 
     @httpPost('sign-out')

@@ -2,12 +2,14 @@ export class BaseException extends Error {
     type: string;
     statusCode: number;
     errorMessage: string;
+    messageLogiflow: string | undefined;
 
-    constructor(type: string, statusCode: number, message: string) {
+    constructor(type: string, statusCode: number, message: string, messageLogiflow: boolean) {
         super(message);
         this.type = type;
         this.statusCode = statusCode;
         this.errorMessage = message
+        this.messageLogiflow = messageLogiflow ? message : undefined
     }
 }
 
@@ -17,8 +19,8 @@ export class BaseException extends Error {
 //     throw new BadRequestException('La dirección de entrega no es válida');
 // }
 export class BadRequestException extends BaseException {
-    constructor(message: string = 'Bad Request') {
-        super('BadRequest', 400, message);
+    constructor(message: string = 'Bad Request', messageLogiflow: boolean = false) {
+        super('BadRequest', 400, message, messageLogiflow);
     }
 }
 
@@ -28,8 +30,8 @@ export class BadRequestException extends BaseException {
 //     throw new UnauthorizedException('Debes iniciar sesión para continuar');
 // }
 export class UnauthorizedException extends BaseException {
-    constructor(message: string = 'Unauthorized') {
-        super('Unauthorized', 401, message);
+    constructor(message: string = 'Unauthorized', messageLogiflow: boolean = false) {
+        super('Unauthorized', 401, message, messageLogiflow);
     }
 }
 
@@ -39,8 +41,8 @@ export class UnauthorizedException extends BaseException {
 //     throw new ForbiddenException('No tienes permisos para ver esta información');
 // }
 export class ForbiddenException extends BaseException {
-    constructor(message: string = 'Forbidden') {
-        super('Forbidden', 403, message);
+    constructor(message: string = 'Forbidden', messageLogiflow: boolean = false) {
+        super('Forbidden', 403, message, messageLogiflow);
     }
 }
 
@@ -51,8 +53,8 @@ export class ForbiddenException extends BaseException {
 //     throw new NotFoundException(`No se encontró el pedido con ID: ${orderId}`);
 // }
 export class NotFoundException extends BaseException {
-    constructor(message: string = 'Not Found') {
-        super('NotFound', 404, message);
+    constructor(message: string = 'Not Found', messageLogiflow: boolean = false) {
+        super('NotFound', 404, message, messageLogiflow);
     }
 }
 
@@ -63,8 +65,8 @@ export class NotFoundException extends BaseException {
 //     throw new ConflictException('El camión ya tiene un envío programado para esta fecha');
 // }
 export class ConflictException extends BaseException {
-    constructor(message: string = 'Conflict') {
-        super('Conflict', 409, message);
+    constructor(message: string = 'Conflict', messageLogiflow: boolean = false) {
+        super('Conflict', 409, message, messageLogiflow);
     }
 }
 
@@ -74,8 +76,8 @@ export class ConflictException extends BaseException {
 //     throw new UnprocessableEntityException('El peso del producto no puede ser negativo');
 // }
 export class UnprocessableEntityException extends BaseException {
-    constructor(message: string = 'Unprocessable Entity') {
-        super('UnprocessableEntity', 422, message);
+    constructor(message: string = 'Unprocessable Entity', messageLogiflow: boolean = false) {
+        super('UnprocessableEntity', 422, message, messageLogiflow);
     }
 }
 
@@ -85,8 +87,8 @@ export class UnprocessableEntityException extends BaseException {
 //     throw new TooManyRequestsException('Demasiadas solicitudes, intenta más tarde');
 // }
 export class TooManyRequestsException extends BaseException {
-    constructor(message: string = 'Too Many Requests') {
-        super('TooManyRequests', 429, message);
+    constructor(message: string = 'Too Many Requests', messageLogiflow: boolean = false) {
+        super('TooManyRequests', 429, message, messageLogiflow);
     }
 }
 
@@ -98,8 +100,8 @@ export class TooManyRequestsException extends BaseException {
 //     throw new InternalServerException('Error al guardar el pedido en la base de datos');
 // }
 export class InternalServerException extends BaseException {
-    constructor(message: string = 'Internal Server Error') {
-        super('InternalServerError', 500, message);
+    constructor(message: string = 'Internal Server Error', messageLogiflow: boolean = false) {
+        super('InternalServerError', 500, message, messageLogiflow);
     }
 }
 
@@ -110,7 +112,7 @@ export class InternalServerException extends BaseException {
 //     throw new ServiceUnavailableException('El servicio de rastreo no está disponible actualmente');
 // }
 export class ServiceUnavailableException extends BaseException {
-    constructor(message: string = 'Service Unavailable') {
-        super('ServiceUnavailable', 503, message);
+    constructor(message: string = 'Service Unavailable', messageLogiflow: boolean = false) {
+        super('ServiceUnavailable', 503, message, messageLogiflow);
     }
 }
