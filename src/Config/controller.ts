@@ -11,7 +11,7 @@ async function initManger(paths: Dirent[]) {
         const controllerClass = controllerModule[Object.keys(controllerModule)[0]]
 
         const fn = rute.parentPath.split(sep)
-        const routePath = `/${fn[fn.length - 3]}/${fn[fn.length - 2]}/`.toLowerCase()
+        const routePath = `/${fn[fn.length - 3]}/${fn[fn.length - 2]}/`
 
         controller(routePath)(controllerClass)
     }

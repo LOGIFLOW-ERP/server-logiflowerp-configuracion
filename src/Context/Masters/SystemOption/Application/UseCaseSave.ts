@@ -1,22 +1,22 @@
 import { inject, injectable } from 'inversify'
-import { OPCION_SISTEMA_TYPES } from '../Infrastructure/IoC/types'
-import { IOpcionSistemaMongoRepository } from '../Domain'
+import { SYSTEM_OPTION_TYPES } from '../Infrastructure/IoC/types'
+import { ISystemOptionMongoRepository } from '../Domain'
 import { RouteInfo } from 'inversify-express-utils'
 import { UnprocessableEntityException } from '@Config'
-import { OpcionSistemaENTITY, validateCustom } from 'logiflowerp-sdk'
+import { SystemOptionENTITY, validateCustom } from 'logiflowerp-sdk'
 
 @injectable()
 export class UseCaseSave {
 
     constructor(
-        @inject(OPCION_SISTEMA_TYPES.MongoRepository) private readonly repository: IOpcionSistemaMongoRepository,
+        @inject(SYSTEM_OPTION_TYPES.MongoRepository) private readonly repository: ISystemOptionMongoRepository,
     ) { }
 
     async exec(rawData: RouteInfo[], prefix: string) {
         const dataDB = await this.repository.select([])
         const dataDBSet = new Set(dataDB.map(e => e.key))
         const mapaLocal = new Set<string>()
-        const newData: OpcionSistemaENTITY[] = []
+        const newData: SystemOptionENTITY[] = []
 
         for (const raw of rawData) {
             for (const endpoint of raw.endpoints) {
@@ -32,11 +32,11 @@ export class UseCaseSave {
                     mapaLocal.add(key)
 
                     if (!dataDBSet.has(key)) {
-                        const _newEntity = new OpcionSistemaENTITY()
+                        const _newEntity = new SystemOptionENTITY()
                         _newEntity.father = father
-                        _newEntity.name = element
+                        _newEntity.name = this.separarPalabras(element)
                         _newEntity.prefix = prefix
-                        const newItem = await validateCustom(_newEntity, OpcionSistemaENTITY, UnprocessableEntityException)
+                        const newItem = await validateCustom(_newEntity, SystemOptionENTITY, UnprocessableEntityException)
                         newData.push(newItem)
                     }
                 }
@@ -52,6 +52,12 @@ export class UseCaseSave {
         if (newData.length) {
             await this.repository.insertMany(newData)
         }
+    }
+
+    separarPalabras(texto: string) {
+        return texto
+            .replace(/([a-z])([A-Z])/g, '$1 $2')
+            .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2')
     }
 
 }
