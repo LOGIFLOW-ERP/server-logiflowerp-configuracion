@@ -54,4 +54,8 @@ export class UseCaseSignIn {
         return data[0]
     }
 
+    private async loadProfile(user: UserENTITY) {
+
+    }
+
 }

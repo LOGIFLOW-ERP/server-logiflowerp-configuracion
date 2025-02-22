@@ -5,7 +5,8 @@ export const database_test = 'logiflowerp_db'
 //#region collections
 export const collection_user = 'users'
 export const collection_endpoint = 'endpoints'
-export const collection_systemOption = 'systemOption'
+export const collection_systemOptions = 'systemOptions'
+export const collection_profiles = 'profiles'
 //#endregion collections
 
 //#region queue names

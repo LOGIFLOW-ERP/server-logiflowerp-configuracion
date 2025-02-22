@@ -8,7 +8,7 @@ export class EndpointMongoRepository extends MongoRepository<SystemOptionENTITY>
 
     constructor(
         @inject(SHARED_TYPES.database_test) database: string,
-        @inject(SHARED_TYPES.collection_systemOption) collection: string,
+        @inject(SHARED_TYPES.collection_systemOptions) collection: string,
     ) {
         super(database, collection)
     }

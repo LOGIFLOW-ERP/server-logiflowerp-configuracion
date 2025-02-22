@@ -9,6 +9,7 @@ export const SHARED_TYPES = {
     database_test: Symbol.for('database_test'),
     collection_user: Symbol.for('collection_user'),
     collection_endpoint: Symbol.for('collection_endpoint'),
-    collection_systemOption: Symbol.for('collection_systemOption'),
+    collection_systemOptions: Symbol.for('collection_systemOptions'),
+    collection_profiles: Symbol.for('collection_profiles'),
     UseCaseSendMailRegisterUser: Symbol.for('UseCaseSendMailRegisterUser'),
 }
