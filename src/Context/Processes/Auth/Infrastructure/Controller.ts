@@ -17,7 +17,7 @@ import {
 } from '../Application'
 import {
     CreateUserDTO,
-    LoginDTO,
+    SignInDTO,
     validateRequestBody as VRB
 } from 'logiflowerp-sdk'
 import { AdapterRabbitMQ, SHARED_QUEUES, SHARED_TYPES } from '@Shared/Infrastructure'
@@ -61,7 +61,7 @@ export class AuthController extends BaseHttpController {
         res.sendStatus(204)
     }
 
-    @httpPost('sign-in', VRB.bind(null, LoginDTO, BRE))
+    @httpPost('sign-in', VRB.bind(null, SignInDTO, BRE))
     async signIn(@request() req: Request, @response() res: Response) {
         const { token, user } = await this.useCaseSignIn.exec(req.body)
         res.cookie(
