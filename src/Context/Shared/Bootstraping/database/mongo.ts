@@ -32,7 +32,7 @@ export class BootstrapingDatabaseMongo {
         if (!collections.some(col => col.name === this.collection)) {
             await db.createCollection(this.collection)
         }
-        await this.adapterMongo.closeConnection()
+        // await this.adapterMongo.closeConnection()
     }
 
     private async createIndexes() {
@@ -49,7 +49,7 @@ export class BootstrapingDatabaseMongo {
         for (const row of this.indexes) {
             await col.createIndex(row.value, row.opt)
         }
-        await this.adapterMongo.closeConnection()
+        // await this.adapterMongo.closeConnection()
     }
 
     private generateIndexes(indexes: IndexEntity[]) {

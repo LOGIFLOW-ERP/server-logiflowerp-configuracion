@@ -14,7 +14,7 @@ export async function queryOnRedis_AndResponse(params: IFind) {
     const redis = ContainerGlobal.get<AdapterRedis>(SHARED_TYPES.AdapterRedis)
     const mongo = ContainerGlobal.get<AdapterMongoDB>(SHARED_TYPES.AdapterMongoDB)
 
-    await mongo.closeConnection()
+    // await mongo.closeConnection()
 
     res.setHeader('Content-Type', 'application/json; charset=utf-8')
     stream.pipe(res)

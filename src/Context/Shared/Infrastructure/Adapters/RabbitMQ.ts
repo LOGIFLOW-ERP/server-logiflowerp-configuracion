@@ -22,7 +22,7 @@ export class AdapterRabbitMQ {
                 this.connection = await connect(url)
                 this.channel = await this.connection.createChannel()
                 this.channel.prefetch(1)
-                console.log('\x1b[32m%s\x1b[0m', 'Conectado a RabbitMQ')
+                console.log('\x1b[32m%s\x1b[0m', '>>> Conectado a RabbitMQ')
             }
         } catch (error) {
             console.error(error)

@@ -25,12 +25,12 @@ export function queryOnDBAndResponse<T extends Document>(params: IFind) {
     cursor.on('end', async () => {
         stream.write(']')
         stream.end()
-        await mongo.closeConnection()
+        // await mongo.closeConnection()
     })
     cursor.on('error', async (err: any) => {
         console.error('Error leyendo del cursor:', err)
         stream.end(']')
-        await mongo.closeConnection()
+        // await mongo.closeConnection()
         res.end(JSON.stringify(new InternalServerException('Error leyendo del cursor')))
     })
     res.on('close', () => {

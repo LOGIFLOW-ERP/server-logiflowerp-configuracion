@@ -31,12 +31,12 @@ export async function queryOnDB_WriteRedis_AndResponse<T extends Document>(param
     })
     cursor.on('end', async () => {
         stream.end(']')
-        await mongo.closeConnection()
+        // await mongo.closeConnection()
     })
     cursor.on('error', async (err: any) => {
         console.error('Error leyendo del cursor:', err)
         stream.end(']')
-        await mongo.closeConnection()
+        // await mongo.closeConnection()
         res.status(500).end(JSON.stringify({ statusCode: 500, errorMessage: 'Error leyendo del cursor' }))
     })
     res.on('close', () => {

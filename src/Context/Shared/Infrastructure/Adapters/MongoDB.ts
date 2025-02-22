@@ -12,8 +12,20 @@ export class AdapterMongoDB {
     async connection(uri = env.MONGO_URI, retries = 5): Promise<MongoClient> {
         if (this.clientInstance) return this.clientInstance
         try {
-            this.clientInstance = await MongoClient.connect(uri, { directConnection: true })
-            info('Conectado a Mongo')
+            this.clientInstance = await MongoClient.connect(uri, {
+                directConnection: true,
+                maxPoolSize: 10,
+                minPoolSize: 2
+            })
+            info('\x1b[32m%s\x1b[0m', '>>> Conectado a Mongo')
+            process.on('SIGINT', async () => {
+                await this.closeConnection()
+                process.exit(0)
+            })
+            process.on('SIGTERM', async () => {
+                await this.closeConnection()
+                process.exit(0)
+            })
             return this.clientInstance
         } catch (error) {
             if ((error as Error).message.includes('EADDRINUSE') && retries > 0) {

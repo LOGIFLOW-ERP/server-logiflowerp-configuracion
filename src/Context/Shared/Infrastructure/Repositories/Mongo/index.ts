@@ -35,7 +35,7 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
             const col = client.db(database).collection(collection)
             return await _select<ReturnType>({ collection: col, pipeline })
         } finally {
-            await this.adapterMongo.closeConnection()
+            // await this.adapterMongo.closeConnection()
         }
     }
 
@@ -54,7 +54,7 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
             throw error
         } finally {
             await this.adapterMongo.closeSession(session)
-            await this.adapterMongo.closeConnection()
+            // await this.adapterMongo.closeConnection()
         }
     }
 
@@ -73,7 +73,7 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
             throw error
         } finally {
             await this.adapterMongo.closeSession(session)
-            await this.adapterMongo.closeConnection()
+            // await this.adapterMongo.closeConnection()
         }
     }
 
@@ -92,7 +92,7 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
             throw error
         } finally {
             await this.adapterMongo.closeSession(session)
-            await this.adapterMongo.closeConnection()
+            // await this.adapterMongo.closeConnection()
         }
     }
 
@@ -111,7 +111,7 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
             throw error
         } finally {
             await this.adapterMongo.closeSession(session)
-            await this.adapterMongo.closeConnection()
+            // await this.adapterMongo.closeConnection()
         }
     }
 

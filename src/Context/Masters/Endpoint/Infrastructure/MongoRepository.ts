@@ -40,7 +40,7 @@ export class EndpointMongoRepository extends MongoRepository<EndpointENTITY> imp
             }
         } finally {
             await this.adapterRedis.deleteKeysCollection(col)
-            await this.adapterMongo.closeConnection()
+            // await this.adapterMongo.closeConnection()
         }
     }
 
