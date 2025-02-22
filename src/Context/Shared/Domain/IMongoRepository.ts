@@ -12,4 +12,5 @@ export interface IMongoRepository<T extends Document> {
     select<ReturnType extends Document = T>(query: Document[], collection?: string, database?: string): Promise<ReturnType[]>
     insertOne(doc: OptionalUnlessRequiredId<T>): Promise<WithId<T>>
     updateOne(filter: Filter<T>, update: T[] | UpdateFilter<T>): Promise<WithId<T>>
+    insertMany(objs: OptionalUnlessRequiredId<T>[]): Promise<WithId<T>[]>
 }

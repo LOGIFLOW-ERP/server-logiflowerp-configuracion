@@ -5,7 +5,7 @@ export interface LogEntity<T> {
     col: string
     operacion: 'INSERT' | 'UPDATE'
     antiguoValor: WithId<T> | null
-    nuevoValor: WithId<T>
+    nuevoValor: WithId<T> | WithId<T>[]
     fecha: Date
     idUsuario: string
 }

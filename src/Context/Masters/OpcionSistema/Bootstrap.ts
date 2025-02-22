@@ -1,5 +1,5 @@
 import { IndexEntity } from '@Shared/Domain'
-import { collection, database } from './Infrastructure'
+import { collection, database } from './Infrastructure/config'
 import { Bootstraping } from '@Shared/Bootstraping'
 
 export class ManagerEntity {
@@ -7,14 +7,7 @@ export class ManagerEntity {
     private bootstrap: Bootstraping
     private database = database
     private collection = collection
-    private indexes: IndexEntity[] = [
-        {
-            campos: [
-                { nombre: 'controller', direccion: 1 }
-            ],
-            opciones: { name: 'idx_controller' }
-        }
-    ]
+    private indexes: IndexEntity[] = []
 
     constructor() {
         this.bootstrap = new Bootstraping(this.database, this.collection, this.indexes)

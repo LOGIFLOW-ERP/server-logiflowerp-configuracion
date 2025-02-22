@@ -14,6 +14,7 @@ export interface IParamsTransaction<T extends Document> {
     client: MongoClient
     col: Collection<T>
     doc?: OptionalUnlessRequiredId<T>
+    docs?: OptionalUnlessRequiredId<T>[]
     filter?: Filter<T>
     update?: T[] | UpdateFilter<T>
     adapterMongo: AdapterMongoDB

@@ -11,6 +11,7 @@ import {
 } from '../Adapters'
 import {
     collection_endpoint,
+    collection_opcionSistema,
     collection_user,
     database_test
 } from '../config'
@@ -29,5 +30,6 @@ export const containerModule = new ContainerModule(bind => {
     bind(SHARED_TYPES.database_test).toConstantValue(database_test)
     bind(SHARED_TYPES.collection_user).toConstantValue(collection_user)
     bind(SHARED_TYPES.collection_endpoint).toConstantValue(collection_endpoint)
+    bind(SHARED_TYPES.collection_opcionSistema).toConstantValue(collection_opcionSistema)
     bind(Worker).to(Worker).inSingletonScope()
 })
