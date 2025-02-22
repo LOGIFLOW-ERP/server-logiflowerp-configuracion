@@ -14,7 +14,7 @@ export class AdapterSocket {
             }
         })
 
-        console.log('\x1b[32m%s\x1b[0m', '>>> Servidor WebSocket iniciado correctamente')
+        console.log('\x1b[36m%s\x1b[0m', '>>> Servidor WebSocket iniciado correctamente')
 
         this.io.on('connection', (socket: Socket) => {
             console.log(`🟢 Cliente conectado: ${socket.id}`)

@@ -17,7 +17,7 @@ export class AdapterMongoDB {
                 maxPoolSize: 10,
                 minPoolSize: 2
             })
-            info('\x1b[32m%s\x1b[0m', '>>> Conectado a Mongo')
+            info('\x1b[36m%s\x1b[0m', '>>> Conectado a Mongo')
             process.on('SIGINT', async () => {
                 await this.closeConnection()
                 process.exit(0)

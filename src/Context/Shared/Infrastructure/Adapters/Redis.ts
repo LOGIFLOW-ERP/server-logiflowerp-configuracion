@@ -11,7 +11,7 @@ export class AdapterRedis {
     constructor() {
         this._client = createClient({ url: env.REDIS_URL })
 
-        this._client.on('connect', () => console.log('\x1b[32m%s\x1b[0m', '>>> Redis conectado'))
+        this._client.on('connect', () => console.log('\x1b[36m%s\x1b[0m', '>>> Redis conectado'))
         this._client.on('error', (error) => console.error('❌ Redis error:', error.message))
         this._client.on('reconnecting', () => console.warn('🔄 Redis intentando reconectar...'))
         this._client.on('end', () => console.warn('🚫 Redis desconectado'))
