@@ -17,6 +17,7 @@ import {
 } from '../Application'
 import {
     CreateUserDTO,
+    ResponseSignIn,
     SignInDTO,
     validateRequestBody as VRB
 } from 'logiflowerp-sdk'
@@ -73,7 +74,8 @@ export class AuthController extends BaseHttpController {
                 sameSite: 'strict'
             }
         )
-        res.status(200).json({ user, dataSystemOptions })
+        const response: ResponseSignIn = { user, dataSystemOptions }
+        res.status(200).json(response)
     }
 
     @httpPost('sign-out')
