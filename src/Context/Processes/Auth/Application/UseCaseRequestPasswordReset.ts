@@ -19,7 +19,7 @@ export class UseCaseRequestPasswordReset {
     async exec(email: string) {
         const user = await this.searchUser(email)
         const payload = this.generatePayloadToken(user)
-        const token = await this.adapterToken.create(payload, undefined, 300)
+        const token = await this.adapterToken.create(payload, undefined, 180)
         const HTMLMessage = this.prepareHTMLmessage(token, user)
         const subject = `Recuperación de contraseña`
         await this.adapterMail.send(user.email, subject, undefined, HTMLMessage)

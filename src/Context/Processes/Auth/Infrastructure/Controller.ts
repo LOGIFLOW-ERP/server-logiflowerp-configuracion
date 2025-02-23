@@ -17,12 +17,13 @@ import {
 } from '../Application'
 import {
     CreateUserDTO,
+    ResetPasswordDTO,
     ResponseSignIn,
     SignInDTO,
     validateRequestBody as VRB
 } from 'logiflowerp-sdk'
 import { AdapterRabbitMQ, SHARED_QUEUES, SHARED_TYPES } from '@Shared/Infrastructure'
-import { DataRequestPasswordResetDTO, DataResetPasswordDTO, DataVerifyEmailDTO } from '../Domain'
+import { DataRequestPasswordResetDTO, DataVerifyEmailDTO } from '../Domain'
 
 export class AuthController extends BaseHttpController {
 
@@ -56,9 +57,9 @@ export class AuthController extends BaseHttpController {
         res.sendStatus(204)
     }
 
-    @httpPost('reset-password', VRB.bind(null, DataResetPasswordDTO, BRE))
+    @httpPost('reset-password', VRB.bind(null, ResetPasswordDTO, BRE))
     async resetPassword(@request() req: Request, @response() res: Response) {
-        await this.useCaseResetPassword.exec(req.body.token, req.body.newPassword)
+        await this.useCaseResetPassword.exec(req.body.token, req.body.password)
         res.sendStatus(204)
     }
 

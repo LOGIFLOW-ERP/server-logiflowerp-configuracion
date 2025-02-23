@@ -16,7 +16,7 @@ export class UseCaseResetPassword {
 
         const payload = await this.adapterToken.verify(token)
         if (!payload) {
-            throw new UnauthorizedException('Token inválido o expirado')
+            throw new UnauthorizedException('Token inválido o expirado', true)
         }
 
         await this.repository.updateOne(
