@@ -13,7 +13,7 @@ export class UseCaseSave {
     ) { }
 
     async exec(rawData: RouteInfo[], rootPath: string, prefix: string) {
-        const dataDB = await this.repository.select([])
+        const dataDB = await this.repository.select([{ $match: { prefix } }])
         const { _ids, newData } = await builSystemOption({
             dataDB,
             prefix,
