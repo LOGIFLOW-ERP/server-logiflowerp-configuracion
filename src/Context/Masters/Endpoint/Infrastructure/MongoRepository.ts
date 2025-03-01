@@ -8,7 +8,7 @@ export class EndpointMongoRepository extends MongoRepository<EndpointENTITY> imp
 
     constructor(
         @inject(SHARED_TYPES.database_logiflow) database: string,
-        @inject(SHARED_TYPES.collection_endpoint) collection: string,
+        @inject(SHARED_TYPES.collection_endpoints) collection: string,
         @inject(SHARED_TYPES.AdapterRedis) adapterRedis: AdapterRedis,
     ) {
         super(database, collection)

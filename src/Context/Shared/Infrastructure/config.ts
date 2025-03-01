@@ -2,13 +2,6 @@
 export const database_logiflow = 'logiflowerp_db'
 //#endregion databases
 
-//#region collections
-export const collection_user = 'users'
-export const collection_endpoint = 'endpoints'
-export const collection_systemOptions = 'systemOptions'
-export const collection_profiles = 'profiles'
-//#endregion collections
-
 //#region queue names
 export const SHARED_QUEUES = {
     MAIL_REGISTER_USER: 'mail_queue_register_user',
