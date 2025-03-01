@@ -1,7 +1,7 @@
 import { IFind } from '@Shared/Domain'
 import { AdapterRedis, SHARED_TYPES } from '@Shared/Infrastructure'
 import { queryOnDBAndResponse } from './queryOnDBAndResponse'
-import { ContainerGlobal } from '@Config'
+import { ContainerGlobal } from '@Config/inversify'
 import { queryOnRedis_AndResponse } from './queryOnRedis_AndResponse'
 import { queryOnDB_WriteRedis_AndResponse } from './queryOnDB_WriteRedis_AndResponse'
 

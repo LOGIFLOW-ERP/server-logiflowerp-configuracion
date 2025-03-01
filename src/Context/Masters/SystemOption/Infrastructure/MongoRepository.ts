@@ -7,7 +7,7 @@ import { SystemOptionENTITY } from 'logiflowerp-sdk'
 export class EndpointMongoRepository extends MongoRepository<SystemOptionENTITY> implements ISystemOptionMongoRepository {
 
     constructor(
-        @inject(SHARED_TYPES.database_test) database: string,
+        @inject(SHARED_TYPES.database_logiflow) database: string,
         @inject(SHARED_TYPES.collection_systemOptions) collection: string,
     ) {
         super(database, collection)

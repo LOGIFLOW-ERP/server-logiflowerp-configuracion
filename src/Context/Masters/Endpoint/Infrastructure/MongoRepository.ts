@@ -7,7 +7,7 @@ import { EndpointENTITY } from 'logiflowerp-sdk'
 export class EndpointMongoRepository extends MongoRepository<EndpointENTITY> implements IEndpointMongoRepository {
 
     constructor(
-        @inject(SHARED_TYPES.database_test) database: string,
+        @inject(SHARED_TYPES.database_logiflow) database: string,
         @inject(SHARED_TYPES.collection_endpoint) collection: string,
         @inject(SHARED_TYPES.AdapterRedis) adapterRedis: AdapterRedis,
     ) {

@@ -1,8 +1,9 @@
-import { ContainerGlobal, InternalServerException } from '@Config'
+import { ContainerGlobal } from '@Config/inversify'
 import { IFind } from '@Shared/Domain'
 import { Document } from 'mongodb'
 import { AdapterMongoDB, SHARED_TYPES } from '@Shared/Infrastructure'
 import { PassThrough } from 'stream'
+import { InternalServerException } from '@Config/exception'
 
 export function queryOnDBAndResponse<T extends Document>(params: IFind) {
     const { pipeline, collection, res } = params

@@ -7,7 +7,7 @@ import { UserENTITY } from 'logiflowerp-sdk'
 export class UserMongoRepository extends MongoRepository<UserENTITY> implements IUserMongoRepository {
 
     constructor(
-        @inject(SHARED_TYPES.database_test) database: string,
+        @inject(SHARED_TYPES.database_logiflow) database: string,
         @inject(SHARED_TYPES.collection_user) collection: string,
     ) {
         super(database, collection)

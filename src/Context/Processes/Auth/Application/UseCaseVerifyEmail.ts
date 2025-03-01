@@ -3,7 +3,7 @@ import { DataVerifyEmailDTO } from '../Domain';
 import { USER_TYPES } from '@Masters/User/Infrastructure';
 import { inject } from 'inversify';
 import { AdapterToken, SHARED_TYPES } from '@Shared/Infrastructure';
-import { BadRequestException, ConflictException, UnauthorizedException } from '@Config';
+import { BadRequestException, ConflictException, UnauthorizedException } from '@Config/exception';
 
 export class UseCaseVerifyEmail {
 

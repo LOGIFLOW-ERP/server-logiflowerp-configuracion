@@ -1,4 +1,4 @@
-import { UnauthorizedException } from '@Config';
+import { UnauthorizedException } from '@Config/exception';
 import { IUserMongoRepository } from '@Masters/User/Domain';
 import { USER_TYPES } from '@Masters/User/Infrastructure';
 import { AdapterToken, SHARED_TYPES } from '@Shared/Infrastructure';

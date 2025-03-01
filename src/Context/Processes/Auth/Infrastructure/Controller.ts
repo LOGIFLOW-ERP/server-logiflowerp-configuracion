@@ -1,7 +1,7 @@
 import { inject } from 'inversify'
 import { AUTH_TYPES } from './IoC'
 import { Request, Response } from 'express'
-import { BadRequestException as BRE } from '@Config'
+import { BadRequestException as BRE } from '@Config/exception'
 import {
     BaseHttpController,
     httpPost,

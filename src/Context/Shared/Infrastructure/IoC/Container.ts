@@ -14,10 +14,11 @@ import {
     collection_profiles,
     collection_systemOptions,
     collection_user,
-    database_test
+    database_logiflow
 } from '../config'
 import { Worker } from '../module.worker'
 import { UseCaseSendMailRegisterUser } from '../../Application'
+import { collections } from 'logiflowerp-sdk'
 
 export const containerModule = new ContainerModule(bind => {
     bind(SHARED_TYPES.AdapterToken).to(AdapterToken).inSingletonScope()
@@ -28,10 +29,12 @@ export const containerModule = new ContainerModule(bind => {
     bind(SHARED_TYPES.AdapterApiRequest).to(AdapterApiRequest).inSingletonScope()
     bind(SHARED_TYPES.AdapterRabbitMQ).to(AdapterRabbitMQ).inSingletonScope()
     bind(SHARED_TYPES.UseCaseSendMailRegisterUser).to(UseCaseSendMailRegisterUser)
-    bind(SHARED_TYPES.database_test).toConstantValue(database_test)
+    bind(SHARED_TYPES.database_logiflow).toConstantValue(database_logiflow)
     bind(SHARED_TYPES.collection_user).toConstantValue(collection_user)
     bind(SHARED_TYPES.collection_endpoint).toConstantValue(collection_endpoint)
     bind(SHARED_TYPES.collection_systemOptions).toConstantValue(collection_systemOptions)
     bind(SHARED_TYPES.collection_profiles).toConstantValue(collection_profiles)
+    bind(SHARED_TYPES.collection_currencies).toConstantValue(collections.currencies)
+    bind(SHARED_TYPES.collection_productPrices).toConstantValue(collections.productPrices)
     bind(Worker).to(Worker).inSingletonScope()
 })

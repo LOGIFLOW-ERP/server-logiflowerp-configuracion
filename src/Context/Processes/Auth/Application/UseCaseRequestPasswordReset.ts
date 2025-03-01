@@ -1,4 +1,5 @@
-import { ConflictException, env, NotFoundException } from '@Config';
+import { ConflictException, NotFoundException } from '@Config/exception';
+import { env } from '@Config/env';
 import { IUserMongoRepository } from '@Masters/User/Domain';
 import { USER_TYPES } from '@Masters/User/Infrastructure';
 import { AdapterMail, AdapterToken, SHARED_TYPES } from '@Shared/Infrastructure';

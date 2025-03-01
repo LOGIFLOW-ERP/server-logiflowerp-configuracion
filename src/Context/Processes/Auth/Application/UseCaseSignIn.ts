@@ -1,4 +1,5 @@
-import { ConflictException, env, ForbiddenException, UnauthorizedException } from '@Config'
+import { ConflictException, ForbiddenException, UnauthorizedException } from '@Config/exception'
+import { env } from '@Config/env'
 import { IProfileMongoRepository } from '@Masters/Profile/Domain'
 import { PROFILE_TYPES } from '@Masters/Profile/Infrastructure/IoC'
 import { ISystemOptionMongoRepository } from '@Masters/SystemOption/Domain'

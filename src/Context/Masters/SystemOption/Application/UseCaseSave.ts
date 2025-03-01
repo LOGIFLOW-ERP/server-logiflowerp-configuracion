@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify'
 import { SYSTEM_OPTION_TYPES } from '../Infrastructure/IoC/types'
 import { ISystemOptionMongoRepository } from '../Domain'
 import { RouteInfo } from 'inversify-express-utils'
-import { UnprocessableEntityException } from '@Config'
+import { UnprocessableEntityException } from '@Config/exception'
 import { builSystemOption } from 'logiflowerp-sdk'
 
 @injectable()

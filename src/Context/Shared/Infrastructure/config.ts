@@ -1,5 +1,5 @@
 //#region databases
-export const database_test = 'logiflowerp_db'
+export const database_logiflow = 'logiflowerp_db'
 //#endregion databases
 
 //#region collections

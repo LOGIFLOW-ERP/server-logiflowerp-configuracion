@@ -5,7 +5,7 @@ import { TokenPayloadDTO, UserENTITY } from 'logiflowerp-sdk'
 import path from 'path'
 import fs from 'fs'
 import { AdapterToken } from '@Shared/Infrastructure';
-import { env } from '@Config';
+import { env } from '@Config/env';
 
 @injectable()
 export class UseCaseSendMailRegisterUser {

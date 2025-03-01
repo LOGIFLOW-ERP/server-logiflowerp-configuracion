@@ -6,10 +6,12 @@ export const SHARED_TYPES = {
     AdapterMail: Symbol.for('AdapterMail'),
     AdapterApiRequest: Symbol.for('AdapterApiRequest'),
     AdapterRabbitMQ: Symbol.for('AdapterRabbitMQ'),
-    database_test: Symbol.for('database_test'),
+    database_logiflow: Symbol.for('database_logiflow'),
     collection_user: Symbol.for('collection_user'),
     collection_endpoint: Symbol.for('collection_endpoint'),
     collection_systemOptions: Symbol.for('collection_systemOptions'),
+    collection_productPrices: Symbol.for('collection_productPrices'),
+    collection_currencies: Symbol.for('collection_currencies'),
     collection_profiles: Symbol.for('collection_profiles'),
     UseCaseSendMailRegisterUser: Symbol.for('UseCaseSendMailRegisterUser'),
 }
