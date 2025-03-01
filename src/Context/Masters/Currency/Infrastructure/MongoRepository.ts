@@ -1,11 +1,11 @@
 import { MongoRepository } from '@Shared/Infrastructure/Repositories/Mongo'
-import { IProductGroupMongoRepository } from '../Domain'
+import { ICurrencyMongoRepository } from '../Domain'
 import { inject, injectable } from 'inversify'
 import { CurrencyENTITY } from 'logiflowerp-sdk'
 import { SHARED_TYPES } from '@Shared/Infrastructure/IoC'
 
 @injectable()
-export class CurrencyMongoRepository extends MongoRepository<CurrencyENTITY> implements IProductGroupMongoRepository {
+export class CurrencyMongoRepository extends MongoRepository<CurrencyENTITY> implements ICurrencyMongoRepository {
 
     constructor(
         @inject(SHARED_TYPES.database_logiflow) database: string,

@@ -1,16 +1,16 @@
 import { inject, injectable } from 'inversify'
-import { PRODUCT_GROUP_TYPES } from '../Infrastructure/IoC'
-import { IProductGroupMongoRepository } from '../Domain'
-import { UpdateProductGroupDTO } from 'logiflowerp-sdk'
+import { CURRENCY_TYPES } from '../Infrastructure/IoC'
+import { ICurrencyMongoRepository } from '../Domain'
+import { UpdateCurrencyDTO } from 'logiflowerp-sdk'
 
 @injectable()
 export class UseCaseUpdateOne {
 
     constructor(
-        @inject(PRODUCT_GROUP_TYPES.MongoRepository) private readonly repository: IProductGroupMongoRepository,
+        @inject(CURRENCY_TYPES.MongoRepository) private readonly repository: ICurrencyMongoRepository,
     ) { }
 
-    async exec(_id: string, dto: UpdateProductGroupDTO) {
+    async exec(_id: string, dto: UpdateCurrencyDTO) {
         return this.repository.updateOne({ _id }, { $set: dto })
     }
 

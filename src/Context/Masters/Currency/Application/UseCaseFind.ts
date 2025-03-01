@@ -1,13 +1,13 @@
 import { Response, Request } from 'express'
 import { inject, injectable } from 'inversify'
-import { IProductGroupMongoRepository } from '../Domain'
-import { PRODUCT_GROUP_TYPES } from '../Infrastructure/IoC'
+import { ICurrencyMongoRepository } from '../Domain'
+import { CURRENCY_TYPES } from '../Infrastructure/IoC'
 
 @injectable()
 export class UseCaseFind {
 
 	constructor(
-		@inject(PRODUCT_GROUP_TYPES.MongoRepository) private readonly repository: IProductGroupMongoRepository,
+		@inject(CURRENCY_TYPES.MongoRepository) private readonly repository: ICurrencyMongoRepository,
 	) { }
 
 	async exec(req: Request, res: Response) {

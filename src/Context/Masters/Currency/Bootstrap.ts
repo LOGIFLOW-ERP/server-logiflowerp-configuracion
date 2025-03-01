@@ -9,8 +9,8 @@ export class ManagerEntity {
     private collection = collection
     private indexes: IndexEntity[] = [
         {
-            campos: [{ nombre: 'itmsGrpCod', direccion: 1 }],
-            opciones: { name: 'idx_itmsGrpCod', unique: true }
+            campos: [{ nombre: 'code', direccion: 1 }],
+            opciones: { name: 'idx_code', unique: true }
         }
     ]
 

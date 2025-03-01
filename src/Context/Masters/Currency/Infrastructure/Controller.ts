@@ -1,5 +1,5 @@
 import { inject } from 'inversify'
-import { PRODUCT_GROUP_TYPES } from './IoC'
+import { CURRENCY_TYPES } from './IoC'
 import { Request, Response } from 'express'
 import {
     BaseHttpController,
@@ -11,8 +11,8 @@ import {
     response
 } from 'inversify-express-utils'
 import {
-    CreateProductGroupDTO,
-    UpdateProductGroupDTO,
+    CreateCurrencyDTO,
+    UpdateCurrencyDTO,
     validateRequestBody as VRB,
     validateUUIDv4Param as VUUID,
 } from 'logiflowerp-sdk'
@@ -28,11 +28,11 @@ import {
 export class CurrencyController extends BaseHttpController {
 
     constructor(
-        @inject(PRODUCT_GROUP_TYPES.UseCaseFind) private readonly useCaseFind: UseCaseFind,
-        @inject(PRODUCT_GROUP_TYPES.UseCaseGetAll) private readonly useCaseGetAll: UseCaseGetAll,
-        @inject(PRODUCT_GROUP_TYPES.UseCaseInsertOne) private readonly useCaseInsertOne: UseCaseInsertOne,
-        @inject(PRODUCT_GROUP_TYPES.UseCaseUpdateOne) private readonly useCaseUpdateOne: UseCaseUpdateOne,
-        @inject(PRODUCT_GROUP_TYPES.UseCaseDeleteOne) private readonly useCaseDeleteOne: UseCaseDeleteOne,
+        @inject(CURRENCY_TYPES.UseCaseFind) private readonly useCaseFind: UseCaseFind,
+        @inject(CURRENCY_TYPES.UseCaseGetAll) private readonly useCaseGetAll: UseCaseGetAll,
+        @inject(CURRENCY_TYPES.UseCaseInsertOne) private readonly useCaseInsertOne: UseCaseInsertOne,
+        @inject(CURRENCY_TYPES.UseCaseUpdateOne) private readonly useCaseUpdateOne: UseCaseUpdateOne,
+        @inject(CURRENCY_TYPES.UseCaseDeleteOne) private readonly useCaseDeleteOne: UseCaseDeleteOne,
     ) {
         super()
     }
@@ -47,13 +47,13 @@ export class CurrencyController extends BaseHttpController {
         await this.useCaseGetAll.exec(req, res)
     }
 
-    @httpPost('', VRB.bind(null, CreateProductGroupDTO, BRE))
+    @httpPost('', VRB.bind(null, CreateCurrencyDTO, BRE))
     async saveOne(@request() req: Request, @response() res: Response) {
         const newDoc = await this.useCaseInsertOne.exec(req.body)
         res.status(201).json(newDoc)
     }
 
-    @httpPut(':_id', VUUID.bind(null, BRE), VRB.bind(null, UpdateProductGroupDTO, BRE))
+    @httpPut(':_id', VUUID.bind(null, BRE), VRB.bind(null, UpdateCurrencyDTO, BRE))
     async updateOne(@request() req: Request, @response() res: Response) {
         const updatedDoc = await this.useCaseUpdateOne.exec(req.params._id, req.body)
         res.status(200).json(updatedDoc)
