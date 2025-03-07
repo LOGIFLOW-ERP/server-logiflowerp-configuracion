@@ -8,7 +8,9 @@ import { TokenPayloadDTO, validateCustom } from 'logiflowerp-sdk'
 export class AdapterToken {
 
     async create(payload: TokenPayloadDTO, secretOrPrivateKey: string = env.JWT_KEY, expiresIn?: number) {
+        console.log(payload)        
         const _payload = await validateCustom(payload, TokenPayloadDTO, UnprocessableEntityException)
+        console.log(2)        
         return JWT.sign(JSON.parse(JSON.stringify(_payload)), secretOrPrivateKey, expiresIn ? { expiresIn } : {})
     }
 

@@ -13,5 +13,6 @@ export const SHARED_TYPES = {
     collection_productPrices: Symbol.for('collection_productPrices'),
     collection_currencies: Symbol.for('collection_currencies'),
     collection_profiles: Symbol.for('collection_profiles'),
+    collection_companies: Symbol.for('collection_companies'),
     UseCaseSendMailRegisterUser: Symbol.for('UseCaseSendMailRegisterUser'),
 }

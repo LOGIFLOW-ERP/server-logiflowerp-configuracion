@@ -18,7 +18,7 @@ export class UseCaseSignIn {
     constructor(
         @inject(USER_TYPES.MongoRepository) private readonly repositoryUser: IUserMongoRepository,
         @inject(PROFILE_TYPES.MongoRepository) private readonly repositoryProfile: IProfileMongoRepository,
-        @inject(SYSTEM_OPTION_TYPES.MongoRepository) private readonly repositorySystemoption: ISystemOptionMongoRepository,
+        @inject(SYSTEM_OPTION_TYPES.MongoRepository) private readonly repositorySystemOption: ISystemOptionMongoRepository,
         @inject(SHARED_TYPES.AdapterToken) private readonly adapterToken: AdapterToken,
     ) { }
 
@@ -37,13 +37,14 @@ export class UseCaseSignIn {
         const routes = this.getRoutes(dataSystemOptions)
         const payload = this.generatePayloadToken(user, routes, profile)
         const token = await this.adapterToken.create(payload)
-        return { token, user: payload.user, dataSystemOptions }
+        return { token, user: payload.user, dataSystemOptions, root: this.isSuperAdmin }
     }
 
     private generatePayloadToken(entity: UserENTITY, routes: string[], profile?: ProfileENTITY) {
         const payload = new TokenPayloadDTO()
         payload.user.set(entity)
         payload.routes = routes
+        payload.root = this.isSuperAdmin
         if (profile) {
             payload.profile = profile
         }
@@ -86,7 +87,7 @@ export class UseCaseSignIn {
 
         const pipeline = profile ? [{ $match: { _id: { $in: profile.systemOptions } } }] : []
 
-        return this.repositorySystemoption.select(pipeline)
+        return this.repositorySystemOption.select(pipeline)
     }
 
     private getRoutes(dataSystemOptions: SystemOptionENTITY[]): string[] {
