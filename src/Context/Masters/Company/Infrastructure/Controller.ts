@@ -11,17 +11,20 @@ import {
     response
 } from 'inversify-express-utils'
 import {
-    CreateCompanyDTO,
+    CreateCompanyPERDTO,
+    CreateCompanyRootPERDTO,
     UpdateCompanyDTO,
+    validateCustom,
     validateRequestBody as VRB,
     validateUUIDv4Param as VUUID,
 } from 'logiflowerp-sdk'
-import { BadRequestException as BRE } from '@Config/exception'
+import { BadRequestException, BadRequestException as BRE } from '@Config/exception'
 import {
     UseCaseDeleteOne,
     UseCaseFind,
     UseCaseGetAll,
     UseCaseInsertOne,
+    UseCaseInsertOneRoot,
     UseCaseUpdateOne
 } from '../Application'
 
@@ -33,6 +36,7 @@ export class CompanyController extends BaseHttpController {
         @inject(COMPANY_TYPES.UseCaseInsertOne) private readonly useCaseInsertOne: UseCaseInsertOne,
         @inject(COMPANY_TYPES.UseCaseUpdateOne) private readonly useCaseUpdateOne: UseCaseUpdateOne,
         @inject(COMPANY_TYPES.UseCaseDeleteOne) private readonly useCaseDeleteOne: UseCaseDeleteOne,
+        @inject(COMPANY_TYPES.UseCaseInsertOneRoot) private readonly useCaseInsertOneRoot: UseCaseInsertOneRoot,
     ) {
         super()
     }
@@ -47,9 +51,21 @@ export class CompanyController extends BaseHttpController {
         await this.useCaseGetAll.exec(req, res)
     }
 
-    @httpPost('', VRB.bind(null, CreateCompanyDTO, BRE))
+    @httpPost('')
     async saveOne(@request() req: Request, @response() res: Response) {
-        const newDoc = await this.useCaseInsertOne.exec(req.body)
+        let newDoc
+        let country: string | undefined = req.userRoot
+            ? req.body.country
+            : req.user.country
+        if (req.userRoot && country === 'PER') {
+            const validatedBody = await validateCustom(req.body, CreateCompanyRootPERDTO, BRE)
+            newDoc = await this.useCaseInsertOneRoot.exec(validatedBody)
+        } else if (country === 'PER') {
+            const validatedBody = await validateCustom(req.body, CreateCompanyPERDTO, BRE)
+            newDoc = await this.useCaseInsertOne.exec(validatedBody, country)
+        } else {
+            throw new BadRequestException(`País no soportado (${country}) o usuario no autorizado`)
+        }
         res.status(201).json(newDoc)
     }
 

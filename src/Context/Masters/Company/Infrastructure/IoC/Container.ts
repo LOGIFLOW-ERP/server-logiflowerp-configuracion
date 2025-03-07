@@ -6,6 +6,7 @@ import {
     UseCaseFind,
     UseCaseGetAll,
     UseCaseInsertOne,
+    UseCaseInsertOneRoot,
     UseCaseUpdateOne,
 } from '../../Application'
 
@@ -14,6 +15,7 @@ export const containerModule = new ContainerModule(bind => {
     bind(COMPANY_TYPES.UseCaseFind).to(UseCaseFind)
     bind(COMPANY_TYPES.UseCaseGetAll).to(UseCaseGetAll)
     bind(COMPANY_TYPES.UseCaseInsertOne).to(UseCaseInsertOne)
+    bind(COMPANY_TYPES.UseCaseInsertOneRoot).to(UseCaseInsertOneRoot)
     bind(COMPANY_TYPES.UseCaseUpdateOne).to(UseCaseUpdateOne)
     bind(COMPANY_TYPES.UseCaseDeleteOne).to(UseCaseDeleteOne)
 })

@@ -3,6 +3,7 @@ export const COMPANY_TYPES = {
     UseCaseFind: Symbol.for(`${__dirname}UseCaseFind`),
     UseCaseGetAll: Symbol.for(`${__dirname}UseCaseGetAll`),
     UseCaseInsertOne: Symbol.for(`${__dirname}UseCaseInsertOne`),
+    UseCaseInsertOneRoot: Symbol.for(`${__dirname}UseCaseInsertOneRoot`),
     UseCaseUpdateOne: Symbol.for(`${__dirname}UseCaseUpdateOne`),
     UseCaseDeleteOne: Symbol.for(`${__dirname}UseCaseDeleteOne`),
 }

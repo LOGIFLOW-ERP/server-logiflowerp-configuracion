@@ -133,6 +133,7 @@ function authMiddleware(app: Application) {
 
             req.payloadToken = decoded
             req.user = decoded.user
+            req.userRoot = decoded.root
 
             next()
         } catch (error) {
