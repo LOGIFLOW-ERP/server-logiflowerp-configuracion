@@ -1,10 +1,10 @@
 import { injectable } from 'inversify'
-import { ICurrencyMongoRepository } from '../Domain'
+import { IRootCompanyMongoRepository } from '../Domain'
 @injectable()
 export class UseCaseDeleteOne {
 
     constructor(
-        private readonly repository: ICurrencyMongoRepository,
+        private readonly repository: IRootCompanyMongoRepository,
     ) { }
 
     async exec(_id: string) {

@@ -1,20 +1,19 @@
-import { inject, injectable } from 'inversify';
-import { COMPANY_TYPES } from '../Infrastructure/IoC';
+import { injectable } from 'inversify';
 import { ICompanyMongoRepository, ISUNATCompanyData } from '../Domain';
-import { CompanyENTITY, validateCustom, CreateCompanyRootPERDTO } from 'logiflowerp-sdk';
+import { CreateCompanyPERDTO, CompanyENTITY, validateCustom } from 'logiflowerp-sdk';
 import { UnprocessableEntityException } from '@Config/exception';
 import { env } from '@Config/env';
-import { AdapterApiRequest, SHARED_TYPES } from '@Shared/Infrastructure';
+import { AdapterApiRequest } from '@Shared/Infrastructure';
 
 @injectable()
-export class UseCaseInsertOneRoot {
+export class UseCaseInsertOnePER {
 
     constructor(
-        @inject(COMPANY_TYPES.MongoRepository) private readonly repository: ICompanyMongoRepository,
-        @inject(SHARED_TYPES.AdapterApiRequest) private readonly adapterApiRequest: AdapterApiRequest,
+        private readonly repository: ICompanyMongoRepository,
+        private readonly adapterApiRequest: AdapterApiRequest,
     ) { }
 
-    async exec(dto: CreateCompanyRootPERDTO) {
+    async exec(dto: CreateCompanyPERDTO) {
         const _entity = new CompanyENTITY()
         _entity.set(dto)
         _entity._id = crypto.randomUUID()
@@ -23,8 +22,7 @@ export class UseCaseInsertOneRoot {
         return this.repository.insertOne(entity)
     }
 
-    private async registerPER(dto: CreateCompanyRootPERDTO, entity: CompanyENTITY) {
-        if (dto.country !== 'PER') return
+    private async registerPER(dto: CreateCompanyPERDTO, entity: CompanyENTITY) {
         const SUNATCompanyData = await this.SUNATCompanyDataConsultation(dto.ruc)
         this.completeDataPER(entity, SUNATCompanyData)
     }

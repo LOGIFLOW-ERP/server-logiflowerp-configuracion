@@ -1,12 +1,12 @@
 import { Response, Request } from 'express'
 import { injectable } from 'inversify'
-import { IProfileMongoRepository } from '../Domain'
+import { IRootCompanyMongoRepository } from '../Domain'
 
 @injectable()
 export class UseCaseFind {
 
 	constructor(
-		private readonly repository: IProfileMongoRepository,
+		private readonly repository: IRootCompanyMongoRepository,
 	) { }
 
 	async exec(req: Request, res: Response) {

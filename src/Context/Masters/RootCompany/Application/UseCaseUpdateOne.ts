@@ -1,12 +1,12 @@
 import { injectable } from 'inversify'
-import { ICompanyMongoRepository } from '../Domain'
+import { IRootCompanyMongoRepository } from '../Domain'
 import { UpdateCompanyDTO } from 'logiflowerp-sdk'
 
 @injectable()
 export class UseCaseUpdateOne {
 
     constructor(
-        private readonly repository: ICompanyMongoRepository,
+        private readonly repository: IRootCompanyMongoRepository,
     ) { }
 
     async exec(_id: string, dto: UpdateCompanyDTO) {

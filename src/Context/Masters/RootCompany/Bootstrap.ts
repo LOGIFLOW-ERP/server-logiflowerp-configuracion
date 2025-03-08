@@ -1,5 +1,5 @@
 import { IndexEntity } from '@Shared/Domain'
-import { collection, database } from './Infrastructure'
+import { collection, database } from './Infrastructure/config'
 import { Bootstraping } from '@Shared/Bootstraping'
 
 export class ManagerEntity {
@@ -9,10 +9,8 @@ export class ManagerEntity {
     private collection = collection
     private indexes: IndexEntity[] = [
         {
-            campos: [
-                { nombre: 'controller', direccion: 1 }
-            ],
-            opciones: { name: 'idx_controller' }
+            campos: [{ nombre: 'ruc', direccion: 1 }],
+            opciones: { name: 'idx_ruc', unique: true }
         }
     ]
 

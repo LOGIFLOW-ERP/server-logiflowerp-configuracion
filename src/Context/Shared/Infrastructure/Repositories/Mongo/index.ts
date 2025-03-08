@@ -1,6 +1,6 @@
 import { ContainerGlobal } from '@Config/inversify'
 import { IMongoRepository } from '@Shared/Domain'
-import { AdapterMongoDB, AdapterRedis, SHARED_TYPES } from '@Shared/Infrastructure'
+import { AdapterMongoDB, AdapterRedis, database_logiflow, SHARED_TYPES } from '@Shared/Infrastructure'
 import { Request, Response } from 'express'
 import { Document, Filter, OptionalUnlessRequiredId, UpdateFilter } from 'mongodb'
 import { _deleteMany, _deleteOne, _find, _insertMany, _insertOne, _select, _updateOne } from './Transactions'
@@ -12,7 +12,7 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
     protected adapterMongo: AdapterMongoDB
     protected adapterRedis: AdapterRedis
 
-    constructor(database: string, collection: string) {
+    constructor(collection: string, database: string = database_logiflow) {
         this.database = database
         this.collection = collection
         this.adapterMongo = ContainerGlobal.get(SHARED_TYPES.AdapterMongoDB)

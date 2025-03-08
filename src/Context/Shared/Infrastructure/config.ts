@@ -2,6 +2,8 @@
 export const database_logiflow = 'logiflowerp_db'
 //#endregion databases
 
+export const prefix_col_root = 'root'
+
 //#region queue names
 export const SHARED_QUEUES = {
     MAIL_REGISTER_USER: 'mail_queue_register_user',

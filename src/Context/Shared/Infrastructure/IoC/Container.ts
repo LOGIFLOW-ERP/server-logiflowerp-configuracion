@@ -9,10 +9,9 @@ import {
     AdapterSocket,
     AdapterToken
 } from '../Adapters'
-import { database_logiflow } from '../config'
+import { database_logiflow, prefix_col_root } from '../config'
 import { Worker } from '../module.worker'
 import { UseCaseSendMailRegisterUser } from '../../Application'
-import { collections } from 'logiflowerp-sdk'
 
 export const containerModule = new ContainerModule(bind => {
     bind(SHARED_TYPES.AdapterToken).to(AdapterToken).inSingletonScope()
@@ -24,12 +23,6 @@ export const containerModule = new ContainerModule(bind => {
     bind(SHARED_TYPES.AdapterRabbitMQ).to(AdapterRabbitMQ).inSingletonScope()
     bind(SHARED_TYPES.UseCaseSendMailRegisterUser).to(UseCaseSendMailRegisterUser)
     bind(SHARED_TYPES.database_logiflow).toConstantValue(database_logiflow)
-    bind(SHARED_TYPES.collection_users).toConstantValue(collections.users)
-    bind(SHARED_TYPES.collection_endpoints).toConstantValue(collections.endpoints)
-    bind(SHARED_TYPES.collection_systemOptions).toConstantValue(collections.systemOptions)
-    bind(SHARED_TYPES.collection_profiles).toConstantValue(collections.profiles)
-    bind(SHARED_TYPES.collection_currencies).toConstantValue(collections.currencies)
-    bind(SHARED_TYPES.collection_productPrices).toConstantValue(collections.productPrices)
-    bind(SHARED_TYPES.collection_companies).toConstantValue(collections.companies)
+    bind(SHARED_TYPES.prefix_col_root).toConstantValue(prefix_col_root)
     bind(Worker).to(Worker).inSingletonScope()
 })
