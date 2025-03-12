@@ -5,8 +5,8 @@ import { collection } from './config'
 
 export class RootCompanyMongoRepository extends MongoRepository<RootCompanyENTITY> implements IRootCompanyMongoRepository {
 
-    constructor(companyCode: string) {
-        super(`${companyCode}_${collection}`)
+    constructor(prefixColRoot: string) {
+        super(`${prefixColRoot}_${collection}`)
     }
 
 }

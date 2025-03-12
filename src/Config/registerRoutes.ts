@@ -2,8 +2,8 @@ import { ENDPOINT_TYPES } from '@Masters/Endpoint/Infrastructure/IoC/types'
 import { ContainerGlobal } from './inversify'
 import { UseCaseSaveRoutes } from '@Masters/Endpoint/Application'
 import { getRouteInfo } from 'inversify-express-utils'
-import { UseCaseSave } from '@Masters/SystemOption/Application'
-import { SYSTEM_OPTION_TYPES } from '@Masters/SystemOption/Infrastructure/IoC'
+import { UseCaseSave } from '@Masters/RootSystemOption/Application'
+import { SYSTEM_OPTION_TYPES } from '@Masters/RootSystemOption/Infrastructure/IoC'
 import { env } from './env'
 
 export async function registerRoutes(rootPath: string) {

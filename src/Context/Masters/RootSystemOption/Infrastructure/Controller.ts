@@ -1,5 +1,4 @@
 import { inject } from 'inversify'
-import { SYSTEM_OPTION_TYPES } from './IoC'
 import { Request, Response } from 'express'
 import { BadRequestException as BRE } from '@Config/exception'
 import {
@@ -15,18 +14,22 @@ import {
     validateUUIDv4Param as VUUID,
     validateRequestBody as VRB
 } from 'logiflowerp-sdk'
+import { SHARED_TYPES } from '@Shared/Infrastructure'
+import { RootSystemOptionMongoRepository } from './MongoRepository'
 
-export class SystemOptionController extends BaseHttpController {
+export class RootSystemOptionController extends BaseHttpController {
+
+    private readonly repository = new RootSystemOptionMongoRepository(this.prefix_col_root)
 
     constructor(
-        @inject(SYSTEM_OPTION_TYPES.UseCaseFind) private readonly useCaseFind: UseCaseFind
+        @inject(SHARED_TYPES.prefix_col_root) private readonly prefix_col_root: string,
     ) {
         super()
     }
 
     @httpPost('find')
     async find(@request() req: Request, @response() res: Response) {
-        await this.useCaseFind.exec(req, res)
+        await new UseCaseFind(this.repository).exec(req, res)
     }
 
     @httpPost('update-one/:id', VUUID.bind(null, BRE), VRB.bind(null, UpdateUserDTO, BRE))
