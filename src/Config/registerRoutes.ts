@@ -1,16 +1,16 @@
-import { ENDPOINT_TYPES } from '@Masters/Endpoint/Infrastructure/IoC/types'
 import { ContainerGlobal } from './inversify'
-import { UseCaseSaveRoutes } from '@Masters/Endpoint/Application'
 import { getRouteInfo } from 'inversify-express-utils'
-import { UseCaseSave } from '@Masters/RootSystemOption/Application'
-import { SYSTEM_OPTION_TYPES } from '@Masters/RootSystemOption/Infrastructure/IoC'
 import { env } from './env'
+import { RootSystemOptionMongoRepository } from '@Masters/RootSystemOption/Infrastructure/MongoRepository'
+import { SHARED_TYPES } from '@Shared/Infrastructure'
+import { UseCaseSave } from '@Masters/RootSystemOption/Application'
 
 export async function registerRoutes(rootPath: string) {
     const routes = getRouteInfo(ContainerGlobal)
     try {
-        await ContainerGlobal.get<UseCaseSaveRoutes>(ENDPOINT_TYPES.UseCaseSaveRoutes).exec(routes, rootPath)
-        await ContainerGlobal.get<UseCaseSave>(SYSTEM_OPTION_TYPES.UseCaseSave).exec(routes, rootPath, env.PREFIX)
+        const prefix_col_root = ContainerGlobal.get<string>(SHARED_TYPES.prefix_col_root)
+        const repository = new RootSystemOptionMongoRepository(prefix_col_root)
+        await new UseCaseSave(repository).exec(routes, rootPath, env.PREFIX)
     } catch (error) {
         console.error(error)
         process.exit(1)

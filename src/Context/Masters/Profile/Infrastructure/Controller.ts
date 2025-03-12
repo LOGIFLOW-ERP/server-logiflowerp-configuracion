@@ -15,13 +15,13 @@ import {
     validateUUIDv4Param as VUUID,
     validateRequestBody as VRB
 } from 'logiflowerp-sdk'
-import { EndpointMongoRepository } from './MongoRepository'
+import { ProfileMongoRepository } from './MongoRepository'
 
 export class ProfileController extends BaseHttpController {
 
     @httpPost('find')
     async find(@request() req: Request, @response() res: Response) {
-        const repository = new EndpointMongoRepository(req.user.company.code)
+        const repository = new ProfileMongoRepository(req.user.company.code)
         await new UseCaseFind(repository).exec(req, res)
     }
 

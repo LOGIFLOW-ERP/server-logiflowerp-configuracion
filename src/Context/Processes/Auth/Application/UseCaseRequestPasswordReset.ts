@@ -1,20 +1,17 @@
 import { ConflictException, NotFoundException } from '@Config/exception';
 import { env } from '@Config/env';
-import { IUserMongoRepository } from '@Masters/User/Domain';
-import { USER_TYPES } from '@Masters/User/Infrastructure';
-import { AdapterMail, AdapterToken, SHARED_TYPES } from '@Shared/Infrastructure';
-import { inject, injectable } from 'inversify'
+import { AdapterMail, AdapterToken } from '@Shared/Infrastructure';
 import { TokenPayloadDTO, UserENTITY } from 'logiflowerp-sdk';
 import path from 'path'
 import fs from 'fs'
+import { IRootUserMongoRepository } from '@Masters/RootUser/Domain';
 
-@injectable()
 export class UseCaseRequestPasswordReset {
 
     constructor(
-        @inject(USER_TYPES.MongoRepository) private readonly repository: IUserMongoRepository,
-        @inject(SHARED_TYPES.AdapterToken) private readonly adapterToken: AdapterToken,
-        @inject(SHARED_TYPES.AdapterMail) private readonly adapterMail: AdapterMail,
+        private readonly repository: IRootUserMongoRepository,
+        private readonly adapterToken: AdapterToken,
+        private readonly adapterMail: AdapterMail,
     ) { }
 
     async exec(email: string) {

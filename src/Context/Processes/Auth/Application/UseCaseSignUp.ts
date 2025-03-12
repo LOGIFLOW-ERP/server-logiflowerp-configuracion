@@ -1,17 +1,16 @@
 import { env } from '@Config/env'
 import { UnprocessableEntityException } from '@Config/exception'
-import { IRENIECPersonalData, IUserMongoRepository } from '@Masters/User/Domain'
-import { USER_TYPES } from '@Masters/User/Infrastructure'
-import { AdapterApiRequest, SHARED_TYPES } from '@Shared/Infrastructure'
-import { inject, injectable } from 'inversify'
+import { IRENIECPersonalData, IRootUserMongoRepository } from '@Masters/RootUser/Domain'
+import { AdapterApiRequest } from '@Shared/Infrastructure'
+import { injectable } from 'inversify'
 import { CreateUserDTO, DocumentType, UserENTITY, validateCustom } from 'logiflowerp-sdk'
 
 @injectable()
 export class UseCaseSignUp {
 
 	constructor(
-		@inject(USER_TYPES.MongoRepository) private readonly repository: IUserMongoRepository,
-		@inject(SHARED_TYPES.AdapterApiRequest) private readonly adapterApiRequest: AdapterApiRequest,
+		private readonly repository: IRootUserMongoRepository,
+		private readonly adapterApiRequest: AdapterApiRequest,
 	) { }
 
 	async exec(dto: CreateUserDTO) {
