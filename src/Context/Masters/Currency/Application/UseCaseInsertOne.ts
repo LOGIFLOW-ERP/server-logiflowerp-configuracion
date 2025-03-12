@@ -1,9 +1,7 @@
-import { injectable } from 'inversify';
 import { ICurrencyMongoRepository } from '../Domain';
 import { CreateCurrencyDTO, CurrencyENTITY, validateCustom } from 'logiflowerp-sdk';
 import { UnprocessableEntityException } from '@Config/exception';
 
-@injectable()
 export class UseCaseInsertOne {
 
     constructor(

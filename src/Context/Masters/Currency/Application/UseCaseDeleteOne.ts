@@ -1,6 +1,5 @@
-import { injectable } from 'inversify'
 import { ICurrencyMongoRepository } from '../Domain'
-@injectable()
+
 export class UseCaseDeleteOne {
 
     constructor(

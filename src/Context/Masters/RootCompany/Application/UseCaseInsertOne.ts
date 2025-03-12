@@ -1,9 +1,7 @@
-import { injectable } from 'inversify';
 import { IRootCompanyMongoRepository } from '../Domain';
 import { CreateRootCompanyDTO, RootCompanyENTITY, validateCustom } from 'logiflowerp-sdk';
 import { UnprocessableEntityException } from '@Config/exception';
 
-@injectable()
 export class UseCaseInsertOne {
 
     constructor(

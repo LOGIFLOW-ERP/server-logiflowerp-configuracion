@@ -1,8 +1,6 @@
-import { injectable } from 'inversify'
 import { ICompanyMongoRepository } from '../Domain'
 import { UpdateCompanyDTO } from 'logiflowerp-sdk'
 
-@injectable()
 export class UseCaseUpdateOne {
 
     constructor(

@@ -1,8 +1,6 @@
 import { Response, Request } from 'express'
-import { injectable } from 'inversify'
 import { ICompanyMongoRepository } from '../Domain'
 
-@injectable()
 export class UseCaseFind {
 
 	constructor(

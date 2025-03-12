@@ -1,10 +1,10 @@
 import { Response, Request } from 'express'
-import { ICurrencyMongoRepository } from '../Domain'
+import { IRootUserMongoRepository } from '../Domain'
 
 export class UseCaseFind {
 
 	constructor(
-		private readonly repository: ICurrencyMongoRepository,
+		private readonly repository: IRootUserMongoRepository,
 	) { }
 
 	async exec(req: Request, res: Response) {

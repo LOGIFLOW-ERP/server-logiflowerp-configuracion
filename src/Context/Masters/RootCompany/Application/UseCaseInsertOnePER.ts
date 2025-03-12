@@ -1,11 +1,9 @@
-import { injectable } from 'inversify';
 import { IRootCompanyMongoRepository, ISUNATCompanyData } from '../Domain';
 import { CreateRootCompanyPERDTO, RootCompanyENTITY, validateCustom } from 'logiflowerp-sdk';
 import { UnprocessableEntityException } from '@Config/exception';
 import { env } from '@Config/env';
 import { AdapterApiRequest } from '@Shared/Infrastructure';
 
-@injectable()
 export class UseCaseInsertOnePER {
 
     constructor(

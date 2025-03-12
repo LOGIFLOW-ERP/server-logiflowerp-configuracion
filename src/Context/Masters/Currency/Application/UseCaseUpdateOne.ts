@@ -1,8 +1,6 @@
-import { injectable } from 'inversify'
 import { ICurrencyMongoRepository } from '../Domain'
 import { UpdateCurrencyDTO } from 'logiflowerp-sdk'
 
-@injectable()
 export class UseCaseUpdateOne {
 
     constructor(

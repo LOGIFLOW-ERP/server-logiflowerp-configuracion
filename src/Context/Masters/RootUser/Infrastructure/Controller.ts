@@ -1,5 +1,4 @@
 import { inject } from 'inversify'
-import { USER_TYPES } from './IoC'
 import { Request, Response } from 'express'
 import { BadRequestException as BRE } from '@Config/exception'
 import {
@@ -18,12 +17,15 @@ import {
     validateUUIDv4Param as VUUID,
     validateRequestBody as VRB
 } from 'logiflowerp-sdk'
+import { SHARED_TYPES } from '@Shared/Infrastructure'
+import { RootUserMongoRepository } from './MongoRepository'
 
-export class UserController extends BaseHttpController {
+export class RootUserController extends BaseHttpController {
+
+    private readonly repository = new RootUserMongoRepository(this.prefix_col_root)
 
     constructor(
-        @inject(USER_TYPES.UseCaseFind) private readonly useCaseFind: UseCaseFind,
-        @inject(USER_TYPES.UseCaseUpdateOne) private readonly useCaseUpdateOne: UseCaseUpdateOne,
+        @inject(SHARED_TYPES.prefix_col_root) private readonly prefix_col_root: string,
     ) {
         super()
     }
@@ -31,13 +33,12 @@ export class UserController extends BaseHttpController {
     @httpPost('find')
     async find(@request() req: Request, @response() res: Response) {
         console.log(req.originalUrl)
-        await this.useCaseFind.exec(req, res)
+        await new UseCaseFind(this.repository).exec(req, res)
     }
 
     @httpPost('update-one/:id', VUUID.bind(null, BRE), VRB.bind(null, UpdateUserDTO, BRE))
     async updateOne(@request() req: Request<any, any, UserENTITY>, @response() res: Response) {
-        console.log(req.originalUrl)
-        const updatedDoc = await this.useCaseUpdateOne.exec(req.params.id, req.body)
+        const updatedDoc = await new UseCaseUpdateOne(this.repository).exec(req.params.id, req.body)
         res.json(updatedDoc)
     }
 
