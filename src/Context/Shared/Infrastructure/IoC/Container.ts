@@ -9,9 +9,10 @@ import {
     AdapterSocket,
     AdapterToken
 } from '../Adapters'
-import { database_logiflow, prefix_col_root } from '../config'
+import { database_logiflow } from '../config'
 import { Worker } from '../module.worker'
 import { UseCaseSendMailRegisterUser } from '../../Application'
+import { prefix_col_root } from 'logiflowerp-sdk'
 
 export const containerModule = new ContainerModule(bind => {
     bind(SHARED_TYPES.AdapterToken).to(AdapterToken).inSingletonScope()

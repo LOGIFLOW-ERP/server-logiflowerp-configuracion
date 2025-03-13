@@ -17,7 +17,7 @@ export class UseCaseSignUp {
 		const RENIECPersonalData = await this.RENIECPersonalDataConsultation(dto)
 		const entity = this.completeUserData(dto, RENIECPersonalData)
 		const validatedEntity = await validateCustom(entity, UserENTITY, UnprocessableEntityException)
-		return await this.repository.insertOne(validatedEntity)
+		return this.repository.insertOne(validatedEntity)
 	}
 
 	private async RENIECPersonalDataConsultation(dto: CreateUserDTO) {
@@ -25,7 +25,7 @@ export class UseCaseSignUp {
 		const url = `${env.DNI_LOOKUP_API_URL}/v2/reniec/dni?numero=${dto.identity}`
 		const headers = { Authorization: `Bearer ${env.DNI_LOOKUP_API_TOKEN}` }
 		const result = await this.adapterApiRequest.get<IRENIECPersonalData>(url, { headers })
-		return await validateCustom(result, IRENIECPersonalData, UnprocessableEntityException)
+		return validateCustom(result, IRENIECPersonalData, UnprocessableEntityException)
 	}
 
 	private completeUserData(dto: CreateUserDTO, RENIECPersonalData: IRENIECPersonalData | undefined) {

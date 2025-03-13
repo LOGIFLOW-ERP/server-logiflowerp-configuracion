@@ -1,12 +1,13 @@
 import { IndexEntity } from '@Shared/Domain'
 import { collection, database } from './Infrastructure'
 import { Bootstraping } from '@Shared/Bootstraping'
+import { prefix_col_root } from 'logiflowerp-sdk'
 
 export class ManagerEntity {
 
     private bootstrap: Bootstraping
     private database = database
-    private collection = collection
+    private collection = `${prefix_col_root}_${collection}`
     private indexes: IndexEntity[] = [
         {
             campos: [
