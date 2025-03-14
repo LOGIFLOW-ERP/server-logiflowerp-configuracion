@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer'
-import { IsNotEmpty, IsString } from 'class-validator'
+import { IsBoolean, IsNotEmpty, IsString } from 'class-validator'
 
 export class ISUNATCompanyData {
     @IsString()
@@ -102,10 +102,15 @@ export class ISUNATCompanyData {
     @Expose()
     departamento: string = ''
 
-    @IsString()
+    @IsBoolean()
     @IsNotEmpty()
     @Expose()
     EsAgenteRetencion: boolean = false
+
+    @IsBoolean()
+    @IsNotEmpty()
+    @Expose()
+    EsBuenContribuyente: boolean = false
 
     @IsString()
     @IsNotEmpty()

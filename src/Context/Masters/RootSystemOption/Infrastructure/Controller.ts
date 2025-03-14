@@ -16,6 +16,7 @@ import {
 } from 'logiflowerp-sdk'
 import { SHARED_TYPES } from '@Shared/Infrastructure'
 import { RootSystemOptionMongoRepository } from './MongoRepository'
+import { authRootMiddleware } from '@Shared/Infrastructure/Middlewares'
 
 export class RootSystemOptionController extends BaseHttpController {
 
@@ -27,12 +28,12 @@ export class RootSystemOptionController extends BaseHttpController {
         super()
     }
 
-    @httpPost('find')
+    @httpPost('find', authRootMiddleware)
     async find(@request() req: Request, @response() res: Response) {
         await new UseCaseFind(this.repository).exec(req, res)
     }
 
-    @httpPost('update-one/:id', VUUID.bind(null, BRE), VRB.bind(null, UpdateUserDTO, BRE))
+    @httpPost('update-one/:id', authRootMiddleware, VUUID.bind(null, BRE), VRB.bind(null, UpdateUserDTO, BRE))
     async updateOne(@request() req: Request<any, any, UserENTITY>, @response() res: Response) {
         console.log(req.originalUrl)
         // const updatedDoc = await this.useCaseUpdateOne.exec(req.params.id, req.body)

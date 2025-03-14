@@ -112,7 +112,15 @@ function authMiddleware(app: Application) {
         try {
             let serviceNoAuth: boolean = true
 
-            if (req.originalUrl.toLowerCase().includes('/login')) {
+            const publicRoutes = [
+                '/sign-in',
+                '/sign-up',
+                '/verify-email',
+                '/request-password-reset',
+                '/reset-password',
+            ]
+            const url = req.originalUrl.toLowerCase()
+            if (publicRoutes.some(route => url.includes(route))) {
                 serviceNoAuth = false
             }
 

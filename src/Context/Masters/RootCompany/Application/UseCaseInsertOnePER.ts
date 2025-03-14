@@ -25,6 +25,7 @@ export class UseCaseInsertOnePER {
         const url = `${env.DNI_LOOKUP_API_URL}/v2/sunat/ruc/full?numero=${ruc}`
         const headers = { Authorization: `Bearer ${env.DNI_LOOKUP_API_TOKEN}` }
         const result = await this.adapterApiRequest.get<ISUNATCompanyData>(url, { headers })
+        console.log(result)
         return validateCustom(result, ISUNATCompanyData, UnprocessableEntityException)
     }
 
