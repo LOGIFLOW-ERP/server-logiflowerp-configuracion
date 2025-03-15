@@ -30,13 +30,9 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
     }
 
     async select<ReturnType extends Document = T>(pipeline: Document[], collection: string = this.collection, database: string = this.database) {
-        try {
-            const client = await this.adapterMongo.connection()
-            const col = client.db(database).collection(collection)
-            return await _select<ReturnType>({ collection: col, pipeline })
-        } finally {
-            // await this.adapterMongo.closeConnection()
-        }
+        const client = await this.adapterMongo.connection()
+        const col = client.db(database).collection(collection)
+        return await _select<ReturnType>({ collection: col, pipeline })
     }
 
     async insertOne(doc: OptionalUnlessRequiredId<T>) {
@@ -54,7 +50,6 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
             throw error
         } finally {
             await this.adapterMongo.closeSession(session)
-            // await this.adapterMongo.closeConnection()
         }
     }
 
@@ -73,7 +68,6 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
             throw error
         } finally {
             await this.adapterMongo.closeSession(session)
-            // await this.adapterMongo.closeConnection()
         }
     }
 
@@ -92,7 +86,6 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
             throw error
         } finally {
             await this.adapterMongo.closeSession(session)
-            // await this.adapterMongo.closeConnection()
         }
     }
 
@@ -111,7 +104,6 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
             throw error
         } finally {
             await this.adapterMongo.closeSession(session)
-            // await this.adapterMongo.closeConnection()
         }
     }
 

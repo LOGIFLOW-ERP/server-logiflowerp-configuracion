@@ -29,10 +29,12 @@ import {
 import { RootCompanyMongoRepository } from './MongoRepository'
 import { AdapterApiRequest, SHARED_TYPES } from '@Shared/Infrastructure'
 import { authRootMiddleware } from '@Shared/Infrastructure/Middlewares'
+import { RootUserMongoRepository } from '@Masters/RootUser/Infrastructure/MongoRepository'
 
 export class RootCompanyController extends BaseHttpController {
 
     private readonly repository = new RootCompanyMongoRepository(this.prefix_col_root)
+    private readonly rootUserRepository = new RootUserMongoRepository(this.prefix_col_root)
 
     constructor(
         @inject(SHARED_TYPES.AdapterApiRequest) private readonly adapterApiRequest: AdapterApiRequest,
@@ -66,7 +68,7 @@ export class RootCompanyController extends BaseHttpController {
         const config = countryConfigs[country] || { dto: CreateRootCompanyDTO, useCase: UseCaseInsertOne }
 
         const validatedBody = await validateCustom(req.body, config.dto, BRE)
-        const newDoc = await new config.useCase(this.repository, this.adapterApiRequest).exec(validatedBody)
+        const newDoc = await new config.useCase(this.repository, this.rootUserRepository, this.adapterApiRequest).exec(validatedBody)
         res.status(201).json(newDoc)
     }
 

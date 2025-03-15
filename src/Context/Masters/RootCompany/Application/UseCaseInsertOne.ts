@@ -1,11 +1,13 @@
 import { IRootCompanyMongoRepository } from '../Domain';
 import { CreateRootCompanyDTO, RootCompanyENTITY, validateCustom } from 'logiflowerp-sdk';
 import { UnprocessableEntityException } from '@Config/exception';
+import { RootUserMongoRepository } from '@Masters/RootUser/Infrastructure/MongoRepository';
 
 export class UseCaseInsertOne {
 
     constructor(
-        private readonly repository: IRootCompanyMongoRepository
+        private readonly repository: IRootCompanyMongoRepository,
+        private readonly rootUserRepository: RootUserMongoRepository,
     ) { }
 
     async exec(dto: CreateRootCompanyDTO) {

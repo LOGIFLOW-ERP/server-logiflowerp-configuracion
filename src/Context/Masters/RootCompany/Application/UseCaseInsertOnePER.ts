@@ -3,11 +3,13 @@ import { CreateRootCompanyPERDTO, RootCompanyENTITY, validateCustom } from 'logi
 import { UnprocessableEntityException } from '@Config/exception';
 import { env } from '@Config/env';
 import { AdapterApiRequest } from '@Shared/Infrastructure';
+import { RootUserMongoRepository } from '@Masters/RootUser/Infrastructure/MongoRepository';
 
 export class UseCaseInsertOnePER {
 
     constructor(
         private readonly repository: IRootCompanyMongoRepository,
+        private readonly rootUserRepository: RootUserMongoRepository,
         private readonly adapterApiRequest: AdapterApiRequest,
     ) { }
 
