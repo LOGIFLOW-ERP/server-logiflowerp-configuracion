@@ -14,7 +14,7 @@ export class UseCaseSave {
         await this.execNoRoot(rawData, rootPath, prefix)
     }
 
-    async execRoot(rawData: RouteInfo[], rootPath: string, prefix: string) {
+    private async execRoot(rawData: RouteInfo[], rootPath: string, prefix: string) {
         const dataDB = await this.repository.select([{ $match: { prefix, root: true } }])
         const rawDataAux = rawData.filter(e => e.controller.startsWith('Root'))
         const { _ids, newData } = await builSystemOption({
@@ -33,7 +33,7 @@ export class UseCaseSave {
         }
     }
 
-    async execNoRoot(rawData: RouteInfo[], rootPath: string, prefix: string) {
+    private async execNoRoot(rawData: RouteInfo[], rootPath: string, prefix: string) {
         const dataDB = await this.repository.select([{ $match: { prefix, root: false } }])
         const rawDataAux = rawData.filter(e => !e.controller.startsWith('Root'))
         const { _ids, newData } = await builSystemOption({
