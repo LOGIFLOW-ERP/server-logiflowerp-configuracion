@@ -28,7 +28,7 @@ import { convertDates } from 'logiflowerp-sdk'
 const ALGORITHM = 'aes-256-cbc'
 const SECRET_KEY = Buffer.from(env.ENCRYPTION_KEY, 'utf8')
 
-export async function serverConfig(app: Application) {
+export async function serverConfig(app: Application, rootPath: string) {
 
     app.use(customLogger)
     app.use(cookieParser())
@@ -53,7 +53,7 @@ export async function serverConfig(app: Application) {
     }))
 
     if (env.REQUIRE_AUTH) {
-        authMiddleware(app)
+        authMiddleware(app, rootPath)
     }
 
     app.use(json({ limit: '10mb' }))
@@ -107,20 +107,20 @@ function customLogger(req: Request, res: Response, next: NextFunction) {
 
 }
 
-function authMiddleware(app: Application) {
+function authMiddleware(app: Application, rootPath: string) {
     app.use(async (req, _res, next) => {
         try {
             let serviceNoAuth: boolean = true
 
             const publicRoutes = [
-                '/sign-in',
-                '/sign-up',
-                '/verify-email',
-                '/request-password-reset',
-                '/reset-password',
+                `${rootPath}/processes/auth/sign-in`,
+                `${rootPath}/processes/auth/sign-up`,
+                `${rootPath}/processes/auth/verify-email`,
+                `${rootPath}/processes/auth/request-password-reset`,
+                `${rootPath}/processes/auth/reset-password`,
             ]
             const url = req.originalUrl.toLowerCase()
-            if (publicRoutes.some(route => url.includes(route))) {
+            if (publicRoutes.some(route => route.toLowerCase() === url)) {
                 serviceNoAuth = false
             }
 
