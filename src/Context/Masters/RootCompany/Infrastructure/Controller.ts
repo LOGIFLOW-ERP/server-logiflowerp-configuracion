@@ -68,9 +68,8 @@ export class RootCompanyController extends BaseHttpController {
         const config = countryConfigs[country] || { dto: CreateRootCompanyDTO, useCase: UseCaseInsertOne }
 
         const validatedBody = await validateCustom(req.body, config.dto, BRE)
-        const newDoc = await new config.useCase(this.repository, this.rootUserRepository, this.adapterApiRequest).exec(validatedBody)
-        // res.status(201).json(newDoc)
-        res.sendStatus(2024)
+        await new config.useCase(this.repository, this.rootUserRepository, this.adapterApiRequest).exec(validatedBody)
+        res.sendStatus(204)
     }
 
     @httpPut(':_id', authRootMiddleware, VUUID.bind(null, BRE), VRB.bind(null, UpdateCompanyDTO, BRE))

@@ -16,6 +16,7 @@ import cors from 'cors'
 import {
     BadRequestException,
     BaseException,
+    ConflictException,
     ForbiddenException,
     InternalServerException,
     UnauthorizedException
@@ -24,6 +25,7 @@ import { ContainerGlobal } from './inversify'
 import { AdapterToken, SHARED_TYPES } from '@Shared/Infrastructure'
 import crypto from 'crypto'
 import { convertDates } from 'logiflowerp-sdk'
+import { MongoServerError } from 'mongodb'
 
 const ALGORITHM = 'aes-256-cbc'
 const SECRET_KEY = Buffer.from(env.ENCRYPTION_KEY, 'utf8')
@@ -75,6 +77,15 @@ export function serverErrorConfig(app: Application) {
 
         console.error(err)
 
+        if (err instanceof MongoServerError) {
+            console.log(err.errorResponse)
+            if (err.code === 11000) {
+                const msg = `El recurso ya existe (clave duplicada: ${JSON.stringify(err.errorResponse.keyValue)})`
+                res.status(409).send(new ConflictException(msg, true))
+                return
+            }
+        }
+
         if (err instanceof BaseException) {
             res.status(err.statusCode).json(err)
             return
@@ -113,11 +124,11 @@ function authMiddleware(app: Application, rootPath: string) {
             let serviceNoAuth: boolean = true
 
             const publicRoutes = [
-                `${rootPath}/processes/auth/sign-in`,
-                `${rootPath}/processes/auth/sign-up`,
-                `${rootPath}/processes/auth/verify-email`,
-                `${rootPath}/processes/auth/request-password-reset`,
-                `${rootPath}/processes/auth/reset-password`,
+                `${rootPath}/processes/rootauth/sign-in`,
+                `${rootPath}/processes/rootauth/sign-up`,
+                `${rootPath}/processes/rootauth/verify-email`,
+                `${rootPath}/processes/rootauth/request-password-reset`,
+                `${rootPath}/processes/rootauth/reset-password`,
             ]
             const url = req.originalUrl.toLowerCase()
             if (publicRoutes.some(route => route.toLowerCase() === url)) {

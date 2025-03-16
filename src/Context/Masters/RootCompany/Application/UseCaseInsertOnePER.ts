@@ -27,7 +27,7 @@ export class UseCaseInsertOnePER {
         const _entity = new RootCompanyENTITY()
         _entity.set(dto)
         _entity._id = crypto.randomUUID()
-        const user = await this.searchUser(dto.identityManager)
+        const user = await this.searchAndValidateUser(dto.identityManager)
         const SUNATCompanyData = await this.SUNATCompanyDataConsultation(dto.ruc)
         this.completeDataPER(_entity, SUNATCompanyData)
         const entity = await validateCustom(_entity, RootCompanyENTITY, UnprocessableEntityException)
@@ -49,7 +49,7 @@ export class UseCaseInsertOnePER {
         entity.sector = SUNATCompanyData.actividadEconomica
     }
 
-    private async searchUser(identity: string) {
+    private async searchAndValidateUser(identity: string) {
         const pipeline = [{ $match: { identity } }]
         const data = await this.rootUserRepository.select(pipeline)
         if (!data.length) {
@@ -57,6 +57,12 @@ export class UseCaseInsertOnePER {
         }
         if (data.length > 1) {
             throw new ConflictException(`Hay mas de un resultado para usuario con identificación ${identity}`)
+        }
+        if (data[0].root) {
+            throw new ConflictException(`El usuario con identificación ${identity}, ya es root`)
+        }
+        if (data[0].company.code.length) {
+            throw new ConflictException(`El usuario con identificación ${identity}, ya tiene una empresa asignada`)
         }
         return data[0]
     }
