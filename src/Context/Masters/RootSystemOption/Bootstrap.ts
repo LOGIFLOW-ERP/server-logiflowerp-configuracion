@@ -8,7 +8,15 @@ export class ManagerEntity {
     private bootstrap: Bootstraping
     private database = database
     private collection = `${prefix_col_root}_${collection}`
-    private indexes: IndexEntity[] = []
+    private indexes: IndexEntity[] = [
+        {
+            campos: [
+                { nombre: 'key', direccion: 1 },
+                { nombre: 'root', direccion: 1 }
+            ],
+            opciones: { name: 'idx_key_root', unique: true }
+        }
+    ]
 
     constructor() {
         this.bootstrap = new Bootstraping(this.database, this.collection, this.indexes)

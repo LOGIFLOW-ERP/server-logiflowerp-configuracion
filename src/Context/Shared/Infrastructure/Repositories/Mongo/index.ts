@@ -126,7 +126,8 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
         }
     }
 
-    async multiprocess(transactions: ITransaction[]) {
+    async executeTransactionBatch(transactions: ITransaction<T>[]) {
+        if (!transactions.length) throw new BadRequestException('El lote de transacciones no puede estar vacío')
         const client = await this.adapterMongo.connection()
         const session = await this.adapterMongo.openSession(client)
         const response: any[] = []

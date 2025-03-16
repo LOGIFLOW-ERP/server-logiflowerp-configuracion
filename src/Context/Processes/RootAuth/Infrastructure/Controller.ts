@@ -30,7 +30,7 @@ import { RootUserMongoRepository } from '@Masters/RootUser/Infrastructure/MongoR
 import { ProfileMongoRepository } from '@Masters/Profile/Infrastructure/MongoRepository'
 import { RootSystemOptionMongoRepository } from '@Masters/RootSystemOption/Infrastructure/MongoRepository'
 
-export class AuthController extends BaseHttpController {
+export class RootAuthController extends BaseHttpController {
 
     private readonly rootUserRepository = new RootUserMongoRepository(this.prefix_col_root)
 
