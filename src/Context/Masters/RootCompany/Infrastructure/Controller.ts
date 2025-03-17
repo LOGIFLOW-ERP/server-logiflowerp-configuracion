@@ -12,7 +12,7 @@ import {
 import {
     CreateRootCompanyDTO,
     CreateRootCompanyPERDTO,
-    UpdateCompanyDTO,
+    UpdateRootCompanyDTO,
     validateCustom,
     validateRequestBody as VRB,
     validateUUIDv4Param as VUUID,
@@ -72,9 +72,9 @@ export class RootCompanyController extends BaseHttpController {
         res.sendStatus(204)
     }
 
-    @httpPut(':_id', authRootMiddleware, VUUID.bind(null, BRE), VRB.bind(null, UpdateCompanyDTO, BRE))
+    @httpPut(':_id', authRootMiddleware, VUUID.bind(null, BRE), VRB.bind(null, UpdateRootCompanyDTO, BRE))
     async updateOne(@request() req: Request, @response() res: Response) {
-        const updatedDoc = await new UseCaseUpdateOne(this.repository).exec(req.params._id, req.body)
+        const updatedDoc = await new UseCaseUpdateOne(this.repository, this.rootUserRepository).exec(req.params._id, req.body)
         res.status(200).json(updatedDoc)
     }
 

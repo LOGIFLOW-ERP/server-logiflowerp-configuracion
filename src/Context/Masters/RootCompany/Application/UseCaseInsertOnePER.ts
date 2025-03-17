@@ -49,7 +49,7 @@ export class UseCaseInsertOnePER {
         entity.sector = SUNATCompanyData.actividadEconomica
     }
 
-    private async searchAndValidateUser(identity: string) {
+    private async searchAndValidateUser(identity: string) { // MISMA VALIDACION SE DEBE HACER EN EDITAR
         const pipeline = [{ $match: { identity } }]
         const data = await this.rootUserRepository.select(pipeline)
         if (!data.length) {
