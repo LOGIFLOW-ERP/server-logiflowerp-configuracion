@@ -29,6 +29,7 @@ import { DataRequestPasswordResetDTO, DataVerifyEmailDTO } from '../Domain'
 import { RootUserMongoRepository } from '@Masters/RootUser/Infrastructure/MongoRepository'
 import { ProfileMongoRepository } from '@Masters/Profile/Infrastructure/MongoRepository'
 import { RootSystemOptionMongoRepository } from '@Masters/RootSystemOption/Infrastructure/MongoRepository'
+import { RootCompanyMongoRepository } from '@Masters/RootCompany/Infrastructure/MongoRepository'
 
 export class RootAuthController extends BaseHttpController {
 
@@ -75,7 +76,8 @@ export class RootAuthController extends BaseHttpController {
         const profileRepository = new ProfileMongoRepository(user.company.code)
         const profile = await new UseCaseGetProfile(profileRepository).exec(user)
         const rootSystemOptionRepository = new RootSystemOptionMongoRepository(this.prefix_col_root)
-        const { dataSystemOptions, routes } = await new UseCaseGetRootSystemOption(rootSystemOptionRepository).exec(root, profile)
+        const rootCompanyRepository = new RootCompanyMongoRepository(this.prefix_col_root)
+        const { dataSystemOptions, routes } = await new UseCaseGetRootSystemOption(rootSystemOptionRepository, rootCompanyRepository).exec(user, root, profile)
         const { token, user: userResponse } = await new UseCaseGetToken(this.adapterToken).exec(user, root, routes, profile)
         res.cookie(
             'authToken',

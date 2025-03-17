@@ -12,6 +12,10 @@ export class ManagerEntity {
         {
             campos: [{ nombre: 'ruc', direccion: 1 }],
             opciones: { name: 'idx_ruc', unique: true }
+        },
+        {
+            campos: [{ nombre: 'code', direccion: 1 }],
+            opciones: { name: 'idx_code', unique: true }
         }
     ]
 
