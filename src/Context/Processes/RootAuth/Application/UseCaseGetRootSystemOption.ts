@@ -1,4 +1,4 @@
-import { ProfileENTITY, SystemOptionENTITY, UserENTITY } from 'logiflowerp-sdk'
+import { ProfileENTITY, State, SystemOptionENTITY, UserENTITY } from 'logiflowerp-sdk'
 import { IRootSystemOptionMongoRepository } from '@Masters/RootSystemOption/Domain'
 import { IRootCompanyMongoRepository } from '@Masters/RootCompany/Domain'
 import { ConflictException } from '@Config/exception'
@@ -40,7 +40,7 @@ export class UseCaseGetRootSystemOption {
     }
 
     private async searchRootCompany(user: UserENTITY) {
-        const pipeline = [{ $match: { code: user.company.code } }]
+        const pipeline = [{ $match: { code: user.company.code, state: State.ACTIVO } }]
         const rootCompany = await this.repositoryRootCompany.select(pipeline)
         if (rootCompany.length !== 1) {
             throw new ConflictException(`Error al buscar empresa root. Hay ${rootCompany.length} resultados para ${JSON.stringify(pipeline)}`)
