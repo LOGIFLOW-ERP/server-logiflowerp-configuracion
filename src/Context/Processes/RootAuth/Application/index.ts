@@ -1,5 +1,6 @@
 export * from './UseCaseGetPersonnel';
 export * from './UseCaseGetProfile';
+export * from './UseCaseGetRootCompany';
 export * from './UseCaseGetRootSystemOption';
 export * from './UseCaseGetRootSystemOptionRoot';
 export * from './UseCaseGetToken';

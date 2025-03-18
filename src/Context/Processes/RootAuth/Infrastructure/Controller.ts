@@ -8,7 +8,9 @@ import {
     response
 } from 'inversify-express-utils'
 import {
+    UseCaseGetPersonnel,
     UseCaseGetProfile,
+    UseCaseGetRootCompany,
     UseCaseGetRootSystemOption,
     UseCaseGetRootSystemOptionRoot,
     UseCaseGetToken,
@@ -21,10 +23,12 @@ import {
 } from '../Application'
 import {
     CreateUserDTO,
+    ProfileENTITY,
     ResetPasswordDTO,
     ResponseSignIn,
     SignInDTO,
     SignInRootDTO,
+    SystemOptionENTITY,
     validateRequestBody as VRB
 } from 'logiflowerp-sdk'
 import { AdapterApiRequest, AdapterMail, AdapterRabbitMQ, AdapterToken, SHARED_QUEUES, SHARED_TYPES } from '@Shared/Infrastructure'
@@ -33,10 +37,13 @@ import { RootUserMongoRepository } from '@Masters/RootUser/Infrastructure/MongoR
 import { ProfileMongoRepository } from '@Masters/Profile/Infrastructure/MongoRepository'
 import { RootSystemOptionMongoRepository } from '@Masters/RootSystemOption/Infrastructure/MongoRepository'
 import { RootCompanyMongoRepository } from '@Masters/RootCompany/Infrastructure/MongoRepository'
+import { PersonnelMongoRepository } from '@Masters/Personnel/Infrastructure/MongoRepository'
 
 export class RootAuthController extends BaseHttpController {
 
     private readonly rootUserRepository = new RootUserMongoRepository(this.prefix_col_root)
+    private readonly rootCompanyRepository = new RootCompanyMongoRepository(this.prefix_col_root)
+    private readonly rootSystemOptionRepository = new RootSystemOptionMongoRepository(this.prefix_col_root)
 
     constructor(
         @inject(SHARED_TYPES.AdapterRabbitMQ) private readonly adapterRabbitMQ: AdapterRabbitMQ,
@@ -95,11 +102,24 @@ export class RootAuthController extends BaseHttpController {
     @httpPost('sign-in', VRB.bind(null, SignInDTO, BRE))
     async signIn(@request() req: Request, @response() res: Response) {
         const { user } = await new UseCaseSignIn(this.rootUserRepository).exec(req.body)
-        const profileRepository = new ProfileMongoRepository(user.company.code)
-        const profile = await new UseCaseGetProfile(profileRepository).exec(user)
-        const rootSystemOptionRepository = new RootSystemOptionMongoRepository(this.prefix_col_root)
-        const rootCompanyRepository = new RootCompanyMongoRepository(this.prefix_col_root)
-        const { dataSystemOptions, routes } = await new UseCaseGetRootSystemOption(rootSystemOptionRepository, rootCompanyRepository).exec(user, root, profile)
+        const { rootCompany, isRoot } = await new UseCaseGetRootCompany(this.rootCompanyRepository).exec(user, req.body)
+        let dataSystemOptions: SystemOptionENTITY[]
+        let routes: string[]
+        let profile: ProfileENTITY | undefined
+        if (!isRoot) {
+            const personnelRepository = new PersonnelMongoRepository(req.body.companyCode)
+            const { personnel } = await new UseCaseGetPersonnel(personnelRepository).exec(user)
+            const profileRepository = new ProfileMongoRepository(req.body.companyCode)
+            const { profile: profileAux } = await new UseCaseGetProfile(profileRepository).exec(personnel)
+            const { systemOptions, routesAux } = await new UseCaseGetRootSystemOption(this.rootSystemOptionRepository).exec(profileAux)
+            dataSystemOptions = systemOptions
+            routes = routesAux
+            profile = profileAux
+        } else {
+            const { systemOptions, routesAux } = await new UseCaseGetRootSystemOption(this.rootSystemOptionRepository).execRoot(rootCompany)
+            dataSystemOptions = systemOptions
+            routes = routesAux
+        }
         const { token, user: userResponse } = await new UseCaseGetToken(this.adapterToken).exec(user, false, routes, profile)
         res.cookie(
             'authToken',
@@ -110,7 +130,7 @@ export class RootAuthController extends BaseHttpController {
                 sameSite: 'strict'
             }
         )
-        const response: ResponseSignIn = { user: userResponse, dataSystemOptions, root }
+        const response: ResponseSignIn = { user: userResponse, dataSystemOptions, root: false }
         res.status(200).json(response)
     }
 

@@ -61,9 +61,6 @@ export class UseCaseInsertOnePER {
         if (data[0].root) {
             throw new ConflictException(`El usuario con identificación ${identity}, ya es root`)
         }
-        if (data[0].company.code.length) {
-            throw new ConflictException(`El usuario con identificación ${identity}, ya tiene una empresa asignada`)
-        }
         return data[0]
     }
 

@@ -1,6 +1,6 @@
 import { IMapTransaction } from '@Shared/Domain'
 import * as Express from 'express'
-import { AuthUserDTO, TokenPayloadDTO } from 'logiflowerp-sdk'
+import { AuthUserDTO, CompanyUserDTO, TokenPayloadDTO } from 'logiflowerp-sdk'
 import { Document, Filter, OptionalUnlessRequiredId, UpdateFilter } from 'mongodb'
 
 declare global {
@@ -9,6 +9,7 @@ declare global {
             payloadToken: TokenPayloadDTO
             user: AuthUserDTO
             userRoot: boolean
+            company: CompanyUserDTO
         }
     }
 
