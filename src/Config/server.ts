@@ -125,10 +125,12 @@ function authMiddleware(app: Application, rootPath: string) {
 
             const publicRoutes = [
                 `${rootPath}/processes/rootauth/sign-in`,
+                `${rootPath}/processes/rootauth/sign-in-root`,
                 `${rootPath}/processes/rootauth/sign-up`,
                 `${rootPath}/processes/rootauth/verify-email`,
                 `${rootPath}/processes/rootauth/request-password-reset`,
                 `${rootPath}/processes/rootauth/reset-password`,
+                `${rootPath}/masters/rootcompany/get-active`,
             ]
             const url = req.originalUrl.toLowerCase()
             if (publicRoutes.some(route => route.toLowerCase() === url)) {

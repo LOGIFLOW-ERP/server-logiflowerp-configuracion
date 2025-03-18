@@ -21,6 +21,7 @@ import { BadRequestException, BadRequestException as BRE } from '@Config/excepti
 import {
     UseCaseDeleteOne,
     UseCaseFind,
+    UseCaseGetActive,
     UseCaseGetAll,
     UseCaseInsertOne,
     UseCaseInsertOnePER,
@@ -51,6 +52,11 @@ export class RootCompanyController extends BaseHttpController {
     @httpGet('', authRootMiddleware)
     async findAll(@request() req: Request, @response() res: Response) {
         await new UseCaseGetAll(this.repository).exec(req, res)
+    }
+
+    @httpGet('get-active')
+    async getActive(@request() req: Request, @response() res: Response) {
+        await new UseCaseGetActive(this.repository).exec(req, res)
     }
 
     @httpPost('', authRootMiddleware)

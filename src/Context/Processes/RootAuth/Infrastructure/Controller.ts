@@ -10,10 +10,12 @@ import {
 import {
     UseCaseGetProfile,
     UseCaseGetRootSystemOption,
+    UseCaseGetRootSystemOptionRoot,
     UseCaseGetToken,
     UseCaseRequestPasswordReset,
     UseCaseResetPassword,
     UseCaseSignIn,
+    UseCaseSignInRoot,
     UseCaseSignUp,
     UseCaseVerifyEmail
 } from '../Application'
@@ -22,6 +24,7 @@ import {
     ResetPasswordDTO,
     ResponseSignIn,
     SignInDTO,
+    SignInRootDTO,
     validateRequestBody as VRB
 } from 'logiflowerp-sdk'
 import { AdapterApiRequest, AdapterMail, AdapterRabbitMQ, AdapterToken, SHARED_QUEUES, SHARED_TYPES } from '@Shared/Infrastructure'
@@ -70,15 +73,34 @@ export class RootAuthController extends BaseHttpController {
         res.sendStatus(204)
     }
 
+    @httpPost('sign-in-root', VRB.bind(null, SignInRootDTO, BRE))
+    async signInRoot(@request() req: Request, @response() res: Response) {
+        const { user } = await new UseCaseSignInRoot(this.rootUserRepository).exec(req.body)
+        const rootSystemOptionRepository = new RootSystemOptionMongoRepository(this.prefix_col_root)
+        const { dataSystemOptions, routes } = await new UseCaseGetRootSystemOptionRoot(rootSystemOptionRepository).exec()
+        const { token, user: userResponse } = await new UseCaseGetToken(this.adapterToken).exec(user, true, routes)
+        res.cookie(
+            'authToken',
+            token,
+            {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'strict'
+            }
+        )
+        const response: ResponseSignIn = { user: userResponse, dataSystemOptions, root: true }
+        res.status(200).json(response)
+    }
+
     @httpPost('sign-in', VRB.bind(null, SignInDTO, BRE))
     async signIn(@request() req: Request, @response() res: Response) {
-        const { user, root } = await new UseCaseSignIn(this.rootUserRepository).exec(req.body)
+        const { user } = await new UseCaseSignIn(this.rootUserRepository).exec(req.body)
         const profileRepository = new ProfileMongoRepository(user.company.code)
         const profile = await new UseCaseGetProfile(profileRepository).exec(user)
         const rootSystemOptionRepository = new RootSystemOptionMongoRepository(this.prefix_col_root)
         const rootCompanyRepository = new RootCompanyMongoRepository(this.prefix_col_root)
         const { dataSystemOptions, routes } = await new UseCaseGetRootSystemOption(rootSystemOptionRepository, rootCompanyRepository).exec(user, root, profile)
-        const { token, user: userResponse } = await new UseCaseGetToken(this.adapterToken).exec(user, root, routes, profile)
+        const { token, user: userResponse } = await new UseCaseGetToken(this.adapterToken).exec(user, false, routes, profile)
         res.cookie(
             'authToken',
             token,

@@ -10,17 +10,13 @@ export class UseCaseGetRootSystemOption {
         private readonly repositoryRootCompany: IRootCompanyMongoRepository,
     ) { }
 
-    async exec(user: UserENTITY, isSuperAdmin: boolean, profile?: ProfileENTITY) {
-        const dataSystemOptions = await this.loadSystemOptions(user, isSuperAdmin, profile)
+    async exec(user: UserENTITY, profile?: ProfileENTITY) {
+        const dataSystemOptions = await this.loadSystemOptions(user,  profile)
         const routes = this.getRoutes(dataSystemOptions)
         return { dataSystemOptions, routes }
     }
 
-    private async loadSystemOptions(user: UserENTITY, isSuperAdmin: boolean, profile?: ProfileENTITY) {
-        if (isSuperAdmin) {
-            const pipeline = [{ $match: { root: true } }]
-            return this.repositorySystemOption.select(pipeline)
-        }
+    private async loadSystemOptions(user: UserENTITY, profile?: ProfileENTITY) {
 
         if (!profile && !user.root) return []
 
