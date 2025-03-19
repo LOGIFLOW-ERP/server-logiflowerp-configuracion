@@ -13,6 +13,12 @@ declare global {
         }
     }
 
+    interface ParamsPut {
+        _id: string
+    }
+    interface ParamsDelete {
+        _id: string
+    }
     class ITransaction<T extends Document> {
         collection: string
         transaction: keyof IMapTransaction

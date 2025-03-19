@@ -60,7 +60,7 @@ export class RootCompanyController extends BaseHttpController {
     }
 
     @httpPost('', authRootMiddleware)
-    async saveOne(@request() req: Request, @response() res: Response) {
+    async saveOne(@request() req: Request<{}, {}, CreateRootCompanyPERDTO | CreateRootCompanyDTO>, @response() res: Response) {
 
         const { country } = req.body
         if (!country) {
@@ -79,13 +79,13 @@ export class RootCompanyController extends BaseHttpController {
     }
 
     @httpPut(':_id', authRootMiddleware, VUUID.bind(null, BRE), VRB.bind(null, UpdateRootCompanyDTO, BRE))
-    async updateOne(@request() req: Request, @response() res: Response) {
+    async updateOne(@request() req: Request<ParamsPut, {}, UpdateRootCompanyDTO>, @response() res: Response) {
         const updatedDoc = await new UseCaseUpdateOne(this.repository, this.rootUserRepository).exec(req.params._id, req.body)
         res.status(200).json(updatedDoc)
     }
 
     @httpDelete(':_id', authRootMiddleware, VUUID.bind(null, BRE))
-    async deleteOne(@request() req: Request, @response() res: Response) {
+    async deleteOne(@request() req: Request<ParamsDelete>, @response() res: Response) {
         const updatedDoc = await new UseCaseDeleteOne(this.repository).exec(req.params._id)
         res.status(200).json(updatedDoc)
     }

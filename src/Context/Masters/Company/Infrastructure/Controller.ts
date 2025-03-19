@@ -50,8 +50,8 @@ export class CompanyController extends BaseHttpController {
     }
 
     @httpPost('')
-    async saveOne(@request() req: Request, @response() res: Response) {
-        const { country } = req.body
+    async saveOne(@request() req: Request<{}, {}, CreateCompanyPERDTO | CreateCompanyDTO>, @response() res: Response) {
+        const { country } = req.user
         if (!country) {
             throw new BadRequestException(`El campo "country" es requerido`)
         }
@@ -69,14 +69,14 @@ export class CompanyController extends BaseHttpController {
     }
 
     @httpPut(':_id', VUUID.bind(null, BRE), VRB.bind(null, UpdateCompanyDTO, BRE))
-    async updateOne(@request() req: Request, @response() res: Response) {
+    async updateOne(@request() req: Request<ParamsPut, {}, UpdateCompanyDTO>, @response() res: Response) {
         const repository = new CompanyMongoRepository(req.company.code)
         const updatedDoc = await new UseCaseUpdateOne(repository).exec(req.params._id, req.body)
         res.status(200).json(updatedDoc)
     }
 
     @httpDelete(':_id', VUUID.bind(null, BRE))
-    async deleteOne(@request() req: Request, @response() res: Response) {
+    async deleteOne(@request() req: Request<ParamsDelete>, @response() res: Response) {
         const repository = new CompanyMongoRepository(req.company.code)
         const updatedDoc = await new UseCaseDeleteOne(repository).exec(req.params._id)
         res.status(200).json(updatedDoc)

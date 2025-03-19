@@ -1,5 +1,5 @@
 import { IRootUserMongoRepository } from '../Domain'
-import { UserENTITY } from 'logiflowerp-sdk'
+import { UpdateUserDTO } from 'logiflowerp-sdk'
 
 export class UseCaseUpdateOne {
 
@@ -7,10 +7,10 @@ export class UseCaseUpdateOne {
 		private readonly repository: IRootUserMongoRepository,
 	) { }
 
-	async exec(id: string, dto: UserENTITY) {
+	async exec(id: string, dto: UpdateUserDTO) {
 
 		const filter = { _id: id }
-		const update = { $set: { names: dto.names } }
+		const update = { $set: { password: dto.password } }
 
 		return await this.repository.updateOne(filter, update)
 

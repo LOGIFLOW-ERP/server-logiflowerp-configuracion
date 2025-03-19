@@ -56,32 +56,32 @@ export class RootAuthController extends BaseHttpController {
     }
 
     @httpPost('sign-up', VRB.bind(null, CreateUserDTO, BRE))
-    async saveOne(@request() req: Request, @response() res: Response) {
+    async saveOne(@request() req: Request<{}, {}, CreateUserDTO>, @response() res: Response) {
         const newDoc = await new UseCaseSignUp(this.rootUserRepository, this.adapterApiRequest).exec(req.body)
         await this.adapterRabbitMQ.publish({ queue: SHARED_QUEUES.MAIL_REGISTER_USER, message: newDoc })
         res.status(201).json(newDoc)
     }
 
     @httpPost('verify-email', VRB.bind(null, DataVerifyEmailDTO, BRE))
-    async verifyEmail(@request() req: Request, @response() res: Response) {
+    async verifyEmail(@request() req: Request<{}, {}, DataVerifyEmailDTO>, @response() res: Response) {
         await new UseCaseVerifyEmail(this.rootUserRepository, this.adapterToken).exec(req.body)
         res.sendStatus(204)
     }
 
     @httpPost('request-password-reset', VRB.bind(null, DataRequestPasswordResetDTO, BRE))
-    async requestPasswordReset(@request() req: Request, @response() res: Response) {
+    async requestPasswordReset(@request() req: Request<{}, {}, DataRequestPasswordResetDTO>, @response() res: Response) {
         await new UseCaseRequestPasswordReset(this.rootUserRepository, this.adapterToken, this.adapterMail).exec(req.body.email)
         res.sendStatus(204)
     }
 
     @httpPost('reset-password', VRB.bind(null, ResetPasswordDTO, BRE))
-    async resetPassword(@request() req: Request, @response() res: Response) {
+    async resetPassword(@request() req: Request<{}, {}, ResetPasswordDTO>, @response() res: Response) {
         await new UseCaseResetPassword(this.rootUserRepository, this.adapterToken).exec(req.body.token, req.body.password)
         res.sendStatus(204)
     }
 
     @httpPost('sign-in-root', VRB.bind(null, SignInRootDTO, BRE))
-    async signInRoot(@request() req: Request, @response() res: Response) {
+    async signInRoot(@request() req: Request<{}, {}, SignInRootDTO>, @response() res: Response) {
         const { user } = await new UseCaseSignInRoot(this.rootUserRepository).exec(req.body)
         const rootSystemOptionRepository = new RootSystemOptionMongoRepository(this.prefix_col_root)
         const { dataSystemOptions, routes } = await new UseCaseGetRootSystemOptionRoot(rootSystemOptionRepository).exec()
@@ -100,7 +100,7 @@ export class RootAuthController extends BaseHttpController {
     }
 
     @httpPost('sign-in', VRB.bind(null, SignInDTO, BRE))
-    async signIn(@request() req: Request, @response() res: Response) {
+    async signIn(@request() req: Request<{}, {}, SignInDTO>, @response() res: Response) {
         const { user } = await new UseCaseSignIn(this.rootUserRepository).exec(req.body)
         const { rootCompany, isRoot } = await new UseCaseGetRootCompany(this.rootCompanyRepository).exec(user, req.body)
         let dataSystemOptions: SystemOptionENTITY[]

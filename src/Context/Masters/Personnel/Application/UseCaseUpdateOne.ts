@@ -1,5 +1,5 @@
 import { IPersonnelMongoRepository } from '../Domain'
-import { UpdateCurrencyDTO } from 'logiflowerp-sdk'
+import { UpdateEmployeeDTO } from 'logiflowerp-sdk'
 
 export class UseCaseUpdateOne {
 
@@ -7,7 +7,7 @@ export class UseCaseUpdateOne {
         private readonly repository: IPersonnelMongoRepository,
     ) { }
 
-    async exec(_id: string, dto: UpdateCurrencyDTO) {
+    async exec(_id: string, dto: UpdateEmployeeDTO) {
         return this.repository.updateOne({ _id }, { $set: dto })
     }
 

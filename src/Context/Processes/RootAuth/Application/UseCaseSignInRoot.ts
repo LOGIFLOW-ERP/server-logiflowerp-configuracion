@@ -1,6 +1,6 @@
 import { ConflictException, ForbiddenException, UnauthorizedException } from '@Config/exception'
 import { env } from '@Config/env'
-import { SignInDTO, UserENTITY } from 'logiflowerp-sdk'
+import { SignInRootDTO, UserENTITY } from 'logiflowerp-sdk'
 import { IRootUserMongoRepository } from '@Masters/RootUser/Domain'
 
 export class UseCaseSignInRoot {
@@ -9,7 +9,7 @@ export class UseCaseSignInRoot {
         private readonly repositoryUser: IRootUserMongoRepository,
     ) { }
 
-    async exec(dto: SignInDTO) {
+    async exec(dto: SignInRootDTO) {
         if (!env.ADMINISTRATOR_EMAILS.includes(dto.email)) {
             throw new ForbiddenException('Acceso denegado: este usuario no está autorizado como administrador', true)
         }
@@ -24,7 +24,7 @@ export class UseCaseSignInRoot {
         return { user }
     }
 
-    private verifyPassword(dto: SignInDTO, user: UserENTITY) {
+    private verifyPassword(dto: SignInRootDTO, user: UserENTITY) {
         const isValid = dto.password === user.password
         if (!isValid) {
             throw new UnauthorizedException('Credenciales inválidas', true)

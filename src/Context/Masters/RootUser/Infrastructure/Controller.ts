@@ -38,7 +38,7 @@ export class RootUserController extends BaseHttpController {
     }
 
     @httpPost('update-one/:id', authRootMiddleware, VUUID.bind(null, BRE), VRB.bind(null, UpdateUserDTO, BRE))
-    async updateOne(@request() req: Request<any, any, UserENTITY>, @response() res: Response) {
+    async updateOne(@request() req: Request<any, any, UpdateUserDTO>, @response() res: Response) {
         const updatedDoc = await new UseCaseUpdateOne(this.repository).exec(req.params.id, req.body)
         res.json(updatedDoc)
     }
