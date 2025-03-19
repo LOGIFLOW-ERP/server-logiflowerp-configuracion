@@ -11,10 +11,10 @@ export class UseCaseSignIn {
     async exec(dto: SignInDTO) {
         const user = await this.searchUser(dto.email)
         if (!user.state) {
-            throw new ForbiddenException('El usuario está inactivo.', true)
+            throw new ForbiddenException('El usuario está inactivo', true)
         }
         if (!user.emailVerified) {
-            throw new UnauthorizedException('Correo no verificado.', true)
+            throw new UnauthorizedException('Correo no verificado', true)
         }
         this.verifyPassword(dto, user)
         return { user }
@@ -23,7 +23,7 @@ export class UseCaseSignIn {
     private verifyPassword(dto: SignInDTO, user: UserENTITY) {
         const isValid = dto.password === user.password
         if (!isValid) {
-            throw new UnauthorizedException('Credenciales inválidas.', true)
+            throw new UnauthorizedException('Credenciales inválidas', true)
         }
     }
 
@@ -31,7 +31,7 @@ export class UseCaseSignIn {
         const pipeline = [{ $match: { email } }]
         const data = await this.repositoryUser.select(pipeline)
         if (!data.length) {
-            throw new UnauthorizedException('Credenciales inválidas.', true)
+            throw new UnauthorizedException('Credenciales inválidas', true)
         }
         if (data.length > 1) {
             throw new ConflictException(`Hay mas de un resultado para usuario con email ${email}.`)

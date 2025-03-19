@@ -23,8 +23,19 @@ import {
     UseCaseUpdateOne
 } from '../Application'
 import { PersonnelMongoRepository } from './MongoRepository'
+import { RootUserMongoRepository } from '@Masters/RootUser/Infrastructure/MongoRepository'
+import { SHARED_TYPES } from '@Shared/Infrastructure'
+import { inject } from 'inversify'
 
 export class PersonnelController extends BaseHttpController {
+
+    private readonly repositoryRootUser = new RootUserMongoRepository(this.prefix_col_root)
+
+    constructor(
+        @inject(SHARED_TYPES.prefix_col_root) private readonly prefix_col_root: string,
+    ) {
+        super()
+    }
 
     @httpPost('find')
     async find(@request() req: Request, @response() res: Response) {
@@ -41,7 +52,7 @@ export class PersonnelController extends BaseHttpController {
     @httpPost('', VRB.bind(null, CreateEmployeeDTO, BRE))
     async saveOne(@request() req: Request<{}, {}, CreateEmployeeDTO>, @response() res: Response) {
         const repository = new PersonnelMongoRepository(req.company.code)
-        const newDoc = await new UseCaseInsertOne(repository).exec(req.body)
+        const newDoc = await new UseCaseInsertOne(repository, this.repositoryRootUser).exec(req.body)
         res.status(201).json(newDoc)
     }
 

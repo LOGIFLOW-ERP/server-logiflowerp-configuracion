@@ -3,12 +3,14 @@ import { Request, Response } from 'express'
 import { BadRequestException as BRE } from '@Config/exception'
 import {
     BaseHttpController,
+    httpGet,
     httpPost,
     request,
     response
 } from 'inversify-express-utils'
 import {
     UseCaseFind,
+    UseCaseGetByIdentity,
     UseCaseUpdateOne
 } from '../Application'
 import {
@@ -19,7 +21,7 @@ import {
 } from 'logiflowerp-sdk'
 import { SHARED_TYPES } from '@Shared/Infrastructure'
 import { RootUserMongoRepository } from './MongoRepository'
-import { authRootMiddleware } from '@Shared/Infrastructure/Middlewares'
+import { authRootCompanyMiddleware, authRootMiddleware } from '@Shared/Infrastructure/Middlewares'
 
 export class RootUserController extends BaseHttpController {
 
@@ -33,14 +35,13 @@ export class RootUserController extends BaseHttpController {
 
     @httpPost('find', authRootMiddleware)
     async find(@request() req: Request, @response() res: Response) {
-        console.log(req.originalUrl)
         await new UseCaseFind(this.repository).exec(req, res)
     }
 
-    @httpPost('update-one/:id', authRootMiddleware, VUUID.bind(null, BRE), VRB.bind(null, UpdateUserDTO, BRE))
-    async updateOne(@request() req: Request<any, any, UpdateUserDTO>, @response() res: Response) {
-        const updatedDoc = await new UseCaseUpdateOne(this.repository).exec(req.params.id, req.body)
-        res.json(updatedDoc)
+    @httpGet(':identity', authRootCompanyMiddleware)
+    async getByIdentity(@request() req: Request<{ identity: string }>, @response() res: Response) {
+        const doc = await new UseCaseGetByIdentity(this.repository).exec(req.params.identity)
+        res.status(200).json(doc)
     }
 
 }

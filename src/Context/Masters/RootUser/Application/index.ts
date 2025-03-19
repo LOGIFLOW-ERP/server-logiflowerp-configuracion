@@ -1,2 +1,3 @@
-export * from './UseCaseFind'
-export * from './UseCaseUpdateOne'
+export * from './UseCaseFind';
+export * from './UseCaseGetByIdentity';
+export * from './UseCaseUpdateOne';
