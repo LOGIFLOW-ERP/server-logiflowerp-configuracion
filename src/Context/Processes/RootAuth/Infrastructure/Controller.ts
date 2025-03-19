@@ -120,7 +120,7 @@ export class RootAuthController extends BaseHttpController {
             dataSystemOptions = systemOptions
             routes = routesAux
         }
-        const { token, user: userResponse } = await new UseCaseGetToken(this.adapterToken).exec(user, false, routes, profile)
+        const { token, user: userResponse } = await new UseCaseGetToken(this.adapterToken).exec(user, false, routes, profile, rootCompany)
         res.cookie(
             'authToken',
             token,

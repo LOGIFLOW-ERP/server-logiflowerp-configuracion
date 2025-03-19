@@ -15,8 +15,10 @@ export class AdapterToken {
     async verify(token: string, secretOrPublicKey: string = env.JWT_KEY) {
         try {
             const res = JWT.verify(token, secretOrPublicKey) as TokenPayloadDTO
-            return validateCustom(res, TokenPayloadDTO, UnprocessableEntityException)
+            // await new Promise(resolve => setTimeout(resolve, 5000))            
+            return await validateCustom(res, TokenPayloadDTO, UnprocessableEntityException)
         } catch (error) {
+            console.error(error)
             return null
         }
     }
