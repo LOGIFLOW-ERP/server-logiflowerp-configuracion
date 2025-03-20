@@ -23,36 +23,37 @@ import {
     UpdateProfileDTO
 } from 'logiflowerp-sdk'
 import { ProfileMongoRepository } from './MongoRepository'
+import { authorizeRoute } from '@Shared/Infrastructure/Middlewares'
 
 export class ProfileController extends BaseHttpController {
 
-    @httpPost('find')
+    @httpPost('find', authorizeRoute)
     async find(@request() req: Request, @response() res: Response) {
         const repository = new ProfileMongoRepository(req.company.code)
         await new UseCaseFind(repository).exec(req, res)
     }
 
-    @httpGet('')
+    @httpGet('', authorizeRoute)
     async findAll(@request() req: Request, @response() res: Response) {
         const repository = new ProfileMongoRepository(req.company.code)
         await new UseCaseGetAll(repository).exec(req, res)
     }
 
-    @httpPost('', VRB.bind(null, CreateProfileDTO, BRE))
+    @httpPost('', authorizeRoute, VRB.bind(null, CreateProfileDTO, BRE))
     async saveOne(@request() req: Request<{}, {}, CreateProfileDTO>, @response() res: Response) {
         const repository = new ProfileMongoRepository(req.company.code)
         await new UseCaseInsertOne(repository).exec(req.body)
         res.sendStatus(204)
     }
 
-    @httpPut(':_id', VUUID.bind(null, BRE), VRB.bind(null, UpdateProfileDTO, BRE))
+    @httpPut(':_id', authorizeRoute, VUUID.bind(null, BRE), VRB.bind(null, UpdateProfileDTO, BRE))
     async updateOne(@request() req: Request<ParamsPut, {}, UpdateProfileDTO>, @response() res: Response) {
         const repository = new ProfileMongoRepository(req.company.code)
         await new UseCaseUpdateOne(repository).exec(req.params._id, req.body)
         res.sendStatus(204)
     }
 
-    @httpDelete(':_id', VUUID.bind(null, BRE))
+    @httpDelete(':_id', authorizeRoute, VUUID.bind(null, BRE))
     async deleteOne(@request() req: Request<ParamsDelete>, @response() res: Response) {
         const repository = new ProfileMongoRepository(req.company.code)
         await new UseCaseDeleteOne(repository).exec(req.params._id)

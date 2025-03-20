@@ -28,6 +28,7 @@ import {
 } from '../Application'
 import { CompanyMongoRepository } from './MongoRepository'
 import { AdapterApiRequest, SHARED_TYPES } from '@Shared/Infrastructure'
+import { authorizeRoute } from '@Shared/Infrastructure/Middlewares'
 
 export class CompanyController extends BaseHttpController {
 
@@ -37,19 +38,19 @@ export class CompanyController extends BaseHttpController {
         super()
     }
 
-    @httpPost('find')
+    @httpPost('find', authorizeRoute)
     async find(@request() req: Request, @response() res: Response) {
         const repository = new CompanyMongoRepository(req.company.code)
         await new UseCaseFind(repository).exec(req, res)
     }
 
-    @httpGet('')
+    @httpGet('', authorizeRoute)
     async findAll(@request() req: Request, @response() res: Response) {
         const repository = new CompanyMongoRepository(req.company.code)
         await new UseCaseGetAll(repository).exec(req, res)
     }
 
-    @httpPost('')
+    @httpPost('', authorizeRoute)
     async saveOne(@request() req: Request<{}, {}, CreateCompanyPERDTO | CreateCompanyDTO>, @response() res: Response) {
         const { country } = req.user
         if (!country) {
@@ -68,14 +69,14 @@ export class CompanyController extends BaseHttpController {
         res.status(201).json(newDoc)
     }
 
-    @httpPut(':_id', VUUID.bind(null, BRE), VRB.bind(null, UpdateCompanyDTO, BRE))
+    @httpPut(':_id', authorizeRoute, VUUID.bind(null, BRE), VRB.bind(null, UpdateCompanyDTO, BRE))
     async updateOne(@request() req: Request<ParamsPut, {}, UpdateCompanyDTO>, @response() res: Response) {
         const repository = new CompanyMongoRepository(req.company.code)
         const updatedDoc = await new UseCaseUpdateOne(repository).exec(req.params._id, req.body)
         res.status(200).json(updatedDoc)
     }
 
-    @httpDelete(':_id', VUUID.bind(null, BRE))
+    @httpDelete(':_id', authorizeRoute, VUUID.bind(null, BRE))
     async deleteOne(@request() req: Request<ParamsDelete>, @response() res: Response) {
         const repository = new CompanyMongoRepository(req.company.code)
         const updatedDoc = await new UseCaseDeleteOne(repository).exec(req.params._id)

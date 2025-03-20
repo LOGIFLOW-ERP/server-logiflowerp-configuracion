@@ -23,36 +23,37 @@ import {
     UseCaseUpdateOne
 } from '../Application'
 import { CurrencyMongoRepository } from './MongoRepository'
+import { authorizeRoute } from '@Shared/Infrastructure/Middlewares'
 
 export class CurrencyController extends BaseHttpController {
 
-    @httpPost('find')
+    @httpPost('find', authorizeRoute)
     async find(@request() req: Request, @response() res: Response) {
         const repository = new CurrencyMongoRepository(req.company.code)
         await new UseCaseFind(repository).exec(req, res)
     }
 
-    @httpGet('')
+    @httpGet('', authorizeRoute)
     async findAll(@request() req: Request, @response() res: Response) {
         const repository = new CurrencyMongoRepository(req.company.code)
         await new UseCaseGetAll(repository).exec(req, res)
     }
 
-    @httpPost('', VRB.bind(null, CreateCurrencyDTO, BRE))
+    @httpPost('', authorizeRoute, VRB.bind(null, CreateCurrencyDTO, BRE))
     async saveOne(@request() req: Request<{}, {}, CreateCurrencyDTO>, @response() res: Response) {
         const repository = new CurrencyMongoRepository(req.company.code)
         const newDoc = await new UseCaseInsertOne(repository).exec(req.body)
         res.status(201).json(newDoc)
     }
 
-    @httpPut(':_id', VUUID.bind(null, BRE), VRB.bind(null, UpdateCurrencyDTO, BRE))
+    @httpPut(':_id', authorizeRoute, VUUID.bind(null, BRE), VRB.bind(null, UpdateCurrencyDTO, BRE))
     async updateOne(@request() req: Request<ParamsPut, {}, UpdateCurrencyDTO>, @response() res: Response) {
         const repository = new CurrencyMongoRepository(req.company.code)
         const updatedDoc = await new UseCaseUpdateOne(repository).exec(req.params._id, req.body)
         res.status(200).json(updatedDoc)
     }
 
-    @httpDelete(':_id', VUUID.bind(null, BRE))
+    @httpDelete(':_id', authorizeRoute, VUUID.bind(null, BRE))
     async deleteOne(@request() req: Request<ParamsDelete>, @response() res: Response) {
         const repository = new CurrencyMongoRepository(req.company.code)
         const updatedDoc = await new UseCaseDeleteOne(repository).exec(req.params._id)
