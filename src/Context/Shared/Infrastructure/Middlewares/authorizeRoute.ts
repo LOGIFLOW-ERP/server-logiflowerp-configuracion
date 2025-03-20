@@ -7,12 +7,14 @@ export function authorizeRoute(req: Request, _res: Response, next: NextFunction)
             return next()
         }
 
-        const cleanRoutes = (routes: string[]) => routes.map(route => route.replace(/\/$/, "").replace(/\/:[^\/]+/g, "/:_param_").toLowerCase())
+        const patronParam = ':_param_'
+
+        const cleanRoutes = (routes: string[]) => routes.map(route => route.replace(/\/$/, "").replace(/\/:[^\/]+/g, `/${patronParam}`).toLowerCase())
 
         const normalizeUrl = (req: Request) => {
             let url = `${req.method} ${req.originalUrl}`.toLowerCase()
             Object.entries(req.params).forEach(([key, param]) => {
-                url = url.replace(param.toLowerCase(), ":_param_")
+                url = url.replace(param.toLowerCase(), patronParam)
             })
             return url
         }
@@ -24,7 +26,7 @@ export function authorizeRoute(req: Request, _res: Response, next: NextFunction)
 
         if (exist) return next()
 
-        next(new UnauthorizedException('No autorizado'))
+        next(new UnauthorizedException('No autorizado: Esta acción no está permitida según tus permisos', true))
     } catch (error) {
         next(error)
     }
