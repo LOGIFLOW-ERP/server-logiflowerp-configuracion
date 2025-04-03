@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Collection, Document, MongoClient } from 'mongodb'
+import { Collection, Document } from 'mongodb'
 
 export interface IFind {
     collection: Collection
