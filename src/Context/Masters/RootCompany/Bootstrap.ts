@@ -1,31 +1,33 @@
 import { IndexEntity } from '@Shared/Domain'
 import { collection, database } from './Infrastructure/config'
 import { Bootstraping } from '@Shared/Bootstraping'
-import { prefix_col_root } from 'logiflowerp-sdk'
+import { prefix_col_root, RootCompanyENTITY } from 'logiflowerp-sdk'
+import { inject, injectable } from 'inversify'
+import { SHARED_TYPES } from '@Shared/Infrastructure'
 
+@injectable()
 export class ManagerEntity {
 
-    private bootstrap: Bootstraping
     private database = database
     private collection = `${prefix_col_root}_${collection}`
-    private indexes: IndexEntity[] = [
+    private indexes: IndexEntity<RootCompanyENTITY>[] = [
         {
-            campos: [{ nombre: 'ruc', direccion: 1 }],
+            campos: { ruc: 1 },
             opciones: { name: 'idx_ruc', unique: true }
         },
         {
-            campos: [{ nombre: 'code', direccion: 1 }],
+            campos: { code: 1 },
             opciones: { name: 'idx_code', unique: true }
         }
     ]
 
-    constructor() {
-        this.bootstrap = new Bootstraping(this.database, this.collection, this.indexes)
-    }
+    constructor(
+        @inject(SHARED_TYPES.Bootstraping) private bootstrap: Bootstraping
+    ) { }
 
     async exec() {
         console.info(`➽  Configurando ${this.collection} en ${this.database} ...`)
-        await this.bootstrap.exec()
+        await this.bootstrap.exec(this.database, this.collection, this.indexes)
         console.info(`➽  Configuración de ${this.collection} en ${this.database} completada`)
     }
 
