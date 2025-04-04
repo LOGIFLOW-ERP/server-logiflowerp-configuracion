@@ -1,9 +1,12 @@
 import { IProfileMongoRepository } from '../Domain'
+import { inject, injectable } from 'inversify'
+import { PROFILE_TYPES } from '../Infrastructure/IoC'
 
+@injectable()
 export class UseCaseDeleteOne {
 
     constructor(
-        private readonly repository: IProfileMongoRepository,
+        @inject(PROFILE_TYPES.RepositoryMongo) private readonly repository: IProfileMongoRepository,
     ) { }
 
     async exec(_id: string) {

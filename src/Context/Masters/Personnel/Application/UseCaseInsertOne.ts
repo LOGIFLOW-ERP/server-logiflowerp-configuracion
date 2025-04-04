@@ -2,12 +2,15 @@ import { IPersonnelMongoRepository } from '../Domain';
 import { CreateEmployeeDTO, EmployeeENTITY, State, validateCustom } from 'logiflowerp-sdk';
 import { ConflictException, NotFoundException, UnprocessableEntityException } from '@Config/exception';
 import { IRootUserMongoRepository } from '@Masters/RootUser/Domain';
+import { inject, injectable } from 'inversify'
+import { PERSONNEL_TYPES } from '../Infrastructure/IoC'
 
+@injectable()
 export class UseCaseInsertOne {
 
     constructor(
-        private readonly repository: IPersonnelMongoRepository,
-        private readonly repositoryRootUser: IRootUserMongoRepository
+        @inject(PERSONNEL_TYPES.RepositoryMongo) private readonly repository: IPersonnelMongoRepository,
+        @inject(PERSONNEL_TYPES.RepositoryMongo) private readonly repositoryRootUser: IRootUserMongoRepository
     ) { }
 
     async exec(dto: CreateEmployeeDTO) {

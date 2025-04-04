@@ -1,11 +1,14 @@
 import { IProfileMongoRepository } from '../Domain';
 import { CreateProfileDTO, ProfileENTITY, validateCustom } from 'logiflowerp-sdk';
 import { UnprocessableEntityException } from '@Config/exception';
+import { inject, injectable } from 'inversify'
+import { PROFILE_TYPES } from '../Infrastructure/IoC'
 
+@injectable()
 export class UseCaseInsertOne {
 
     constructor(
-        private readonly repository: IProfileMongoRepository,
+        @inject(PROFILE_TYPES.RepositoryMongo) private readonly repository: IProfileMongoRepository,
     ) { }
 
     async exec(dto: CreateProfileDTO) {

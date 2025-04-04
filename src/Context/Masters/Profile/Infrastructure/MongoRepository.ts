@@ -1,12 +1,15 @@
 import { MongoRepository } from '@Shared/Infrastructure'
 import { IProfileMongoRepository } from '../Domain'
 import { ProfileENTITY } from 'logiflowerp-sdk'
-import { collection } from './config'
+import { inject } from 'inversify'
 
 export class ProfileMongoRepository extends MongoRepository<ProfileENTITY> implements IProfileMongoRepository {
 
-    constructor(companyCode: string) {
-        super(`${companyCode}_${collection}`)
+    constructor(
+        @inject('collection') protected readonly collection: string,
+        @inject('database') protected readonly database: string,
+    ) {
+        super(database, collection)
     }
 
 }

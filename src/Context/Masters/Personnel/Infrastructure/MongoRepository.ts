@@ -1,12 +1,15 @@
 import { MongoRepository } from '@Shared/Infrastructure/Repositories/Mongo'
 import { IPersonnelMongoRepository } from '../Domain'
 import { EmployeeENTITY } from 'logiflowerp-sdk'
-import { collection } from './config'
+import { inject } from 'inversify'
 
 export class PersonnelMongoRepository extends MongoRepository<EmployeeENTITY> implements IPersonnelMongoRepository {
 
-    constructor(companyCode: string) {
-        super(`${companyCode}_${collection}`)
+    constructor(
+        @inject('collection') protected readonly collection: string,
+        @inject('database') protected readonly database: string,
+    ) {
+        super(database, collection)
     }
 
 }
