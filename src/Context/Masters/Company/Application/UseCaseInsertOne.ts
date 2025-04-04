@@ -1,11 +1,14 @@
 import { ICompanyMongoRepository } from '../Domain';
 import { CompanyENTITY, validateCustom, CreateCompanyDTO } from 'logiflowerp-sdk';
 import { UnprocessableEntityException } from '@Config/exception';
+import { inject, injectable } from 'inversify';
+import { COMPANY_TYPES } from '../Infrastructure/IoC';
 
+@injectable()
 export class UseCaseInsertOne {
 
     constructor(
-        private readonly repository: ICompanyMongoRepository,
+        @inject(COMPANY_TYPES.RepositoryMongo) private readonly repository: ICompanyMongoRepository,
     ) { }
 
     async exec(dto: CreateCompanyDTO) {

@@ -1,0 +1,1 @@
+export { resolveCompanyDecorator } from './resolveCompanyDecorator';

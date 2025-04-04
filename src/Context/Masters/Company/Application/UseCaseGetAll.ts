@@ -1,14 +1,17 @@
 import { Response, Request } from 'express'
 import { ICompanyMongoRepository } from '../Domain'
+import { inject, injectable } from 'inversify'
+import { COMPANY_TYPES } from '../Infrastructure/IoC'
 
+@injectable()
 export class UseCaseGetAll {
 
 	constructor(
-		private readonly repository: ICompanyMongoRepository,
+		@inject(COMPANY_TYPES.RepositoryMongo) private readonly repositoryMongo: ICompanyMongoRepository,
 	) { }
 
 	async exec(req: Request, res: Response) {
-		await this.repository.find([], req, res)
+		await this.repositoryMongo.find([], req, res)
 	}
 
 }

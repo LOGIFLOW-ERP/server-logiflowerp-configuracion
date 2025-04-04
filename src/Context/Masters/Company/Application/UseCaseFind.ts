@@ -1,15 +1,18 @@
 import { Response, Request } from 'express'
 import { ICompanyMongoRepository } from '../Domain'
+import { inject, injectable } from 'inversify'
+import { COMPANY_TYPES } from '../Infrastructure/IoC'
 
+@injectable()
 export class UseCaseFind {
 
 	constructor(
-		private readonly repository: ICompanyMongoRepository,
+		@inject(COMPANY_TYPES.RepositoryMongo) private readonly repositoryMongo: ICompanyMongoRepository,
 	) { }
 
 	async exec(req: Request, res: Response) {
 		const pipeline = req.body
-		await this.repository.find(pipeline, req, res)
+		await this.repositoryMongo.find(pipeline, req, res)
 	}
 
 }

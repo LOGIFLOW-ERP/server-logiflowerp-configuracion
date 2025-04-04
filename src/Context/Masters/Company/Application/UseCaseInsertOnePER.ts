@@ -2,13 +2,16 @@ import { ICompanyMongoRepository, ISUNATCompanyData } from '../Domain';
 import { CreateCompanyPERDTO, CompanyENTITY, validateCustom } from 'logiflowerp-sdk';
 import { UnprocessableEntityException } from '@Config/exception';
 import { env } from '@Config/env';
-import { AdapterApiRequest } from '@Shared/Infrastructure';
+import { AdapterApiRequest, SHARED_TYPES } from '@Shared/Infrastructure';
+import { inject, injectable } from 'inversify';
+import { COMPANY_TYPES } from '../Infrastructure/IoC';
 
+@injectable()
 export class UseCaseInsertOnePER {
 
     constructor(
-        private readonly repository: ICompanyMongoRepository,
-        private readonly adapterApiRequest: AdapterApiRequest,
+        @inject(COMPANY_TYPES.RepositoryMongo) private readonly repository: ICompanyMongoRepository,
+        @inject(SHARED_TYPES.AdapterApiRequest) private readonly adapterApiRequest: AdapterApiRequest,
     ) { }
 
     async exec(dto: CreateCompanyPERDTO) {

@@ -1,5 +1,6 @@
 import { IMapTransaction } from '@Shared/Domain'
 import * as Express from 'express'
+import { interfaces } from 'inversify'
 import { AuthUserDTO, CompanyUserDTO, TokenPayloadDTO } from 'logiflowerp-sdk'
 import { Document, Filter, OptionalUnlessRequiredId, UpdateFilter } from 'mongodb'
 
@@ -10,6 +11,7 @@ declare global {
             user: AuthUserDTO
             userRoot: boolean
             company: CompanyUserDTO
+            useCase: any
         }
     }
 
