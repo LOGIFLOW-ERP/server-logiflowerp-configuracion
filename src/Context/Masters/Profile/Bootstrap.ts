@@ -1,5 +1,5 @@
 import { IndexEntity } from '@Shared/Domain'
-import { collection, database } from './Infrastructure/config'
+import { collection } from './Infrastructure/config'
 import { Bootstraping } from '@Shared/Bootstraping'
 import { ProfileENTITY, RootCompanyENTITY } from 'logiflowerp-sdk'
 import { inject, injectable } from 'inversify'
@@ -16,8 +16,8 @@ export class ManagerEntity {
 
     async exec(rootCompanies: RootCompanyENTITY[]) {
         for (const company of rootCompanies) {
-            const db = database
-            const col = `${company.code}_${collection}`
+            const db = company.code
+            const col = collection
 
             console.info(`➽  Configurando ${col} en ${db} ...`)
             await this.bootstrap.exec(db, col, this.indexes)
