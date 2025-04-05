@@ -1,8 +1,9 @@
 import { MongoRepository } from '@Shared/Infrastructure/Repositories/Mongo'
 import { ICurrencyMongoRepository } from '../Domain'
 import { CurrencyENTITY } from 'logiflowerp-sdk'
-import { inject } from 'inversify'
+import { inject, injectable } from 'inversify'
 
+@injectable()
 export class CurrencyMongoRepository extends MongoRepository<CurrencyENTITY> implements ICurrencyMongoRepository {
 
     constructor(

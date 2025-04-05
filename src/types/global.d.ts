@@ -10,11 +10,10 @@ declare global {
             payloadToken: TokenPayloadDTO
             user: AuthUserDTO
             userRoot: boolean
-            company: CompanyUserDTO
+            rootCompany: CompanyUserDTO
             useCase: any
         }
     }
-
     interface ParamsPut {
         _id: string
     }
@@ -28,4 +27,5 @@ declare global {
         filter?: Filter<T>
         update?: T[] | UpdateFilter<T>
     }
+    type CountryConfig = Map<string, { dto: new () => object; symbolUseCase: symbol, constructorUseCase: interfaces.Newable<unknown> }>
 }

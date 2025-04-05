@@ -1,8 +1,9 @@
 import { MongoRepository } from '@Shared/Infrastructure/Repositories/Mongo'
 import { IPersonnelMongoRepository } from '../Domain'
 import { EmployeeENTITY } from 'logiflowerp-sdk'
-import { inject } from 'inversify'
+import { inject, injectable } from 'inversify'
 
+@injectable()
 export class PersonnelMongoRepository extends MongoRepository<EmployeeENTITY> implements IPersonnelMongoRepository {
 
     constructor(

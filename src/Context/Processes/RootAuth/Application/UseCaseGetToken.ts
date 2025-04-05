@@ -19,10 +19,10 @@ export class UseCaseGetToken {
         payload.routes = routes
         payload.root = isSuperAdmin
         if (profile) {
-            payload.profile = profile
+            payload.profile.set(profile)
         }
         if (rootCompany) {
-            payload.company = rootCompany
+            payload.rootCompany.set(rootCompany)
         }
         return payload
     }

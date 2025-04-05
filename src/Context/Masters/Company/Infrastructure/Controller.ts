@@ -1,4 +1,3 @@
-import { inject } from 'inversify'
 import { Request, Response } from 'express'
 import {
     BaseHttpController,
@@ -13,27 +12,20 @@ import {
     CreateCompanyDTO,
     CreateCompanyPERDTO,
     UpdateCompanyDTO,
-    validateCustom,
     validateRequestBody as VRB,
     validateUUIDv4Param as VUUID,
 } from 'logiflowerp-sdk'
-import { BadRequestException, BadRequestException as BRE } from '@Config/exception'
-import {
-    UseCaseInsertOne,
-    UseCaseInsertOnePER,
-} from '../Application'
-import { CompanyMongoRepository } from './MongoRepository'
-import { AdapterApiRequest, SHARED_TYPES } from '@Shared/Infrastructure'
+import { BadRequestException as BRE } from '@Config/exception'
 import { authorizeRoute } from '@Shared/Infrastructure/Middlewares'
-import { resolveCompanyDeleteOne, resolveCompanyFind, resolveCompanyGetAll, resolveCompanyUpdateOne } from './decorators'
+import {
+    resolveCompanyDeleteOne,
+    resolveCompanyFind,
+    resolveCompanyGetAll,
+    resolveCompanyInsertOne,
+    resolveCompanyUpdateOne,
+} from './decorators'
 
 export class CompanyController extends BaseHttpController {
-
-    constructor(
-        @inject(SHARED_TYPES.AdapterApiRequest) private readonly adapterApiRequest: AdapterApiRequest,
-    ) {
-        super()
-    }
 
     @httpPost('find', authorizeRoute)
     @resolveCompanyFind
@@ -48,21 +40,9 @@ export class CompanyController extends BaseHttpController {
     }
 
     @httpPost('', authorizeRoute)
+    @resolveCompanyInsertOne
     async saveOne(@request() req: Request<{}, {}, CreateCompanyPERDTO | CreateCompanyDTO>, @response() res: Response) {
-        const { country } = req.user
-        if (!country) {
-            throw new BadRequestException(`El campo "country" es requerido`)
-        }
-
-        const countryConfigs: Record<string, { dto: any; useCase: any }> = {
-            PER: { dto: CreateCompanyPERDTO, useCase: UseCaseInsertOnePER },
-        }
-
-        const config = countryConfigs[country] || { dto: CreateCompanyDTO, useCase: UseCaseInsertOne }
-
-        const validatedBody = await validateCustom(req.body, config.dto, BRE)
-        const repository = new CompanyMongoRepository(req.company.code)
-        const newDoc = await new config.useCase(repository, this.adapterApiRequest).exec(validatedBody)
+        const newDoc = await req.useCase.exec(req.body)
         res.status(201).json(newDoc)
     }
 
