@@ -9,8 +9,6 @@ import {
     response
 } from 'inversify-express-utils'
 import {
-    CreateCompanyDTO,
-    CreateCompanyPERDTO,
     UpdateCompanyDTO,
     validateRequestBody as VRB,
     validateUUIDv4Param as VUUID,
@@ -41,14 +39,14 @@ export class CompanyController extends BaseHttpController {
 
     @httpPost('', authorizeRoute)
     @resolveCompanyInsertOne
-    async saveOne(@request() req: Request<{}, {}, CreateCompanyPERDTO | CreateCompanyDTO>, @response() res: Response) {
+    async saveOne(@request() req: Request, @response() res: Response) {
         const newDoc = await req.useCase.exec(req.body)
         res.status(201).json(newDoc)
     }
 
     @httpPut(':_id', authorizeRoute, VUUID.bind(null, BRE), VRB.bind(null, UpdateCompanyDTO, BRE))
     @resolveCompanyUpdateOne
-    async updateOne(@request() req: Request<ParamsPut, {}, UpdateCompanyDTO>, @response() res: Response) {
+    async updateOne(@request() req: Request<ParamsPut>, @response() res: Response) {
         const updatedDoc = await req.useCase.exec(req.params._id, req.body)
         res.status(200).json(updatedDoc)
     }
