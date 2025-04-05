@@ -23,3 +23,5 @@ export const env = {
     DEVELOPERS_MAILS: get('DEVELOPERS_MAILS').required().asArray(),
     ADMINISTRATOR_EMAILS: get('ADMINISTRATOR_EMAILS').required().asArray(),
 }
+
+export type typeEnv = typeof env

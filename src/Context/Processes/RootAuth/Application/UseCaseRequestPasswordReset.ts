@@ -1,10 +1,11 @@
 import { ConflictException, NotFoundException } from '@Config/exception';
-import { env } from '@Config/env';
 import { AdapterMail, AdapterToken } from '@Shared/Infrastructure';
 import { TokenPayloadDTO, UserENTITY } from 'logiflowerp-sdk';
 import path from 'path'
 import fs from 'fs'
 import { IRootUserMongoRepository } from '@Masters/RootUser/Domain';
+import { inject } from 'inversify';
+import { CONFIG_TYPES } from '@Config/types';
 
 export class UseCaseRequestPasswordReset {
 
@@ -12,6 +13,7 @@ export class UseCaseRequestPasswordReset {
         private readonly repository: IRootUserMongoRepository,
         private readonly adapterToken: AdapterToken,
         private readonly adapterMail: AdapterMail,
+        @inject(CONFIG_TYPES.Env) private readonly env: Env,
     ) { }
 
     async exec(email: string) {
@@ -44,7 +46,7 @@ export class UseCaseRequestPasswordReset {
     private prepareHTMLmessage(token: string, user: UserENTITY) {
         const filePath = path.join(__dirname, '../../../../../public/RequestPasswordReset.html')
         const html = fs.readFileSync(filePath, 'utf-8')
-            .replace('{{ENLACE_RESTABLECER_CONTRASEÑA}}', `${env.FRONTEND_URL}reset-password?token=${token}`)
+            .replace('{{ENLACE_RESTABLECER_CONTRASEÑA}}', `${this.env.FRONTEND_URL}reset-password?token=${token}`)
             .replace('{{names}}', user.names)
         return html
     }

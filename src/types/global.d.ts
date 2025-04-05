@@ -1,3 +1,4 @@
+import { typeEnv } from '@Config/env'
 import { IMapTransaction } from '@Shared/Domain'
 import * as Express from 'express'
 import { interfaces } from 'inversify'
@@ -28,4 +29,5 @@ declare global {
         update?: T[] | UpdateFilter<T>
     }
     type CountryConfig = Map<string, { dto: new () => object; symbolUseCase: symbol, constructorUseCase: interfaces.Newable<unknown> }>
+    type Env = typeEnv
 }

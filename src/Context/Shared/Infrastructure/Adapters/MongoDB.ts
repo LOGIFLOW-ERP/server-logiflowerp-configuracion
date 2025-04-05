@@ -1,8 +1,8 @@
-import { env } from '@Config/env'
 import { InternalServerException } from '@Config/exception'
+import { CONFIG_TYPES } from '@Config/types'
 import { LogEntity } from '@Shared/Domain'
 import { info } from 'console'
-import { injectable } from 'inversify'
+import { inject, injectable } from 'inversify'
 import { ClientSession, MongoClient, ReadConcern, ReadPreference } from 'mongodb'
 
 @injectable()
@@ -10,7 +10,11 @@ export class AdapterMongoDB {
 
     private clientInstance: MongoClient | null = null
 
-    async connection(uri = env.MONGO_URI, retries = 5): Promise<MongoClient> {
+    constructor(
+        @inject(CONFIG_TYPES.Env) private readonly env: Env,
+    ) { }
+
+    async connection(uri = this.env.MONGO_URI, retries = 5): Promise<MongoClient> {
         if (this.clientInstance) return this.clientInstance
         try {
             this.clientInstance = await MongoClient.connect(uri, {

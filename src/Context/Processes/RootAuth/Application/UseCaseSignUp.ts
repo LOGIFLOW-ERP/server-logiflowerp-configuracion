@@ -1,8 +1,8 @@
-import { env } from '@Config/env'
 import { UnprocessableEntityException } from '@Config/exception'
+import { CONFIG_TYPES } from '@Config/types'
 import { IRENIECPersonalData, IRootUserMongoRepository } from '@Masters/RootUser/Domain'
 import { AdapterApiRequest } from '@Shared/Infrastructure'
-import { injectable } from 'inversify'
+import { inject, injectable } from 'inversify'
 import { CreateUserDTO, DocumentType, UserENTITY, validateCustom } from 'logiflowerp-sdk'
 
 @injectable()
@@ -11,6 +11,7 @@ export class UseCaseSignUp {
 	constructor(
 		private readonly repository: IRootUserMongoRepository,
 		private readonly adapterApiRequest: AdapterApiRequest,
+		@inject(CONFIG_TYPES.Env) private readonly env: Env,
 	) { }
 
 	async exec(dto: CreateUserDTO) {
@@ -22,8 +23,8 @@ export class UseCaseSignUp {
 
 	private async RENIECPersonalDataConsultation(dto: CreateUserDTO) {
 		if (dto.documentType !== DocumentType.DNI) return
-		const url = `${env.DNI_LOOKUP_API_URL}/v2/reniec/dni?numero=${dto.identity}`
-		const headers = { Authorization: `Bearer ${env.DNI_LOOKUP_API_TOKEN}` }
+		const url = `${this.env.DNI_LOOKUP_API_URL}/v2/reniec/dni?numero=${dto.identity}`
+		const headers = { Authorization: `Bearer ${this.env.DNI_LOOKUP_API_TOKEN}` }
 		const result = await this.adapterApiRequest.get<IRENIECPersonalData>(url, { headers })
 		return validateCustom(result, IRENIECPersonalData, UnprocessableEntityException)
 	}

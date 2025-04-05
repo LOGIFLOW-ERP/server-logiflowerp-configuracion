@@ -1,16 +1,18 @@
 import { ConflictException, ForbiddenException, UnauthorizedException } from '@Config/exception'
-import { env } from '@Config/env'
 import { SignInRootDTO, UserENTITY } from 'logiflowerp-sdk'
 import { IRootUserMongoRepository } from '@Masters/RootUser/Domain'
+import { CONFIG_TYPES } from '@Config/types'
+import { inject } from 'inversify'
 
 export class UseCaseSignInRoot {
 
     constructor(
         private readonly repositoryUser: IRootUserMongoRepository,
+        @inject(CONFIG_TYPES.Env) private readonly env: Env,
     ) { }
 
     async exec(dto: SignInRootDTO) {
-        if (!env.ADMINISTRATOR_EMAILS.includes(dto.email)) {
+        if (!this.env.ADMINISTRATOR_EMAILS.includes(dto.email)) {
             throw new ForbiddenException('Acceso denegado: este usuario no está autorizado como administrador', true)
         }
         const user = await this.searchUser(dto.email)

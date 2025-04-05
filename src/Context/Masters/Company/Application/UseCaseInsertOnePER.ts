@@ -1,10 +1,10 @@
 import { ICompanyMongoRepository, ISUNATCompanyData } from '../Domain';
 import { CreateCompanyPERDTO, CompanyENTITY, validateCustom } from 'logiflowerp-sdk';
 import { UnprocessableEntityException } from '@Config/exception';
-import { env } from '@Config/env';
 import { AdapterApiRequest, SHARED_TYPES } from '@Shared/Infrastructure';
 import { inject, injectable } from 'inversify';
 import { COMPANY_TYPES } from '../Infrastructure/IoC';
+import { CONFIG_TYPES } from '@Config/types';
 
 @injectable()
 export class UseCaseInsertOnePER {
@@ -12,6 +12,7 @@ export class UseCaseInsertOnePER {
     constructor(
         @inject(COMPANY_TYPES.RepositoryMongo) private readonly repository: ICompanyMongoRepository,
         @inject(SHARED_TYPES.AdapterApiRequest) private readonly adapterApiRequest: AdapterApiRequest,
+        @inject(CONFIG_TYPES.Env) private readonly env: Env,
     ) { }
 
     async exec(dto: CreateCompanyPERDTO) {
@@ -29,8 +30,8 @@ export class UseCaseInsertOnePER {
     }
 
     private async SUNATCompanyDataConsultation(ruc: string) {
-        const url = `${env.DNI_LOOKUP_API_URL}/v2/sunat/ruc/full?numero=${ruc}`
-        const headers = { Authorization: `Bearer ${env.DNI_LOOKUP_API_TOKEN}` }
+        const url = `${this.env.DNI_LOOKUP_API_URL}/v2/sunat/ruc/full?numero=${ruc}`
+        const headers = { Authorization: `Bearer ${this.env.DNI_LOOKUP_API_TOKEN}` }
         const result = await this.adapterApiRequest.get<ISUNATCompanyData>(url, { headers })
         return await validateCustom(result, ISUNATCompanyData, UnprocessableEntityException)
     }

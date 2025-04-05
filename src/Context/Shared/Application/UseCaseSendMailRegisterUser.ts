@@ -5,7 +5,7 @@ import { TokenPayloadDTO, UserENTITY } from 'logiflowerp-sdk'
 import path from 'path'
 import fs from 'fs'
 import { AdapterToken } from '@Shared/Infrastructure';
-import { env } from '@Config/env';
+import { CONFIG_TYPES } from '@Config/types';
 
 @injectable()
 export class UseCaseSendMailRegisterUser {
@@ -13,6 +13,7 @@ export class UseCaseSendMailRegisterUser {
     constructor(
         @inject(SHARED_TYPES.AdapterMail) private readonly adapterMail: AdapterMail,
         @inject(SHARED_TYPES.AdapterToken) private readonly adapterToken: AdapterToken,
+        @inject(CONFIG_TYPES.Env) private readonly env: Env,
     ) { }
 
     async exec(entity: UserENTITY) {
@@ -33,7 +34,7 @@ export class UseCaseSendMailRegisterUser {
     private prepareHTMLmessage(token: string) {
         const filePath = path.join(__dirname, '../../../../public/RegisterUser.html')
         const html = fs.readFileSync(filePath, 'utf-8')
-            .replace('{{ENLACE_ACTIVACION}}', `${env.FRONTEND_URL}verify-email?token=${token}`)
+            .replace('{{ENLACE_ACTIVACION}}', `${this.env.FRONTEND_URL}verify-email?token=${token}`)
         return html
     }
 
