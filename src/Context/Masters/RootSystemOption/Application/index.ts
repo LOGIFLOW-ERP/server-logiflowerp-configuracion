@@ -1,2 +1,2 @@
-export * from './UseCaseFind';
-export * from './UseCaseSave';
+export { UseCaseFind } from './UseCaseFind';
+export { UseCaseSave } from './UseCaseSave';

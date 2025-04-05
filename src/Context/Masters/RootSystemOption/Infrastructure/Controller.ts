@@ -14,23 +14,20 @@ import {
     validateUUIDv4Param as VUUID,
     validateRequestBody as VRB
 } from 'logiflowerp-sdk'
-import { SHARED_TYPES } from '@Shared/Infrastructure'
-import { RootSystemOptionMongoRepository } from './MongoRepository'
 import { authRootMiddleware } from '@Shared/Infrastructure/Middlewares'
+import { ROOT_SYSTEM_OPTION_TYPES } from './IoC'
 
 export class RootSystemOptionController extends BaseHttpController {
 
-    private readonly repository = new RootSystemOptionMongoRepository(this.prefix_col_root)
-
     constructor(
-        @inject(SHARED_TYPES.prefix_col_root) private readonly prefix_col_root: string,
+        @inject(ROOT_SYSTEM_OPTION_TYPES.UseCaseFind) private readonly useCaseFind: UseCaseFind,
     ) {
         super()
     }
 
     @httpPost('find', authRootMiddleware)
     async find(@request() req: Request, @response() res: Response) {
-        await new UseCaseFind(this.repository).exec(req, res)
+        await this.useCaseFind.exec(req, res)
     }
 
     @httpPost('update-one/:id', authRootMiddleware, VUUID.bind(null, BRE), VRB.bind(null, UpdateUserDTO, BRE))

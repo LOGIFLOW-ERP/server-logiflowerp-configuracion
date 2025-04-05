@@ -2,11 +2,14 @@ import { IRootSystemOptionMongoRepository } from '../Domain'
 import { RouteInfo } from 'inversify-express-utils'
 import { UnprocessableEntityException } from '@Config/exception'
 import { builSystemOption } from 'logiflowerp-sdk'
+import { inject, injectable } from 'inversify'
+import { ROOT_SYSTEM_OPTION_TYPES } from '../Infrastructure/IoC'
 
+@injectable()
 export class UseCaseSave {
 
     constructor(
-        private readonly repository: IRootSystemOptionMongoRepository,
+        @inject(ROOT_SYSTEM_OPTION_TYPES.RepositoryMongo) private readonly repository: IRootSystemOptionMongoRepository,
     ) { }
 
     async exec(rawData: RouteInfo[], rootPath: string, prefix: string) {
