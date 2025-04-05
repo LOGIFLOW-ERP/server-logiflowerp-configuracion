@@ -41,22 +41,22 @@ export class CurrencyController extends BaseHttpController {
     @httpPost('', authorizeRoute, VRB.bind(null, CreateCurrencyDTO, BRE))
     @resolveCompanyInsertOne
     async saveOne(@request() req: Request, @response() res: Response) {
-        const newDoc = await req.useCase.exec(req.body)
-        res.status(201).json(newDoc)
+        await req.useCase.exec(req.body)
+        res.sendStatus(201)
     }
 
     @httpPut(':_id', authorizeRoute, VUUID.bind(null, BRE), VRB.bind(null, UpdateCurrencyDTO, BRE))
     @resolveCompanyUpdateOne
     async updateOne(@request() req: Request<ParamsPut>, @response() res: Response) {
-        const updatedDoc = await req.useCase.exec(req.params._id, req.body)
-        res.status(200).json(updatedDoc)
+        await req.useCase.exec(req.params._id, req.body)
+        res.sendStatus(204)
     }
 
     @httpDelete(':_id', authorizeRoute, VUUID.bind(null, BRE))
     @resolveCompanyDeleteOne
     async deleteOne(@request() req: Request<ParamsDelete>, @response() res: Response) {
-        const updatedDoc = await req.useCase.exec(req.params._id)
-        res.status(200).json(updatedDoc)
+        await req.useCase.exec(req.params._id)
+        res.sendStatus(204)
     }
 
 }

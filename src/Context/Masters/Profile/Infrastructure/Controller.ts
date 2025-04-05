@@ -10,53 +10,52 @@ import {
     response
 } from 'inversify-express-utils'
 import {
-    UseCaseDeleteOne,
-    UseCaseFind,
-    UseCaseGetAll,
-    UseCaseInsertOne,
-    UseCaseUpdateOne
-} from '../Application'
-import {
     validateUUIDv4Param as VUUID,
     validateRequestBody as VRB,
     CreateProfileDTO,
     UpdateProfileDTO
 } from 'logiflowerp-sdk'
-import { ProfileMongoRepository } from './MongoRepository'
 import { authorizeRoute } from '@Shared/Infrastructure/Middlewares'
+import {
+    resolveCompanyDeleteOne,
+    resolveCompanyFind,
+    resolveCompanyGetAll,
+    resolveCompanyInsertOne,
+    resolveCompanyUpdateOne
+} from './decorators'
 
 export class ProfileController extends BaseHttpController {
 
     @httpPost('find', authorizeRoute)
+    @resolveCompanyFind
     async find(@request() req: Request, @response() res: Response) {
-        const repository = new ProfileMongoRepository(req.company.code)
-        await new UseCaseFind(repository).exec(req, res)
+        await req.useCase.exec(req, res)
     }
 
     @httpGet('', authorizeRoute)
+    @resolveCompanyGetAll
     async findAll(@request() req: Request, @response() res: Response) {
-        const repository = new ProfileMongoRepository(req.company.code)
-        await new UseCaseGetAll(repository).exec(req, res)
+        await req.useCase.exec(req, res)
     }
 
     @httpPost('', authorizeRoute, VRB.bind(null, CreateProfileDTO, BRE))
-    async saveOne(@request() req: Request<{}, {}, CreateProfileDTO>, @response() res: Response) {
-        const repository = new ProfileMongoRepository(req.company.code)
-        await new UseCaseInsertOne(repository).exec(req.body)
-        res.sendStatus(204)
+    @resolveCompanyInsertOne
+    async saveOne(@request() req: Request, @response() res: Response) {
+        await req.useCase.exec(req.body)
+        res.sendStatus(201)
     }
 
     @httpPut(':_id', authorizeRoute, VUUID.bind(null, BRE), VRB.bind(null, UpdateProfileDTO, BRE))
-    async updateOne(@request() req: Request<ParamsPut, {}, UpdateProfileDTO>, @response() res: Response) {
-        const repository = new ProfileMongoRepository(req.company.code)
-        await new UseCaseUpdateOne(repository).exec(req.params._id, req.body)
+    @resolveCompanyUpdateOne
+    async updateOne(@request() req: Request<ParamsPut>, @response() res: Response) {
+        await req.useCase.exec(req.params._id, req.body)
         res.sendStatus(204)
     }
 
     @httpDelete(':_id', authorizeRoute, VUUID.bind(null, BRE))
+    @resolveCompanyDeleteOne
     async deleteOne(@request() req: Request<ParamsDelete>, @response() res: Response) {
-        const repository = new ProfileMongoRepository(req.company.code)
-        await new UseCaseDeleteOne(repository).exec(req.params._id)
+        await req.useCase.exec(req.params._id)
         res.sendStatus(204)
     }
 

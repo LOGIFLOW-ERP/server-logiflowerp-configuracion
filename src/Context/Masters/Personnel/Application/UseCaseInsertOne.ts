@@ -1,16 +1,16 @@
 import { IPersonnelMongoRepository } from '../Domain';
-import { CreateEmployeeDTO, EmployeeENTITY, State, validateCustom } from 'logiflowerp-sdk';
+import { collections, CreateEmployeeDTO, EmployeeENTITY, State, validateCustom } from 'logiflowerp-sdk';
 import { ConflictException, NotFoundException, UnprocessableEntityException } from '@Config/exception';
-import { IRootUserMongoRepository } from '@Masters/RootUser/Domain';
 import { inject, injectable } from 'inversify'
 import { PERSONNEL_TYPES } from '../Infrastructure/IoC'
+import { CONFIG_TYPES } from '@Config/types';
 
 @injectable()
 export class UseCaseInsertOne {
 
     constructor(
         @inject(PERSONNEL_TYPES.RepositoryMongo) private readonly repository: IPersonnelMongoRepository,
-        @inject(PERSONNEL_TYPES.RepositoryMongo) private readonly repositoryRootUser: IRootUserMongoRepository
+        @inject(CONFIG_TYPES.Env) private readonly env: Env,
     ) { }
 
     async exec(dto: CreateEmployeeDTO) {
@@ -24,7 +24,7 @@ export class UseCaseInsertOne {
 
     private async searchUser(identity: string) {
         const pipeline = [{ $match: { identity, state: State.ACTIVO } }]
-        const result = await this.repositoryRootUser.select(pipeline)
+        const result = await this.repository.select(pipeline, collections.users, this.env.BD_ROOT)
         if (!result.length) {
             throw new NotFoundException(`Usuario con identificación "${identity}" aún no está registrado o está inactivo`, true)
         }

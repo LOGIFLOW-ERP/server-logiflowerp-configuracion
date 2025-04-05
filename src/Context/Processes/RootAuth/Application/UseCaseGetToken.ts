@@ -1,10 +1,14 @@
-import { AdapterToken } from '@Shared/Infrastructure'
+import { CONFIG_TYPES } from '@Config/types'
+import { AdapterToken, SHARED_TYPES } from '@Shared/Infrastructure'
+import { inject, injectable } from 'inversify'
 import { ProfileENTITY, RootCompanyENTITY, TokenPayloadDTO, UserENTITY } from 'logiflowerp-sdk'
 
+@injectable()
 export class UseCaseGetToken {
 
     constructor(
-        private readonly adapterToken: AdapterToken,
+        @inject(SHARED_TYPES.AdapterToken) private readonly adapterToken: AdapterToken,
+        @inject(CONFIG_TYPES.Env) private readonly env: Env,
     ) { }
 
     async exec(user: UserENTITY, isSuperAdmin: boolean, routes: string[], profile?: ProfileENTITY, rootCompany?: RootCompanyENTITY) {
@@ -23,6 +27,9 @@ export class UseCaseGetToken {
         }
         if (rootCompany) {
             payload.rootCompany.set(rootCompany)
+        }
+        if (isSuperAdmin) {
+            payload.rootCompany.code = this.env.BD_ROOT
         }
         return payload
     }

@@ -1,15 +1,16 @@
 import { IndexEntity } from '@Shared/Domain'
-import { collection, database } from './Infrastructure'
+import { collection } from './Infrastructure'
 import { Bootstraping } from '@Shared/Bootstraping'
-import { prefix_col_root, UserENTITY } from 'logiflowerp-sdk'
+import { UserENTITY } from 'logiflowerp-sdk'
 import { inject, injectable } from 'inversify'
 import { SHARED_TYPES } from '@Shared/Infrastructure'
+import { CONFIG_TYPES } from '@Config/types'
 
 @injectable()
 export class ManagerEntity {
 
-    private database = database
-    private collection = `${prefix_col_root}_${collection}`
+    private database = this.env.BD_ROOT
+    private collection = collection
     private indexes: IndexEntity<UserENTITY>[] = [
         {
             campos: { 'identity': 1 },
@@ -22,7 +23,8 @@ export class ManagerEntity {
     ]
 
     constructor(
-        @inject(SHARED_TYPES.Bootstraping) private bootstrap: Bootstraping
+        @inject(SHARED_TYPES.Bootstraping) private bootstrap: Bootstraping,
+        @inject(CONFIG_TYPES.Env) private env: Env,
     ) { }
 
     async exec() {
