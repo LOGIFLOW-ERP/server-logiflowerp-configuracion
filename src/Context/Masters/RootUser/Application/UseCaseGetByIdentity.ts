@@ -1,11 +1,14 @@
 import { State } from 'logiflowerp-sdk'
 import { IRootUserMongoRepository } from '../Domain'
 import { ConflictException, NotFoundException } from '@Config/exception'
+import { inject, injectable } from 'inversify'
+import { ROOT_USER_TYPES } from '../Infrastructure/IoC'
 
+@injectable()
 export class UseCaseGetByIdentity {
 
 	constructor(
-		private readonly repository: IRootUserMongoRepository,
+		@inject(ROOT_USER_TYPES.RepositoryMongo) private readonly repository: IRootUserMongoRepository,
 	) { }
 
 	async exec(identity: string) {

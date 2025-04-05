@@ -9,7 +9,6 @@ import {
     AdapterSocket,
     AdapterToken
 } from '../Adapters'
-import { database_logiflow } from '../config'
 import { Worker } from '../module.worker'
 import { UseCaseSendMailRegisterUser } from '../../Application'
 import { prefix_col_root } from 'logiflowerp-sdk'
@@ -25,7 +24,6 @@ export const containerModule = new ContainerModule(bind => {
     bind(SHARED_TYPES.AdapterApiRequest).to(AdapterApiRequest).inSingletonScope()
     bind(SHARED_TYPES.AdapterRabbitMQ).to(AdapterRabbitMQ).inSingletonScope()
     bind(SHARED_TYPES.UseCaseSendMailRegisterUser).to(UseCaseSendMailRegisterUser)
-    bind(SHARED_TYPES.database_logiflow).toConstantValue(database_logiflow)
     bind(SHARED_TYPES.prefix_col_root).toConstantValue(prefix_col_root)
     bind(Worker).to(Worker).inSingletonScope()
     bind(SHARED_TYPES.BootstrapingDatabaseMongo).to(BootstrapingDatabaseMongo)
