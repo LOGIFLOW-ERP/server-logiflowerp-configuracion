@@ -22,6 +22,7 @@ import {
     UseCaseVerifyEmail
 } from '../Application'
 import {
+    collections,
     CreateUserDTO,
     ProfileENTITY,
     ResetPasswordDTO,
@@ -31,11 +32,13 @@ import {
     SystemOptionENTITY,
     validateRequestBody as VRB
 } from 'logiflowerp-sdk'
-import { AdapterRabbitMQ, SHARED_QUEUES, SHARED_TYPES } from '@Shared/Infrastructure'
+import { AdapterRabbitMQ, createTenantScopedContainer, SHARED_QUEUES, SHARED_TYPES } from '@Shared/Infrastructure'
 import { DataRequestPasswordResetDTO, DataVerifyEmailDTO } from '../Domain'
 import { ProfileMongoRepository } from '@Masters/Profile/Infrastructure/MongoRepository'
 import { PersonnelMongoRepository } from '@Masters/Personnel/Infrastructure/MongoRepository'
 import { AUTH_TYPES } from './IoC'
+import { PERSONNEL_TYPES } from '@Masters/Personnel/Infrastructure/IoC'
+import { PROFILE_TYPES } from '@Masters/Profile/Infrastructure/IoC'
 
 export class RootAuthController extends BaseHttpController {
 
@@ -107,10 +110,27 @@ export class RootAuthController extends BaseHttpController {
         let routes: string[]
         let profile: ProfileENTITY | undefined
         if (!isRoot) {
-            const personnelRepository = new PersonnelMongoRepository(req.body.companyCode)
-            const { personnel } = await new UseCaseGetPersonnel(personnelRepository).exec(user)
-            const profileRepository = new ProfileMongoRepository(req.body.companyCode)
-            const { profile: profileAux } = await new UseCaseGetProfile(profileRepository).exec(personnel)
+            const tenantContainerGetPersonnel = createTenantScopedContainer(
+                AUTH_TYPES.UseCaseGetPersonnel,
+                PERSONNEL_TYPES.RepositoryMongo,
+                UseCaseGetPersonnel,
+                PersonnelMongoRepository,
+                req.body.companyCode,
+                collections.personnel
+            )
+            const useCaseGetPersonnel = tenantContainerGetPersonnel.get<UseCaseGetPersonnel>(AUTH_TYPES.UseCaseGetPersonnel)
+            const { personnel } = await useCaseGetPersonnel.exec(user)
+
+            const tenantContainerGetProfile = createTenantScopedContainer(
+                AUTH_TYPES.UseCaseGetProfile,
+                PROFILE_TYPES.RepositoryMongo,
+                UseCaseGetProfile,
+                ProfileMongoRepository,
+                req.body.companyCode,
+                collections.profiles
+            )
+            const useCaseGetProfile = tenantContainerGetProfile.get<UseCaseGetProfile>(AUTH_TYPES.UseCaseGetProfile)
+            const { profile: profileAux } = await useCaseGetProfile.exec(personnel)
             const { systemOptions, routesAux } = await this.useCaseGetRootSystemOption.exec(profileAux)
             dataSystemOptions = systemOptions
             routes = routesAux

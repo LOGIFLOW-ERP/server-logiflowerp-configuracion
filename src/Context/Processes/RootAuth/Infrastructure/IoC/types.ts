@@ -9,4 +9,6 @@ export const AUTH_TYPES = {
     UseCaseSignIn: Symbol.for(`${__dirname}UseCaseSignIn`),
     UseCaseGetRootCompany: Symbol.for(`${__dirname}UseCaseGetRootCompany`),
     UseCaseGetRootSystemOption: Symbol.for(`${__dirname}UseCaseGetRootSystemOption`),
+    UseCaseGetPersonnel: Symbol.for(`${__dirname}UseCaseGetPersonnel`),
+    UseCaseGetProfile: Symbol.for(`${__dirname}UseCaseGetPersonnel`),
 }
