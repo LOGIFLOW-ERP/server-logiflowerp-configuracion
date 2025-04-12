@@ -31,61 +31,61 @@ import {
     SystemOptionENTITY,
     validateRequestBody as VRB
 } from 'logiflowerp-sdk'
-import { AdapterApiRequest, AdapterMail, AdapterRabbitMQ, AdapterToken, SHARED_QUEUES, SHARED_TYPES } from '@Shared/Infrastructure'
+import { AdapterRabbitMQ, SHARED_QUEUES, SHARED_TYPES } from '@Shared/Infrastructure'
 import { DataRequestPasswordResetDTO, DataVerifyEmailDTO } from '../Domain'
-import { RootUserMongoRepository } from '@Masters/RootUser/Infrastructure/MongoRepository'
 import { ProfileMongoRepository } from '@Masters/Profile/Infrastructure/MongoRepository'
-import { RootSystemOptionMongoRepository } from '@Masters/RootSystemOption/Infrastructure/MongoRepository'
-import { RootCompanyMongoRepository } from '@Masters/RootCompany/Infrastructure/MongoRepository'
 import { PersonnelMongoRepository } from '@Masters/Personnel/Infrastructure/MongoRepository'
+import { AUTH_TYPES } from './IoC'
 
 export class RootAuthController extends BaseHttpController {
 
-    private readonly rootUserRepository = new RootUserMongoRepository(this.prefix_col_root)
-    private readonly rootCompanyRepository = new RootCompanyMongoRepository(this.prefix_col_root)
-    private readonly rootSystemOptionRepository = new RootSystemOptionMongoRepository(this.prefix_col_root)
 
     constructor(
         @inject(SHARED_TYPES.AdapterRabbitMQ) private readonly adapterRabbitMQ: AdapterRabbitMQ,
-        @inject(SHARED_TYPES.AdapterToken) private readonly adapterToken: AdapterToken,
-        @inject(SHARED_TYPES.AdapterMail) private readonly adapterMail: AdapterMail,
-        @inject(SHARED_TYPES.AdapterApiRequest) private readonly adapterApiRequest: AdapterApiRequest,
-        @inject(SHARED_TYPES.prefix_col_root) private readonly prefix_col_root: string,
+        @inject(AUTH_TYPES.UseCaseSignUp) private readonly useCaseSignUp: UseCaseSignUp,
+        @inject(AUTH_TYPES.UseCaseVerifyEmail) private readonly useCaseVerifyEmail: UseCaseVerifyEmail,
+        @inject(AUTH_TYPES.UseCaseRequestPasswordReset) private readonly useCaseRequestPasswordReset: UseCaseRequestPasswordReset,
+        @inject(AUTH_TYPES.UseCaseResetPassword) private readonly useCaseResetPassword: UseCaseResetPassword,
+        @inject(AUTH_TYPES.UseCaseSignInRoot) private readonly useCaseSignInRoot: UseCaseSignInRoot,
+        @inject(AUTH_TYPES.UseCaseGetRootSystemOptionRoot) private readonly useCaseGetRootSystemOptionRoot: UseCaseGetRootSystemOptionRoot,
+        @inject(AUTH_TYPES.UseCaseGetToken) private readonly useCaseGetToken: UseCaseGetToken,
+        @inject(AUTH_TYPES.UseCaseSignIn) private readonly useCaseSignIn: UseCaseSignIn,
+        @inject(AUTH_TYPES.UseCaseGetRootCompany) private readonly useCaseGetRootCompany: UseCaseGetRootCompany,
+        @inject(AUTH_TYPES.UseCaseGetRootSystemOption) private readonly useCaseGetRootSystemOption: UseCaseGetRootSystemOption,
     ) {
         super()
     }
 
     @httpPost('sign-up', VRB.bind(null, CreateUserDTO, BRE))
     async saveOne(@request() req: Request<{}, {}, CreateUserDTO>, @response() res: Response) {
-        const newDoc = await new UseCaseSignUp(this.rootUserRepository, this.adapterApiRequest).exec(req.body)
+        const newDoc = await this.useCaseSignUp.exec(req.body)
         await this.adapterRabbitMQ.publish({ queue: SHARED_QUEUES.MAIL_REGISTER_USER, message: newDoc })
         res.status(201).json(newDoc)
     }
 
     @httpPost('verify-email', VRB.bind(null, DataVerifyEmailDTO, BRE))
     async verifyEmail(@request() req: Request<{}, {}, DataVerifyEmailDTO>, @response() res: Response) {
-        await new UseCaseVerifyEmail(this.rootUserRepository, this.adapterToken).exec(req.body)
+        await this.useCaseVerifyEmail.exec(req.body)
         res.sendStatus(204)
     }
 
     @httpPost('request-password-reset', VRB.bind(null, DataRequestPasswordResetDTO, BRE))
     async requestPasswordReset(@request() req: Request<{}, {}, DataRequestPasswordResetDTO>, @response() res: Response) {
-        await new UseCaseRequestPasswordReset(this.rootUserRepository, this.adapterToken, this.adapterMail).exec(req.body.email)
+        await this.useCaseRequestPasswordReset.exec(req.body.email)
         res.sendStatus(204)
     }
 
     @httpPost('reset-password', VRB.bind(null, ResetPasswordDTO, BRE))
     async resetPassword(@request() req: Request<{}, {}, ResetPasswordDTO>, @response() res: Response) {
-        await new UseCaseResetPassword(this.rootUserRepository, this.adapterToken).exec(req.body.token, req.body.password)
+        await this.useCaseResetPassword.exec(req.body.token, req.body.password)
         res.sendStatus(204)
     }
 
     @httpPost('sign-in-root', VRB.bind(null, SignInRootDTO, BRE))
     async signInRoot(@request() req: Request<{}, {}, SignInRootDTO>, @response() res: Response) {
-        const { user } = await new UseCaseSignInRoot(this.rootUserRepository).exec(req.body)
-        const rootSystemOptionRepository = new RootSystemOptionMongoRepository(this.prefix_col_root)
-        const { dataSystemOptions, routes } = await new UseCaseGetRootSystemOptionRoot(rootSystemOptionRepository).exec()
-        const { token, user: userResponse } = await new UseCaseGetToken(this.adapterToken).exec(user, true, routes)
+        const { user } = await this.useCaseSignInRoot.exec(req.body)
+        const { dataSystemOptions, routes } = await this.useCaseGetRootSystemOptionRoot.exec()
+        const { token, user: userResponse } = await this.useCaseGetToken.exec(user, true, routes)
         res.cookie(
             'authToken',
             token,
@@ -101,8 +101,8 @@ export class RootAuthController extends BaseHttpController {
 
     @httpPost('sign-in', VRB.bind(null, SignInDTO, BRE))
     async signIn(@request() req: Request<{}, {}, SignInDTO>, @response() res: Response) {
-        const { user } = await new UseCaseSignIn(this.rootUserRepository).exec(req.body)
-        const { rootCompany, isRoot } = await new UseCaseGetRootCompany(this.rootCompanyRepository).exec(user, req.body)
+        const { user } = await this.useCaseSignIn.exec(req.body)
+        const { rootCompany, isRoot } = await this.useCaseGetRootCompany.exec(user, req.body)
         let dataSystemOptions: SystemOptionENTITY[]
         let routes: string[]
         let profile: ProfileENTITY | undefined
@@ -111,16 +111,16 @@ export class RootAuthController extends BaseHttpController {
             const { personnel } = await new UseCaseGetPersonnel(personnelRepository).exec(user)
             const profileRepository = new ProfileMongoRepository(req.body.companyCode)
             const { profile: profileAux } = await new UseCaseGetProfile(profileRepository).exec(personnel)
-            const { systemOptions, routesAux } = await new UseCaseGetRootSystemOption(this.rootSystemOptionRepository).exec(profileAux)
+            const { systemOptions, routesAux } = await this.useCaseGetRootSystemOption.exec(profileAux)
             dataSystemOptions = systemOptions
             routes = routesAux
             profile = profileAux
         } else {
-            const { systemOptions, routesAux } = await new UseCaseGetRootSystemOption(this.rootSystemOptionRepository).execRoot(rootCompany)
+            const { systemOptions, routesAux } = await this.useCaseGetRootSystemOption.execRoot(rootCompany)
             dataSystemOptions = systemOptions
             routes = routesAux
         }
-        const { token, user: userResponse } = await new UseCaseGetToken(this.adapterToken).exec(user, false, routes, profile, rootCompany)
+        const { token, user: userResponse } = await this.useCaseGetToken.exec(user, false, routes, profile, rootCompany)
         res.cookie(
             'authToken',
             token,

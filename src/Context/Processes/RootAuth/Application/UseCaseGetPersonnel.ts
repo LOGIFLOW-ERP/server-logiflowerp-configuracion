@@ -1,11 +1,14 @@
 import { ConflictException, ForbiddenException, UnauthorizedException } from '@Config/exception'
 import { UserENTITY } from 'logiflowerp-sdk'
 import { IPersonnelMongoRepository } from '@Masters/Personnel/Domain'
+import { inject, injectable } from 'inversify'
+import { PERSONNEL_TYPES } from '@Masters/Personnel/Infrastructure/IoC'
 
+@injectable()
 export class UseCaseGetPersonnel {
 
     constructor(
-        private readonly repository: IPersonnelMongoRepository,
+        @inject(PERSONNEL_TYPES.RepositoryMongo) private readonly repository: IPersonnelMongoRepository,
     ) { }
 
     async exec(user: UserENTITY) {

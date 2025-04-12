@@ -1,9 +1,13 @@
 import { SystemOptionENTITY } from 'logiflowerp-sdk'
 import { IRootSystemOptionMongoRepository } from '@Masters/RootSystemOption/Domain'
+import { ROOT_SYSTEM_OPTION_TYPES } from '@Masters/RootSystemOption/Infrastructure/IoC'
+import { inject, injectable } from 'inversify'
+
+@injectable()
 export class UseCaseGetRootSystemOptionRoot {
 
     constructor(
-        private readonly repositorySystemOption: IRootSystemOptionMongoRepository,
+        @inject(ROOT_SYSTEM_OPTION_TYPES.RepositoryMongo) private readonly repository: IRootSystemOptionMongoRepository,
     ) { }
 
     async exec() {
@@ -14,7 +18,7 @@ export class UseCaseGetRootSystemOptionRoot {
 
     private async loadSystemOptions() {
         const pipeline = [{ $match: { root: true } }]
-        return this.repositorySystemOption.select(pipeline)
+        return this.repository.select(pipeline)
     }
 
     private getRoutes(dataSystemOptions: SystemOptionENTITY[]): string[] {

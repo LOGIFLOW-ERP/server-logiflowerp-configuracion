@@ -1,11 +1,14 @@
 import { ConflictException, ForbiddenException, UnauthorizedException } from '@Config/exception'
 import { SignInDTO, UserENTITY } from 'logiflowerp-sdk'
 import { IRootUserMongoRepository } from '@Masters/RootUser/Domain'
+import { inject, injectable } from 'inversify'
+import { ROOT_USER_TYPES } from '@Masters/RootUser/Infrastructure/IoC'
 
+@injectable()
 export class UseCaseSignIn {
 
     constructor(
-        private readonly repositoryUser: IRootUserMongoRepository,
+        @inject(ROOT_USER_TYPES.RepositoryMongo) private readonly repository: IRootUserMongoRepository,
     ) { }
 
     async exec(dto: SignInDTO) {
@@ -29,7 +32,7 @@ export class UseCaseSignIn {
 
     private async searchUser(email: string) {
         const pipeline = [{ $match: { email } }]
-        const data = await this.repositoryUser.select(pipeline)
+        const data = await this.repository.select(pipeline)
         if (!data.length) {
             throw new UnauthorizedException('Credenciales inválidas', true)
         }

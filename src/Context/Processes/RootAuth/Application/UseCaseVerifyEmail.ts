@@ -1,13 +1,15 @@
 import { IRootUserMongoRepository } from '@Masters/RootUser/Domain';
 import { DataVerifyEmailDTO } from '../Domain';
-import { AdapterToken } from '@Shared/Infrastructure';
+import { AdapterToken, SHARED_TYPES } from '@Shared/Infrastructure';
 import { BadRequestException, ConflictException, UnauthorizedException } from '@Config/exception';
+import { ROOT_USER_TYPES } from '@Masters/RootUser/Infrastructure/IoC';
+import { inject } from 'inversify';
 
 export class UseCaseVerifyEmail {
 
     constructor(
-        private readonly repository: IRootUserMongoRepository,
-        private readonly adapterToken: AdapterToken,
+        @inject(ROOT_USER_TYPES.RepositoryMongo) private readonly repository: IRootUserMongoRepository,
+        @inject(SHARED_TYPES.AdapterToken) private readonly adapterToken: AdapterToken,
     ) { }
 
     async exec(data: DataVerifyEmailDTO) {

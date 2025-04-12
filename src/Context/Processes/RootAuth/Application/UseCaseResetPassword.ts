@@ -1,12 +1,15 @@
 import { UnauthorizedException } from '@Config/exception';
 import { IRootUserMongoRepository } from '@Masters/RootUser/Domain';
-import { AdapterToken } from '@Shared/Infrastructure';
+import { ROOT_USER_TYPES } from '@Masters/RootUser/Infrastructure/IoC';
+import { AdapterToken, SHARED_TYPES } from '@Shared/Infrastructure';
+import { inject, injectable } from 'inversify';
 
+@injectable()
 export class UseCaseResetPassword {
 
     constructor(
-        private readonly repository: IRootUserMongoRepository,
-        private readonly adapterToken: AdapterToken,
+        @inject(ROOT_USER_TYPES.RepositoryMongo) private readonly repository: IRootUserMongoRepository,
+        @inject(SHARED_TYPES.AdapterToken) private readonly adapterToken: AdapterToken,
     ) { }
 
     async exec(token: string, newPassword: string) {

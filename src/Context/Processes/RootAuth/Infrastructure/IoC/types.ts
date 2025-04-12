@@ -1,0 +1,12 @@
+export const AUTH_TYPES = {
+    UseCaseSignUp: Symbol.for(`${__dirname}UseCaseSignUp`),
+    UseCaseVerifyEmail: Symbol.for(`${__dirname}UseCaseVerifyEmail`),
+    UseCaseRequestPasswordReset: Symbol.for(`${__dirname}UseCaseRequestPasswordReset`),
+    UseCaseResetPassword: Symbol.for(`${__dirname}UseCaseResetPassword`),
+    UseCaseSignInRoot: Symbol.for(`${__dirname}UseCaseSignInRoot`),
+    UseCaseGetRootSystemOptionRoot: Symbol.for(`${__dirname}UseCaseGetRootSystemOptionRoot`),
+    UseCaseGetToken: Symbol.for(`${__dirname}UseCaseGetToken`),
+    UseCaseSignIn: Symbol.for(`${__dirname}UseCaseSignIn`),
+    UseCaseGetRootCompany: Symbol.for(`${__dirname}UseCaseGetRootCompany`),
+    UseCaseGetRootSystemOption: Symbol.for(`${__dirname}UseCaseGetRootSystemOption`),
+}

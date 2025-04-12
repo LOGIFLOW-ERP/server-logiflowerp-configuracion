@@ -1,11 +1,14 @@
 import { SignInDTO, State, UserENTITY } from 'logiflowerp-sdk'
 import { IRootCompanyMongoRepository } from '@Masters/RootCompany/Domain'
 import { ConflictException } from '@Config/exception'
+import { inject, injectable } from 'inversify'
+import { ROOT_COMPANY_TYPES } from '@Masters/RootCompany/Infrastructure/IoC'
 
+@injectable()
 export class UseCaseGetRootCompany {
 
     constructor(
-        private readonly repositoryRootCompany: IRootCompanyMongoRepository,
+        @inject(ROOT_COMPANY_TYPES.RepositoryMongo) private readonly repository: IRootCompanyMongoRepository,
     ) { }
 
     async exec(user: UserENTITY, dto: SignInDTO) {
@@ -16,7 +19,7 @@ export class UseCaseGetRootCompany {
 
     private async searchRootCompany(dto: SignInDTO) {
         const pipeline = [{ $match: { code: dto.companyCode, state: State.ACTIVO } }]
-        const rootCompany = await this.repositoryRootCompany.select(pipeline)
+        const rootCompany = await this.repository.select(pipeline)
         if (rootCompany.length !== 1) {
             throw new ConflictException(`Error al buscar empresa root. Hay ${rootCompany.length} resultados para ${JSON.stringify(pipeline)}`)
         }
