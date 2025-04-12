@@ -22,7 +22,8 @@ declare global {
         _id: string
     }
     class ITransaction<T extends Document> {
-        collection: string
+        database?: string
+        collection?: string
         transaction: keyof IMapTransaction
         doc?: OptionalUnlessRequiredId<T>
         filter?: Filter<T>

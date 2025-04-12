@@ -27,36 +27,36 @@ import {
     UseCaseInsertOnePER,
     UseCaseUpdateOne
 } from '../Application'
-import { RootCompanyMongoRepository } from './MongoRepository'
-import { AdapterApiRequest, SHARED_TYPES } from '@Shared/Infrastructure'
 import { authRootMiddleware } from '@Shared/Infrastructure/Middlewares'
-import { RootUserMongoRepository } from '@Masters/RootUser/Infrastructure/MongoRepository'
+import { ROOT_COMPANY_TYPES } from './IoC'
 
 export class RootCompanyController extends BaseHttpController {
 
-    private readonly repository = new RootCompanyMongoRepository(this.prefix_col_root)
-    private readonly rootUserRepository = new RootUserMongoRepository(this.prefix_col_root)
-
     constructor(
-        @inject(SHARED_TYPES.AdapterApiRequest) private readonly adapterApiRequest: AdapterApiRequest,
-        @inject(SHARED_TYPES.prefix_col_root) private readonly prefix_col_root: string,
+        @inject(ROOT_COMPANY_TYPES.UseCaseDeleteOne) private readonly useCaseDeleteOne: UseCaseDeleteOne,
+        @inject(ROOT_COMPANY_TYPES.UseCaseFind) private readonly useCaseFind: UseCaseFind,
+        @inject(ROOT_COMPANY_TYPES.UseCaseGetActive) private readonly useCaseGetActive: UseCaseGetActive,
+        @inject(ROOT_COMPANY_TYPES.UseCaseGetAll) private readonly useCaseGetAll: UseCaseGetAll,
+        @inject(ROOT_COMPANY_TYPES.UseCaseInsertOne) private readonly useCaseInsertOne: UseCaseInsertOne,
+        @inject(ROOT_COMPANY_TYPES.UseCaseInsertOnePER) private readonly useCaseInsertOnePER: UseCaseInsertOnePER,
+        @inject(ROOT_COMPANY_TYPES.UseCaseUpdateOne) private readonly useCaseUpdateOne: UseCaseUpdateOne,
     ) {
         super()
     }
 
     @httpPost('find', authRootMiddleware)
     async find(@request() req: Request, @response() res: Response) {
-        await new UseCaseFind(this.repository).exec(req, res)
+        await this.useCaseFind.exec(req, res)
     }
 
     @httpGet('', authRootMiddleware)
     async findAll(@request() req: Request, @response() res: Response) {
-        await new UseCaseGetAll(this.repository).exec(req, res)
+        await this.useCaseGetAll.exec(req, res)
     }
 
     @httpGet('get-active')
     async getActive(@request() req: Request, @response() res: Response) {
-        await new UseCaseGetActive(this.repository).exec(req, res)
+        await this.useCaseGetActive.exec(req, res)
     }
 
     @httpPost('', authRootMiddleware)
@@ -68,26 +68,26 @@ export class RootCompanyController extends BaseHttpController {
         }
 
         const countryConfigs: Record<string, { dto: any; useCase: any }> = {
-            PER: { dto: CreateRootCompanyPERDTO, useCase: UseCaseInsertOnePER },
+            PER: { dto: CreateRootCompanyPERDTO, useCase: this.useCaseInsertOnePER },
         }
 
-        const config = countryConfigs[country] || { dto: CreateRootCompanyDTO, useCase: UseCaseInsertOne }
+        const config = countryConfigs[country] || { dto: CreateRootCompanyDTO, useCase: this.useCaseInsertOne }
 
         const validatedBody = await validateCustom(req.body, config.dto, BRE)
-        await new config.useCase(this.repository, this.rootUserRepository, this.adapterApiRequest).exec(validatedBody)
-        res.sendStatus(204)
+        await config.useCase.exec(validatedBody)
+        res.sendStatus(202)
     }
 
     @httpPut(':_id', authRootMiddleware, VUUID.bind(null, BRE), VRB.bind(null, UpdateRootCompanyDTO, BRE))
     async updateOne(@request() req: Request<ParamsPut, {}, UpdateRootCompanyDTO>, @response() res: Response) {
-        const updatedDoc = await new UseCaseUpdateOne(this.repository, this.rootUserRepository).exec(req.params._id, req.body)
-        res.status(200).json(updatedDoc)
+        await this.useCaseUpdateOne.exec(req.params._id, req.body)
+        res.sendStatus(204)
     }
 
     @httpDelete(':_id', authRootMiddleware, VUUID.bind(null, BRE))
     async deleteOne(@request() req: Request<ParamsDelete>, @response() res: Response) {
-        const updatedDoc = await new UseCaseDeleteOne(this.repository).exec(req.params._id)
-        res.status(200).json(updatedDoc)
+        await this.useCaseDeleteOne.exec(req.params._id)
+        res.sendStatus(204)
     }
 
 }

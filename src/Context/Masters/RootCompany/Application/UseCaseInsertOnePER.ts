@@ -9,19 +9,19 @@ import {
     validateCustom
 } from 'logiflowerp-sdk';
 import { ConflictException, NotFoundException, UnprocessableEntityException } from '@Config/exception';
-import { AdapterApiRequest } from '@Shared/Infrastructure';
-import { RootUserMongoRepository } from '@Masters/RootUser/Infrastructure/MongoRepository';
-import { inject } from 'inversify';
+import { AdapterApiRequest, SHARED_TYPES } from '@Shared/Infrastructure';
+import { inject, injectable } from 'inversify';
 import { CONFIG_TYPES } from '@Config/types';
+import { ROOT_COMPANY_TYPES } from '../Infrastructure/IoC';
 
+@injectable()
 export class UseCaseInsertOnePER {
 
     private transactions: ITransaction<any>[] = []
 
     constructor(
-        private readonly repository: IRootCompanyMongoRepository,
-        private readonly rootUserRepository: RootUserMongoRepository,
-        private readonly adapterApiRequest: AdapterApiRequest,
+        @inject(ROOT_COMPANY_TYPES.RepositoryMongo) private readonly repository: IRootCompanyMongoRepository,
+        @inject(SHARED_TYPES.AdapterApiRequest) private readonly adapterApiRequest: AdapterApiRequest,
         @inject(CONFIG_TYPES.Env) private readonly env: Env,
     ) { }
 
@@ -53,7 +53,7 @@ export class UseCaseInsertOnePER {
 
     private async searchAndValidateUser(identity: string) { // MISMA VALIDACION SE DEBE HACER EN EDITAR
         const pipeline = [{ $match: { identity } }]
-        const data = await this.rootUserRepository.select(pipeline)
+        const data = await this.repository.select<UserENTITY>(pipeline, collections.users, this.env.BD_ROOT)
         if (!data.length) {
             throw new NotFoundException(`Usuario con identificación ${identity} no encontrado`, true)
         }

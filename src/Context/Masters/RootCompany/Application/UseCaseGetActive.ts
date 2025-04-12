@@ -1,11 +1,14 @@
 import { Response, Request } from 'express'
 import { IRootCompanyMongoRepository } from '../Domain'
 import { State } from 'logiflowerp-sdk'
+import { ROOT_COMPANY_TYPES } from '../Infrastructure/IoC'
+import { inject, injectable } from 'inversify'
 
+@injectable()
 export class UseCaseGetActive {
 
 	constructor(
-		private readonly repository: IRootCompanyMongoRepository,
+		@inject(ROOT_COMPANY_TYPES.RepositoryMongo) private readonly repository: IRootCompanyMongoRepository,
 	) { }
 
 	async exec(req: Request, res: Response) {

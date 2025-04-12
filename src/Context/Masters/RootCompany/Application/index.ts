@@ -1,7 +1,7 @@
-export * from './UseCaseDeleteOne';
-export * from './UseCaseFind';
-export * from './UseCaseGetActive';
-export * from './UseCaseGetAll';
-export * from './UseCaseInsertOne';
-export * from './UseCaseInsertOnePER';
-export * from './UseCaseUpdateOne';
+export { UseCaseDeleteOne } from './UseCaseDeleteOne';
+export { UseCaseFind } from './UseCaseFind';
+export { UseCaseGetActive } from './UseCaseGetActive';
+export { UseCaseGetAll } from './UseCaseGetAll';
+export { UseCaseInsertOne } from './UseCaseInsertOne';
+export { UseCaseInsertOnePER } from './UseCaseInsertOnePER';
+export { UseCaseUpdateOne } from './UseCaseUpdateOne';

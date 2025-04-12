@@ -142,7 +142,9 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
                 if (!mapTransaction[transaction.transaction]) {
                     throw new BadRequestException(`Invalid transaction type: ${transaction.transaction}`)
                 }
-                const col = client.db(this.database).collection<T>(transaction.collection)
+                const database = transaction.database ? transaction.database : this.database
+                const collection = transaction.collection ? transaction.collection : this.collection
+                const col = client.db(database).collection<T>(collection)
                 const result = await mapTransaction[transaction.transaction]({
                     adapterMongo: this.adapterMongo,
                     client,

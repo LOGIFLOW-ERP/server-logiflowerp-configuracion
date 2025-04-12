@@ -1,15 +1,18 @@
-import { RootUserMongoRepository } from '@Masters/RootUser/Infrastructure/MongoRepository'
 import { IRootCompanyMongoRepository } from '../Domain'
-import { collections, CompanyUserDTO, prefix_col_root, RootCompanyENTITY, UpdateRootCompanyDTO, UserENTITY } from 'logiflowerp-sdk'
+import { collections, CompanyUserDTO, RootCompanyENTITY, UpdateRootCompanyDTO, UserENTITY } from 'logiflowerp-sdk'
 import { ConflictException, NotFoundException } from '@Config/exception'
+import { inject, injectable } from 'inversify'
+import { ROOT_COMPANY_TYPES } from '../Infrastructure/IoC'
+import { CONFIG_TYPES } from '@Config/types'
 
+@injectable()
 export class UseCaseUpdateOne {
 
     private transactions: ITransaction<any>[] = []
 
     constructor(
-        private readonly repository: IRootCompanyMongoRepository,
-        private readonly rootUserRepository: RootUserMongoRepository,
+        @inject(ROOT_COMPANY_TYPES.RepositoryMongo) private readonly repository: IRootCompanyMongoRepository,
+        @inject(CONFIG_TYPES.Env) private readonly env: Env,
     ) { }
 
     async exec(_id: string, dto: UpdateRootCompanyDTO) {
@@ -37,7 +40,7 @@ export class UseCaseUpdateOne {
 
     private async searchAndValidateUser(identity: string) { // MISMA VALIDACION SE DEBE HACER EN CREAR
         const pipeline = [{ $match: { identity } }]
-        const data = await this.rootUserRepository.select(pipeline)
+        const data = await this.repository.select<UserENTITY>(pipeline, collections.users, this.env.BD_ROOT)
         if (!data.length) {
             throw new NotFoundException(`Usuario con identificación ${identity} no encontrado`, true)
         }
@@ -52,7 +55,6 @@ export class UseCaseUpdateOne {
 
     private createTransactionUpdateRootCompany(_id: string, dto: UpdateRootCompanyDTO) {
         const transaction: ITransaction<RootCompanyENTITY> = {
-            collection: `${prefix_col_root}_${collections.companies}`,
             transaction: 'updateOne',
             filter: { _id },
             update: { $set: dto }
@@ -64,7 +66,8 @@ export class UseCaseUpdateOne {
         const company = new CompanyUserDTO()
         company.set(entity)
         const transaction: ITransaction<UserENTITY> = {
-            collection: `${prefix_col_root}_${collections.users}`,
+            database: this.env.BD_ROOT,
+            collection: collections.users,
             transaction: 'updateOne',
             filter: { _id: user._id },
             update: {
