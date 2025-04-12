@@ -75,7 +75,7 @@ export class RootCompanyController extends BaseHttpController {
 
         const validatedBody = await validateCustom(req.body, config.dto, BRE)
         await config.useCase.exec(validatedBody)
-        res.sendStatus(202)
+        res.sendStatus(204)
     }
 
     @httpPut(':_id', authRootMiddleware, VUUID.bind(null, BRE), VRB.bind(null, UpdateRootCompanyDTO, BRE))

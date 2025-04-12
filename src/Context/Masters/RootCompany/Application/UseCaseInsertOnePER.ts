@@ -3,7 +3,6 @@ import {
     collections,
     CompanyUserDTO,
     CreateRootCompanyPERDTO,
-    prefix_col_root,
     RootCompanyENTITY,
     UserENTITY,
     validateCustom
@@ -68,7 +67,7 @@ export class UseCaseInsertOnePER {
 
     private createTransactionCreateRootCompany(entity: RootCompanyENTITY) {
         const transaction: ITransaction<RootCompanyENTITY> = {
-            collection: `${prefix_col_root}_${collections.companies}`,
+            collection: collections.companies,
             transaction: 'insertOne',
             doc: entity
         }
@@ -79,7 +78,7 @@ export class UseCaseInsertOnePER {
         const company = new CompanyUserDTO()
         company.set(entity)
         const transaction: ITransaction<UserENTITY> = {
-            collection: `${prefix_col_root}_${collections.users}`,
+            collection: collections.users,
             transaction: 'updateOne',
             filter: { _id: user._id },
             update: {

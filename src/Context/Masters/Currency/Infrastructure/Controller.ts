@@ -42,7 +42,7 @@ export class CurrencyController extends BaseHttpController {
     @resolveCompanyInsertOne
     async saveOne(@request() req: Request, @response() res: Response) {
         await req.useCase.exec(req.body)
-        res.sendStatus(201)
+        res.sendStatus(204)
     }
 
     @httpPut(':_id', authorizeRoute, VUUID.bind(null, BRE), VRB.bind(null, UpdateCurrencyDTO, BRE))
