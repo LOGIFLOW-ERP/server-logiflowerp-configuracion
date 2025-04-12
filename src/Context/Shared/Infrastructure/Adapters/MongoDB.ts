@@ -120,7 +120,7 @@ export class AdapterMongoDB {
     }
 
     async insertLog<T>(obj: LogEntity<T>, session: ClientSession, client: MongoClient) {
-        const col = client.db(`log_${obj.db}`).collection(obj.col)
+        const col = client.db(`LOG_${obj.db}`).collection(obj.col)
         await col.insertOne(obj, { session })
     }
 
