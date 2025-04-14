@@ -1,7 +1,5 @@
-import { ContainerGlobal } from '@Config/inversify'
 import { IFind } from '@Shared/Domain'
 import { Document } from 'mongodb'
-import { AdapterMongoDB, SHARED_TYPES } from '@Shared/Infrastructure'
 import { PassThrough } from 'stream'
 import { InternalServerException } from '@Config/exception'
 
@@ -9,7 +7,6 @@ export function queryOnDBAndResponse<T extends Document>(params: IFind) {
     const { pipeline, collection, res } = params
     const cursor = collection.aggregate<T>(pipeline).stream()
     const stream = new PassThrough()
-    const mongo = ContainerGlobal.get<AdapterMongoDB>(SHARED_TYPES.AdapterMongoDB)
 
     res.setHeader('Content-Type', 'application/json; charset=utf-8')
     stream.pipe(res)
@@ -26,12 +23,10 @@ export function queryOnDBAndResponse<T extends Document>(params: IFind) {
     cursor.on('end', async () => {
         stream.write(']')
         stream.end()
-        // await mongo.closeConnection()
     })
     cursor.on('error', async (err: any) => {
         console.error('Error leyendo del cursor:', err)
         stream.end(']')
-        // await mongo.closeConnection()
         res.end(JSON.stringify(new InternalServerException('Error leyendo del cursor')))
     })
     res.on('close', () => {

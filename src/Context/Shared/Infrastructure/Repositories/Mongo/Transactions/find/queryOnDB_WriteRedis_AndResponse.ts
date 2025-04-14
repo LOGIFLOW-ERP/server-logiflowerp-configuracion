@@ -1,7 +1,7 @@
 import { BadRequestException } from '@Config/exception'
 import { ContainerGlobal } from '@Config/inversify'
 import { IFind } from '@Shared/Domain'
-import { AdapterMongoDB, AdapterRedis, SHARED_TYPES } from '@Shared/Infrastructure'
+import { AdapterRedis, SHARED_TYPES } from '@Shared/Infrastructure'
 import { Document } from 'mongodb'
 import { PassThrough } from 'stream'
 
@@ -15,7 +15,6 @@ export async function queryOnDB_WriteRedis_AndResponse<T extends Document>(param
     const cursor = collection.aggregate<T>(pipeline).stream()
     const stream = new PassThrough()
     const redis = ContainerGlobal.get<AdapterRedis>(SHARED_TYPES.AdapterRedis)
-    const mongo = ContainerGlobal.get<AdapterMongoDB>(SHARED_TYPES.AdapterMongoDB)
 
     res.setHeader('Content-Type', 'application/json; charset=utf-8')
     stream.pipe(res)
@@ -32,12 +31,10 @@ export async function queryOnDB_WriteRedis_AndResponse<T extends Document>(param
     })
     cursor.on('end', async () => {
         stream.end(']')
-        // await mongo.closeConnection()
     })
     cursor.on('error', async (err: any) => {
         console.error('Error leyendo del cursor:', err)
         stream.end(']')
-        // await mongo.closeConnection()
         res.status(500).end(JSON.stringify({ statusCode: 500, errorMessage: 'Error leyendo del cursor' }))
     })
     res.on('close', () => {

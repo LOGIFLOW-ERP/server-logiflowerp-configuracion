@@ -1,7 +1,7 @@
 import { BadRequestException } from '@Config/exception'
 import { ContainerGlobal } from '@Config/inversify'
 import { IFind } from '@Shared/Domain'
-import { AdapterMongoDB, AdapterRedis, SHARED_TYPES } from '@Shared/Infrastructure'
+import { AdapterRedis, SHARED_TYPES } from '@Shared/Infrastructure'
 import { PassThrough } from 'stream'
 
 export async function queryOnRedis_AndResponse(params: IFind) {
@@ -13,9 +13,6 @@ export async function queryOnRedis_AndResponse(params: IFind) {
 
     const stream = new PassThrough()
     const redis = ContainerGlobal.get<AdapterRedis>(SHARED_TYPES.AdapterRedis)
-    const mongo = ContainerGlobal.get<AdapterMongoDB>(SHARED_TYPES.AdapterMongoDB)
-
-    // await mongo.closeConnection()
 
     res.setHeader('Content-Type', 'application/json; charset=utf-8')
     stream.pipe(res)

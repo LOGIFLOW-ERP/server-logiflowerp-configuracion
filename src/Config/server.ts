@@ -133,6 +133,7 @@ function authMiddleware(app: Application, rootPath: string) {
                 `${rootPath}/masters/rootcompany/get-active`,
             ]
             const url = req.originalUrl.toLowerCase()
+
             if (publicRoutes.some(route => route.toLowerCase() === url)) {
                 serviceNoAuth = false
             }
