@@ -12,7 +12,7 @@ export class RootSystemOptionMongoRepository extends MongoRepository<SystemOptio
         @inject(ROOT_SYSTEM_OPTION_TYPES.Collection) protected readonly collection: string,
         @inject(CONFIG_TYPES.Env) private env: Env,
     ) {
-        super(env.BD_ROOT, collection)
+        super(env.DB_ROOT, collection)
     }
 
 }

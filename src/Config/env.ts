@@ -6,7 +6,7 @@ export const env = {
     DOMAINS: get('DOMAINS').required().asArray(),
     NODE_ENV: get('NODE_ENV').required().asEnum(['development', 'qa', 'production']),
     MONGO_URI: get('MONGO_URI').required().asUrlString(),
-    BD_ROOT: get('BD_ROOT').required().asString(),
+    DB_ROOT: get('DB_ROOT').required().asString(),
     RABBITMQ_URL: get('RABBITMQ_URL').required().asUrlString(),
     REDIS_URL: get('REDIS_URL').required().asUrlString(),
     FRONTEND_URL: get('FRONTEND_URL').required().asUrlString(),

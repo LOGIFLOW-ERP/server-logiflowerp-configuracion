@@ -29,7 +29,7 @@ export class UseCaseGetToken {
             payload.rootCompany.set(rootCompany)
         }
         if (isSuperAdmin) {
-            payload.rootCompany.code = this.env.BD_ROOT
+            payload.rootCompany.code = this.env.DB_ROOT
         }
         return payload
     }

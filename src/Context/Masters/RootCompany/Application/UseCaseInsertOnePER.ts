@@ -52,7 +52,7 @@ export class UseCaseInsertOnePER {
 
     private async searchAndValidateUser(identity: string) { // MISMA VALIDACION SE DEBE HACER EN EDITAR
         const pipeline = [{ $match: { identity } }]
-        const data = await this.repository.select<UserENTITY>(pipeline, collections.users, this.env.BD_ROOT)
+        const data = await this.repository.select<UserENTITY>(pipeline, collections.users, this.env.DB_ROOT)
         if (!data.length) {
             throw new NotFoundException(`Usuario con identificación ${identity} no encontrado`, true)
         }

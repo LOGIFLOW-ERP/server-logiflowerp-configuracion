@@ -11,7 +11,7 @@ export class RootCompanyMongoRepository extends MongoRepository<RootCompanyENTIT
         @inject(ROOT_COMPANY_TYPES.Collection) protected readonly collection: string,
         @inject(CONFIG_TYPES.Env) private env: Env,
     ) {
-        super(env.BD_ROOT, collection)
+        super(env.DB_ROOT, collection)
     }
 
 }

@@ -8,7 +8,7 @@ import { CONFIG_TYPES } from '@Config/types'
 
 export class ManagerEntity {
 
-    private database = this.env.BD_ROOT
+    private database = this.env.DB_ROOT
     private collection = collection
     private indexes: IndexEntity<SystemOptionENTITY>[] = [
         {

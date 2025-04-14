@@ -9,7 +9,7 @@ import { CONFIG_TYPES } from '@Config/types'
 @injectable()
 export class ManagerEntity {
 
-    private database = this.env.BD_ROOT
+    private database = this.env.DB_ROOT
     private collection = collection
     private indexes: IndexEntity<UserENTITY>[] = [
         {

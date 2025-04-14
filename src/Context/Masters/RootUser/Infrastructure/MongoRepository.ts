@@ -12,7 +12,7 @@ export class RootUserMongoRepository extends MongoRepository<UserENTITY> impleme
         @inject(ROOT_USER_TYPES.Collection) protected readonly collection: string,
         @inject(CONFIG_TYPES.Env) private env: Env,
     ) {
-        super(env.BD_ROOT, collection)
+        super(env.DB_ROOT, collection)
     }
 
 }
