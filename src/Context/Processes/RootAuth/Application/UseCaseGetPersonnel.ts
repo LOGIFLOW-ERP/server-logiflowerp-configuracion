@@ -1,5 +1,5 @@
 import { ConflictException, ForbiddenException, UnauthorizedException } from '@Config/exception'
-import { UserENTITY } from 'logiflowerp-sdk'
+import { State, UserENTITY } from 'logiflowerp-sdk'
 import { IPersonnelMongoRepository } from '@Masters/Personnel/Domain'
 import { inject, injectable } from 'inversify'
 import { PERSONNEL_TYPES } from '@Masters/Personnel/Infrastructure/IoC'
@@ -20,7 +20,7 @@ export class UseCaseGetPersonnel {
     }
 
     private async searchPersonnel(identity: string) {
-        const pipeline = [{ $match: { identity } }]
+        const pipeline = [{ $match: { identity, state: State.ACTIVO } }]
         const data = await this.repository.select(pipeline)
         if (!data.length) {
             throw new UnauthorizedException('Usted no es personal de esta empresa', true)

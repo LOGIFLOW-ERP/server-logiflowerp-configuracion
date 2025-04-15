@@ -1,5 +1,5 @@
 import { ConflictException, ForbiddenException, UnauthorizedException } from '@Config/exception'
-import { SignInRootDTO, UserENTITY } from 'logiflowerp-sdk'
+import { SignInRootDTO, State, UserENTITY } from 'logiflowerp-sdk'
 import { IRootUserMongoRepository } from '@Masters/RootUser/Domain'
 import { CONFIG_TYPES } from '@Config/types'
 import { inject, injectable } from 'inversify'
@@ -36,7 +36,7 @@ export class UseCaseSignInRoot {
     }
 
     private async searchUser(email: string) {
-        const pipeline = [{ $match: { email } }]
+        const pipeline = [{ $match: { email, state: State.ACTIVO } }]
         const data = await this.repository.select(pipeline)
         if (!data.length) {
             throw new UnauthorizedException('Credenciales inválidas', true)

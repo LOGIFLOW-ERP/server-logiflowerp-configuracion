@@ -1,6 +1,6 @@
 import { ConflictException, NotFoundException } from '@Config/exception';
 import { AdapterMail, AdapterToken, SHARED_TYPES } from '@Shared/Infrastructure';
-import { TokenPayloadDTO, UserENTITY } from 'logiflowerp-sdk';
+import { State, TokenPayloadDTO, UserENTITY } from 'logiflowerp-sdk';
 import path from 'path'
 import fs from 'fs'
 import { IRootUserMongoRepository } from '@Masters/RootUser/Domain';
@@ -34,7 +34,7 @@ export class UseCaseRequestPasswordReset {
     }
 
     private async searchUser(email: string) {
-        const pipeline = [{ $match: { email } }]
+        const pipeline = [{ $match: { email, state: State.ACTIVO } }]
         const data = await this.repository.select(pipeline)
         if (!data.length) {
             throw new NotFoundException('Usuario no encontrado')

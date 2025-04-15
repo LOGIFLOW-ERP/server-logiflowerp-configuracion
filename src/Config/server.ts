@@ -127,6 +127,7 @@ function authMiddleware(app: Application, rootPath: string) {
                 `${rootPath}/processes/rootauth/sign-in`,
                 `${rootPath}/processes/rootauth/sign-in-root`,
                 `${rootPath}/processes/rootauth/sign-up`,
+                `${rootPath}/processes/rootauth/sign-out`,
                 `${rootPath}/processes/rootauth/verify-email`,
                 `${rootPath}/processes/rootauth/request-password-reset`,
                 `${rootPath}/processes/rootauth/reset-password`,

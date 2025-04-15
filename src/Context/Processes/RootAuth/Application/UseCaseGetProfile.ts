@@ -2,7 +2,7 @@ import { ConflictException } from '@Config/exception'
 import { IProfileMongoRepository } from '@Masters/Profile/Domain'
 import { PROFILE_TYPES } from '@Masters/Profile/Infrastructure/IoC'
 import { inject, injectable } from 'inversify'
-import { EmployeeENTITY } from 'logiflowerp-sdk'
+import { EmployeeENTITY, State } from 'logiflowerp-sdk'
 
 @injectable()
 export class UseCaseGetProfile {
@@ -12,7 +12,7 @@ export class UseCaseGetProfile {
     ) { }
 
     async exec(personnel: EmployeeENTITY) {
-        const pipeline = [{ $match: { _id: personnel._idprofile } }]
+        const pipeline = [{ $match: { _id: personnel._idprofile, state: State.ACTIVO } }]
         const profile = await this.repository.select(pipeline)
         if (!profile.length) {
             throw new ConflictException(`Aún no tiene un perfil asignado`, true)

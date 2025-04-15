@@ -4,6 +4,7 @@ import { AdapterToken, SHARED_TYPES } from '@Shared/Infrastructure';
 import { BadRequestException, ConflictException, UnauthorizedException } from '@Config/exception';
 import { ROOT_USER_TYPES } from '@Masters/RootUser/Infrastructure/IoC';
 import { inject } from 'inversify';
+import { State } from 'logiflowerp-sdk';
 
 export class UseCaseVerifyEmail {
 
@@ -19,7 +20,7 @@ export class UseCaseVerifyEmail {
             throw new UnauthorizedException('Token no válido o expirado')
         }
 
-        const pipeline = [{ $match: { _id: payload.user._id } }]
+        const pipeline = [{ $match: { _id: payload.user._id, state: State.ACTIVO } }]
         const user = await this.repository.select(pipeline)
         if (user.length !== 1) {
             throw new ConflictException(`Error al verificar email`)
