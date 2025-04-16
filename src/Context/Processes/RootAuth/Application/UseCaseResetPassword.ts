@@ -1,4 +1,4 @@
-import { UnauthorizedException } from '@Config/exception';
+import { ForbiddenException } from '@Config/exception';
 import { IRootUserMongoRepository } from '@Masters/RootUser/Domain';
 import { ROOT_USER_TYPES } from '@Masters/RootUser/Infrastructure/IoC';
 import { AdapterToken, SHARED_TYPES } from '@Shared/Infrastructure';
@@ -16,7 +16,7 @@ export class UseCaseResetPassword {
 
         const payload = await this.adapterToken.verify(token)
         if (!payload) {
-            throw new UnauthorizedException('Token inválido o expirado', true)
+            throw new ForbiddenException('Token inválido o expirado', true)
         }
 
         await this.repository.updateOne(

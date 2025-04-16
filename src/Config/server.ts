@@ -17,7 +17,6 @@ import {
     BadRequestException,
     BaseException,
     ConflictException,
-    ForbiddenException,
     InternalServerException,
     UnauthorizedException
 } from './exception'
@@ -151,7 +150,7 @@ function authMiddleware(app: Application, rootPath: string) {
             const decoded = await adapterToken.verify(token)
 
             if (!decoded) {
-                return next(new ForbiddenException('Token inválido o expirado'))
+                return next(new UnauthorizedException('Token inválido o expirado'))
             }
 
             req.payloadToken = decoded

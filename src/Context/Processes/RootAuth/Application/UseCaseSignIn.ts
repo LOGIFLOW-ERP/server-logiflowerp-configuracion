@@ -1,4 +1,4 @@
-import { ConflictException, ForbiddenException, UnauthorizedException } from '@Config/exception'
+import { ConflictException, ForbiddenException } from '@Config/exception'
 import { SignInDTO, State, UserENTITY } from 'logiflowerp-sdk'
 import { IRootUserMongoRepository } from '@Masters/RootUser/Domain'
 import { inject, injectable } from 'inversify'
@@ -17,7 +17,7 @@ export class UseCaseSignIn {
             throw new ForbiddenException('El usuario está inactivo', true)
         }
         if (!user.emailVerified) {
-            throw new UnauthorizedException('Correo no verificado', true)
+            throw new ForbiddenException('Correo no verificado', true)
         }
         this.verifyPassword(dto, user)
         return { user }
@@ -26,7 +26,7 @@ export class UseCaseSignIn {
     private verifyPassword(dto: SignInDTO, user: UserENTITY) {
         const isValid = dto.password === user.password
         if (!isValid) {
-            throw new UnauthorizedException('Credenciales inválidas', true)
+            throw new ForbiddenException('Credenciales inválidas', true)
         }
     }
 
@@ -34,7 +34,7 @@ export class UseCaseSignIn {
         const pipeline = [{ $match: { email, state: State.ACTIVO } }]
         const data = await this.repository.select(pipeline)
         if (!data.length) {
-            throw new UnauthorizedException('Credenciales inválidas', true)
+            throw new ForbiddenException('Credenciales inválidas', true)
         }
         if (data.length > 1) {
             throw new ConflictException(`Hay mas de un resultado para usuario con email ${email}.`)

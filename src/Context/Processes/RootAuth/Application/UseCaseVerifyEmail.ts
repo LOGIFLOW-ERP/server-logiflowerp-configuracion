@@ -1,7 +1,7 @@
 import { IRootUserMongoRepository } from '@Masters/RootUser/Domain';
 import { DataVerifyEmailDTO } from '../Domain';
 import { AdapterToken, SHARED_TYPES } from '@Shared/Infrastructure';
-import { BadRequestException, ConflictException, UnauthorizedException } from '@Config/exception';
+import { BadRequestException, ConflictException, ForbiddenException } from '@Config/exception';
 import { ROOT_USER_TYPES } from '@Masters/RootUser/Infrastructure/IoC';
 import { inject } from 'inversify';
 import { State } from 'logiflowerp-sdk';
@@ -17,7 +17,7 @@ export class UseCaseVerifyEmail {
 
         const payload = await this.adapterToken.verify(data.token)
         if (!payload) {
-            throw new UnauthorizedException('Token no válido o expirado')
+            throw new ForbiddenException('Token no válido o expirado')
         }
 
         const pipeline = [{ $match: { _id: payload.user._id, state: State.ACTIVO } }]

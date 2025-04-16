@@ -1,4 +1,4 @@
-import { ConflictException, ForbiddenException, UnauthorizedException } from '@Config/exception'
+import { ConflictException, ForbiddenException } from '@Config/exception'
 import { State, UserENTITY } from 'logiflowerp-sdk'
 import { IPersonnelMongoRepository } from '@Masters/Personnel/Domain'
 import { inject, injectable } from 'inversify'
@@ -23,7 +23,7 @@ export class UseCaseGetPersonnel {
         const pipeline = [{ $match: { identity, state: State.ACTIVO } }]
         const data = await this.repository.select(pipeline)
         if (!data.length) {
-            throw new UnauthorizedException('Usted no es personal de esta empresa', true)
+            throw new ForbiddenException('Usted no es personal de esta empresa', true)
         }
         if (data.length > 1) {
             throw new ConflictException(`Hay mas de un resultado para personal con identificación ${identity}`)
