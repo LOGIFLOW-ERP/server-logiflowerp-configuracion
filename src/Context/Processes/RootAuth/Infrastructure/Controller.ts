@@ -23,7 +23,9 @@ import {
 } from '../Application'
 import {
     collections,
+    CompanyDTO,
     CreateUserDTO,
+    ProfileDTO,
     ProfileENTITY,
     ResetPasswordDTO,
     ResponseSignIn,
@@ -98,17 +100,24 @@ export class RootAuthController extends BaseHttpController {
                 sameSite: 'strict'
             }
         )
-        const response: ResponseSignIn = { user: userResponse, dataSystemOptions, root: true }
+        const response: ResponseSignIn = {
+            user: userResponse,
+            dataSystemOptions,
+            root: true,
+            company: new CompanyDTO(),
+            profile: new ProfileDTO()
+        }
         res.status(200).json(response)
     }
 
     @httpPost('sign-in', VRB.bind(null, SignInDTO, BRE))
     async signIn(@request() req: Request<{}, {}, SignInDTO>, @response() res: Response) {
         const { user } = await this.useCaseSignIn.exec(req.body)
-        const { rootCompany, isRoot } = await this.useCaseGetRootCompany.exec(user, req.body)
+        const { rootCompany, isRoot, companyAuth } = await this.useCaseGetRootCompany.exec(user, req.body)
         let dataSystemOptions: SystemOptionENTITY[]
         let routes: string[]
         let profile: ProfileENTITY | undefined
+        const profileAuth = new ProfileDTO()
         if (!isRoot) {
             const tenantContainerGetPersonnel = createTenantScopedContainer(
                 AUTH_TYPES.UseCaseGetPersonnel,
@@ -135,6 +144,7 @@ export class RootAuthController extends BaseHttpController {
             dataSystemOptions = systemOptions
             routes = routesAux
             profile = profileAux
+            profileAuth.set(profileAux)
         } else {
             const { systemOptions, routesAux } = await this.useCaseGetRootSystemOption.execRoot(rootCompany)
             dataSystemOptions = systemOptions
@@ -150,7 +160,13 @@ export class RootAuthController extends BaseHttpController {
                 sameSite: 'strict'
             }
         )
-        const response: ResponseSignIn = { user: userResponse, dataSystemOptions, root: false }
+        const response: ResponseSignIn = {
+            user: userResponse,
+            dataSystemOptions,
+            root: false,
+            company: companyAuth,
+            profile: profileAuth
+        }
         res.status(200).json(response)
     }
 
