@@ -26,7 +26,6 @@ import {
     CompanyDTO,
     CreateUserDTO,
     EmployeeAuthDTO,
-    EmployeeENTITY,
     ProfileDTO,
     ProfileENTITY,
     ResetPasswordDTO,
@@ -108,7 +107,7 @@ export class RootAuthController extends BaseHttpController {
             root: true,
             company: new CompanyDTO(),
             profile: new ProfileDTO(),
-            personnel: new EmployeeENTITY()
+            personnel: new EmployeeAuthDTO()
         }
         res.status(200).json(response)
     }
