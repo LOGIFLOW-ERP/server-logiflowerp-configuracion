@@ -25,6 +25,8 @@ import {
     collections,
     CompanyDTO,
     CreateUserDTO,
+    EmployeeAuthDTO,
+    EmployeeENTITY,
     ProfileDTO,
     ProfileENTITY,
     ResetPasswordDTO,
@@ -105,7 +107,8 @@ export class RootAuthController extends BaseHttpController {
             dataSystemOptions,
             root: true,
             company: new CompanyDTO(),
-            profile: new ProfileDTO()
+            profile: new ProfileDTO(),
+            personnel: new EmployeeENTITY()
         }
         res.status(200).json(response)
     }
@@ -118,6 +121,7 @@ export class RootAuthController extends BaseHttpController {
         let routes: string[]
         let profile: ProfileENTITY | undefined
         const profileAuth = new ProfileDTO()
+        const personnelAuth = new EmployeeAuthDTO()
         if (!isRoot) {
             const tenantContainerGetPersonnel = createTenantScopedContainer(
                 AUTH_TYPES.UseCaseGetPersonnel,
@@ -145,12 +149,13 @@ export class RootAuthController extends BaseHttpController {
             routes = routesAux
             profile = profileAux
             profileAuth.set(profileAux)
+            personnelAuth.set(personnel)
         } else {
             const { systemOptions, routesAux } = await this.useCaseGetRootSystemOption.execRoot(rootCompany)
             dataSystemOptions = systemOptions
             routes = routesAux
         }
-        const { token, user: userResponse } = await this.useCaseGetToken.exec(user, false, routes, profile, rootCompany)
+        const { token, user: userResponse } = await this.useCaseGetToken.exec(user, false, routes, profile, rootCompany, personnelAuth)
         res.cookie(
             'authToken',
             token,
@@ -165,7 +170,8 @@ export class RootAuthController extends BaseHttpController {
             dataSystemOptions,
             root: false,
             company: companyAuth,
-            profile: profileAuth
+            profile: profileAuth,
+            personnel: personnelAuth
         }
         res.status(200).json(response)
     }

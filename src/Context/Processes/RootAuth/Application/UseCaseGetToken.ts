@@ -1,7 +1,7 @@
 import { CONFIG_TYPES } from '@Config/types'
 import { AdapterToken, SHARED_TYPES } from '@Shared/Infrastructure'
 import { inject, injectable } from 'inversify'
-import { ProfileENTITY, RootCompanyENTITY, TokenPayloadDTO, UserENTITY } from 'logiflowerp-sdk'
+import { EmployeeAuthDTO, ProfileENTITY, RootCompanyENTITY, TokenPayloadDTO, UserENTITY } from 'logiflowerp-sdk'
 
 @injectable()
 export class UseCaseGetToken {
@@ -11,13 +11,13 @@ export class UseCaseGetToken {
         @inject(CONFIG_TYPES.Env) private readonly env: Env,
     ) { }
 
-    async exec(user: UserENTITY, isSuperAdmin: boolean, routes: string[], profile?: ProfileENTITY, rootCompany?: RootCompanyENTITY) {
-        const payload = this.generatePayloadToken(user, routes, isSuperAdmin, profile, rootCompany)
-        const token = await this.adapterToken.create(payload)
+    async exec(user: UserENTITY, isSuperAdmin: boolean, routes: string[], profile?: ProfileENTITY, rootCompany?: RootCompanyENTITY, personnel?: EmployeeAuthDTO) {
+        const payload = this.generatePayloadToken(user, routes, isSuperAdmin, profile, rootCompany, personnel)
+        const token = await this.adapterToken.create(payload, undefined, 43200) // const expiresIn = 12 * 60 * 60; // = 43200 o '12h'
         return { token, user: payload.user }
     }
 
-    private generatePayloadToken(entity: UserENTITY, routes: string[], isSuperAdmin: boolean, profile?: ProfileENTITY, rootCompany?: RootCompanyENTITY) {
+    private generatePayloadToken(entity: UserENTITY, routes: string[], isSuperAdmin: boolean, profile?: ProfileENTITY, rootCompany?: RootCompanyENTITY, personnel?: EmployeeAuthDTO) {
         const payload = new TokenPayloadDTO()
         payload.user.set(entity)
         payload.routes = routes
@@ -30,6 +30,9 @@ export class UseCaseGetToken {
         }
         if (isSuperAdmin) {
             payload.rootCompany.code = this.env.DB_ROOT
+        }
+        if (personnel) {
+            payload.personnel.set(personnel)
         }
         return payload
     }
