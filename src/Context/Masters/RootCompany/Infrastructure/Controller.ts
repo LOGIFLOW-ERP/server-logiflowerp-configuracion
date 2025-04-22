@@ -29,6 +29,7 @@ import {
 } from '../Application'
 import { authRootMiddleware } from '@Shared/Infrastructure/Middlewares'
 import { ROOT_COMPANY_TYPES } from './IoC'
+import { initCollections } from '@Config/collections'
 
 export class RootCompanyController extends BaseHttpController {
 
@@ -74,7 +75,8 @@ export class RootCompanyController extends BaseHttpController {
         const config = countryConfigs[country] || { dto: CreateRootCompanyDTO, useCase: this.useCaseInsertOne }
 
         const validatedBody = await validateCustom(req.body, config.dto, BRE)
-        await config.useCase.exec(validatedBody)
+        const result = await config.useCase.exec(validatedBody)
+        await initCollections([result])
         res.sendStatus(204)
     }
 

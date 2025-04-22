@@ -1,6 +1,7 @@
 import { IRootCompanyMongoRepository, ISUNATCompanyData } from '../Domain';
 import {
     collections,
+    CompanyENTITY,
     CompanyUserDTO,
     CreateRootCompanyPERDTO,
     RootCompanyENTITY,
@@ -31,10 +32,13 @@ export class UseCaseInsertOnePER {
         const user = await this.searchAndValidateUser(dto.identityManager)
         const SUNATCompanyData = await this.SUNATCompanyDataConsultation(dto.ruc)
         this.completeDataPER(_entity, SUNATCompanyData)
-        const entity = await validateCustom(_entity, RootCompanyENTITY, UnprocessableEntityException)
-        this.createTransactionUpdateUser(user, entity)
-        this.createTransactionCreateRootCompany(entity)
+        const entityRoot = await validateCustom(_entity, RootCompanyENTITY, UnprocessableEntityException)
+        const entity = await validateCustom(_entity, CompanyENTITY, UnprocessableEntityException)
+        this.createTransactionUpdateUser(user, entityRoot)
+        this.createTransactionCreateCompany(entity)
+        this.createTransactionCreateRootCompany(entityRoot)
         await this.repository.executeTransactionBatch(this.transactions)
+        return entityRoot
     }
 
     private async SUNATCompanyDataConsultation(ruc: string) {
@@ -52,7 +56,7 @@ export class UseCaseInsertOnePER {
 
     private async searchAndValidateUser(identity: string) { // MISMA VALIDACION SE DEBE HACER EN EDITAR
         const pipeline = [{ $match: { identity } }]
-        const data = await this.repository.select<UserENTITY>(pipeline, collections.users, this.env.DB_ROOT)
+        const data = await this.repository.select<UserENTITY>(pipeline, collections.users)
         if (!data.length) {
             throw new NotFoundException(`Usuario con identificación ${identity} no encontrado`, true)
         }
@@ -67,6 +71,16 @@ export class UseCaseInsertOnePER {
 
     private createTransactionCreateRootCompany(entity: RootCompanyENTITY) {
         const transaction: ITransaction<RootCompanyENTITY> = {
+            collection: collections.companies,
+            transaction: 'insertOne',
+            doc: entity
+        }
+        this.transactions.push(transaction)
+    }
+
+    private createTransactionCreateCompany(entity: CompanyENTITY) {
+        const transaction: ITransaction<CompanyENTITY> = {
+            database: entity.code,
             collection: collections.companies,
             transaction: 'insertOne',
             doc: entity

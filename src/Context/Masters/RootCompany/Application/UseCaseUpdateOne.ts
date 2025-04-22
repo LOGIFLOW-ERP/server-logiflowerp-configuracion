@@ -1,9 +1,17 @@
 import { IRootCompanyMongoRepository } from '../Domain'
-import { collections, CompanyUserDTO, RootCompanyENTITY, UpdateRootCompanyDTO, UserENTITY } from 'logiflowerp-sdk'
-import { ConflictException, NotFoundException } from '@Config/exception'
+import {
+    collections,
+    CompanyENTITY,
+    CompanyUserDTO,
+    RootCompanyENTITY,
+    UpdateCompanyDTO,
+    UpdateRootCompanyDTO,
+    UserENTITY,
+    validateCustom
+} from 'logiflowerp-sdk'
+import { ConflictException, NotFoundException, UnprocessableEntityException } from '@Config/exception'
 import { inject, injectable } from 'inversify'
 import { ROOT_COMPANY_TYPES } from '../Infrastructure/IoC'
-import { CONFIG_TYPES } from '@Config/types'
 
 @injectable()
 export class UseCaseUpdateOne {
@@ -12,7 +20,6 @@ export class UseCaseUpdateOne {
 
     constructor(
         @inject(ROOT_COMPANY_TYPES.RepositoryMongo) private readonly repository: IRootCompanyMongoRepository,
-        @inject(CONFIG_TYPES.Env) private readonly env: Env,
     ) { }
 
     async exec(_id: string, dto: UpdateRootCompanyDTO) {
@@ -22,8 +29,8 @@ export class UseCaseUpdateOne {
             this.createTransactionUpdateUser(user, rootCompany)
         }
         this.createTransactionUpdateRootCompany(_id, dto)
+        await this.createTransactionUpdateCompany(dto, rootCompany)
         await this.repository.executeTransactionBatch(this.transactions)
-        // return this.repository.updateOne({ _id }, { $set: dto })
     }
 
     private async changedManager(_id: string, dto: UpdateRootCompanyDTO) {
@@ -40,7 +47,7 @@ export class UseCaseUpdateOne {
 
     private async searchAndValidateUser(identity: string) { // MISMA VALIDACION SE DEBE HACER EN CREAR
         const pipeline = [{ $match: { identity } }]
-        const data = await this.repository.select<UserENTITY>(pipeline, collections.users, this.env.DB_ROOT)
+        const data = await this.repository.select<UserENTITY>(pipeline, collections.users)
         if (!data.length) {
             throw new NotFoundException(`Usuario con identificación ${identity} no encontrado`, true)
         }
@@ -62,11 +69,20 @@ export class UseCaseUpdateOne {
         this.transactions.push(transaction)
     }
 
+    private async createTransactionUpdateCompany(dto: UpdateRootCompanyDTO, rootCompany: RootCompanyENTITY) {
+        const transaction: ITransaction<CompanyENTITY> = {
+            database: rootCompany.code,
+            transaction: 'updateOne',
+            filter: { code: rootCompany.code },
+            update: { $set: await validateCustom(dto, UpdateCompanyDTO, UnprocessableEntityException) }
+        }
+        this.transactions.push(transaction)
+    }
+
     private createTransactionUpdateUser(user: UserENTITY, entity: RootCompanyENTITY) {
         const company = new CompanyUserDTO()
         company.set(entity)
         const transaction: ITransaction<UserENTITY> = {
-            database: this.env.DB_ROOT,
             collection: collections.users,
             transaction: 'updateOne',
             filter: { _id: user._id },
