@@ -20,7 +20,7 @@ async function initcollection(paths: Dirent[], rootCompanies: RootCompanyENTITY[
     }
 }
 
-export const initCollections = async (rootCompanies: RootCompanyENTITY[] | undefined) => {
+export const initCollections = async (rootCompanies?: RootCompanyENTITY[]) => {
     const cwd = path.resolve(__dirname, '../Context')
     const paths = globSync(['**/Bootstrap.js', '**/Bootstrap.ts'], { withFileTypes: true, cwd })
     const _rootCompanies = rootCompanies ? rootCompanies : await getRootCompanies()
