@@ -10,3 +10,4 @@ export * from './UseCaseSignIn';
 export * from './UseCaseSignInRoot';
 export * from './UseCaseSignUp';
 export * from './UseCaseVerifyEmail';
+export * from './UseCaseChangePassword';

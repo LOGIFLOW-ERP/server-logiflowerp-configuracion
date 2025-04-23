@@ -8,6 +8,7 @@ import {
     response
 } from 'inversify-express-utils'
 import {
+    UseCaseChangePassword,
     UseCaseGetPersonnel,
     UseCaseGetProfile,
     UseCaseGetRootCompany,
@@ -22,6 +23,7 @@ import {
     UseCaseVerifyEmail
 } from '../Application'
 import {
+    ChangePasswordDTO,
     collections,
     CompanyDTO,
     CreateUserDTO,
@@ -58,6 +60,7 @@ export class RootAuthController extends BaseHttpController {
         @inject(AUTH_TYPES.UseCaseSignIn) private readonly useCaseSignIn: UseCaseSignIn,
         @inject(AUTH_TYPES.UseCaseGetRootCompany) private readonly useCaseGetRootCompany: UseCaseGetRootCompany,
         @inject(AUTH_TYPES.UseCaseGetRootSystemOption) private readonly useCaseGetRootSystemOption: UseCaseGetRootSystemOption,
+        @inject(AUTH_TYPES.UseCaseChangePassword) private readonly useCaseChangePassword: UseCaseChangePassword,
     ) {
         super()
     }
@@ -84,6 +87,12 @@ export class RootAuthController extends BaseHttpController {
     @httpPost('reset-password', VRB.bind(null, ResetPasswordDTO, BRE))
     async resetPassword(@request() req: Request<{}, {}, ResetPasswordDTO>, @response() res: Response) {
         await this.useCaseResetPassword.exec(req.body.token, req.body.password)
+        res.sendStatus(204)
+    }
+
+    @httpPost('change-password', VRB.bind(null, ChangePasswordDTO, BRE))
+    async changePassword(@request() req: Request<{}, {}, ChangePasswordDTO>, @response() res: Response) {
+        await this.useCaseChangePassword.exec(req.user, req.body)
         res.sendStatus(204)
     }
 
