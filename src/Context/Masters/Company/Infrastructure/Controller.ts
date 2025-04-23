@@ -47,15 +47,15 @@ export class CompanyController extends BaseHttpController {
     @httpPut(':_id', authorizeRoute, VUUID.bind(null, BRE), VRB.bind(null, UpdateCompanyDTO, BRE))
     @resolveCompanyUpdateOne
     async updateOne(@request() req: Request<ParamsPut>, @response() res: Response) {
-        await req.useCase.exec(req.params._id, req.body)
-        res.status(204)
+        await req.useCase.exec(req.params._id, req.body, req.rootCompany.code)
+        res.sendStatus(204)
     }
 
     @httpDelete(':_id', authorizeRoute, VUUID.bind(null, BRE))
     @resolveCompanyDeleteOne
     async deleteOne(@request() req: Request<ParamsDelete>, @response() res: Response) {
-        await req.useCase.exec(req.params._id)
-        res.status(204)
+        await req.useCase.exec(req.params._id, req.rootCompany.code)
+        res.sendStatus(204)
     }
 
 }
