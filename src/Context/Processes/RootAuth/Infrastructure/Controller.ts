@@ -28,6 +28,7 @@ import {
     CompanyDTO,
     CreateUserDTO,
     EmployeeAuthDTO,
+    getQueueNameMailRegisterUser,
     ProfileDTO,
     ProfileENTITY,
     ResetPasswordDTO,
@@ -37,13 +38,14 @@ import {
     SystemOptionENTITY,
     validateRequestBody as VRB
 } from 'logiflowerp-sdk'
-import { AdapterRabbitMQ, createTenantScopedContainer, SHARED_QUEUES, SHARED_TYPES } from '@Shared/Infrastructure'
+import { AdapterRabbitMQ, createTenantScopedContainer, SHARED_TYPES } from '@Shared/Infrastructure'
 import { DataRequestPasswordResetDTO, DataVerifyEmailDTO } from '../Domain'
 import { ProfileMongoRepository } from '@Masters/Profile/Infrastructure/MongoRepository'
 import { PersonnelMongoRepository } from '@Masters/Personnel/Infrastructure/MongoRepository'
 import { AUTH_TYPES } from './IoC'
 import { PERSONNEL_TYPES } from '@Masters/Personnel/Infrastructure/IoC'
 import { PROFILE_TYPES } from '@Masters/Profile/Infrastructure/IoC'
+import { CONFIG_TYPES } from '@Config/types'
 
 export class RootAuthController extends BaseHttpController {
 
@@ -61,6 +63,7 @@ export class RootAuthController extends BaseHttpController {
         @inject(AUTH_TYPES.UseCaseGetRootCompany) private readonly useCaseGetRootCompany: UseCaseGetRootCompany,
         @inject(AUTH_TYPES.UseCaseGetRootSystemOption) private readonly useCaseGetRootSystemOption: UseCaseGetRootSystemOption,
         @inject(AUTH_TYPES.UseCaseChangePassword) private readonly useCaseChangePassword: UseCaseChangePassword,
+        @inject(CONFIG_TYPES.Env) private readonly env: Env,
     ) {
         super()
     }
@@ -68,7 +71,7 @@ export class RootAuthController extends BaseHttpController {
     @httpPost('sign-up', VRB.bind(null, CreateUserDTO, BRE))
     async saveOne(@request() req: Request<{}, {}, CreateUserDTO>, @response() res: Response) {
         const newDoc = await this.useCaseSignUp.exec(req.body)
-        await this.adapterRabbitMQ.publish({ queue: SHARED_QUEUES.MAIL_REGISTER_USER, message: newDoc })
+        await this.adapterRabbitMQ.publish({ queue: getQueueNameMailRegisterUser({ NODE_ENV: this.env.NODE_ENV }), message: newDoc })
         res.status(201).json(newDoc)
     }
 

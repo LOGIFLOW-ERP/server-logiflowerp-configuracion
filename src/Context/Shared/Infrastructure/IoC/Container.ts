@@ -9,7 +9,6 @@ import {
     AdapterSocket,
     AdapterToken
 } from '../Adapters'
-import { Worker } from '../module.worker'
 import { UseCaseSendMailRegisterUser } from '../../Application'
 import { Bootstraping } from '@Shared/Bootstraping'
 import { BootstrapingDatabaseMongo } from '@Shared/Bootstraping/database'
@@ -23,7 +22,6 @@ export const containerModule = new ContainerModule(bind => {
     bind(SHARED_TYPES.AdapterApiRequest).to(AdapterApiRequest).inSingletonScope()
     bind(SHARED_TYPES.AdapterRabbitMQ).to(AdapterRabbitMQ).inSingletonScope()
     bind(SHARED_TYPES.UseCaseSendMailRegisterUser).to(UseCaseSendMailRegisterUser)
-    bind(Worker).to(Worker).inSingletonScope()
     bind(SHARED_TYPES.BootstrapingDatabaseMongo).to(BootstrapingDatabaseMongo)
     bind(SHARED_TYPES.Bootstraping).to(Bootstraping)
 })

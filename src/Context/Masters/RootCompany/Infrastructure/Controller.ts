@@ -12,6 +12,7 @@ import {
 import {
     CreateRootCompanyDTO,
     CreateRootCompanyPERDTO,
+    getQueueNameInitializationCollections,
     UpdateRootCompanyDTO,
     validateCustom,
     validateRequestBody as VRB,
@@ -30,6 +31,8 @@ import {
 import { authRootMiddleware } from '@Shared/Infrastructure/Middlewares'
 import { ROOT_COMPANY_TYPES } from './IoC'
 import { initCollections } from '@Config/collections'
+import { AdapterRabbitMQ, SHARED_TYPES } from '@Shared/Infrastructure'
+import { CONFIG_TYPES } from '@Config/types'
 
 export class RootCompanyController extends BaseHttpController {
 
@@ -41,6 +44,8 @@ export class RootCompanyController extends BaseHttpController {
         @inject(ROOT_COMPANY_TYPES.UseCaseInsertOne) private readonly useCaseInsertOne: UseCaseInsertOne,
         @inject(ROOT_COMPANY_TYPES.UseCaseInsertOnePER) private readonly useCaseInsertOnePER: UseCaseInsertOnePER,
         @inject(ROOT_COMPANY_TYPES.UseCaseUpdateOne) private readonly useCaseUpdateOne: UseCaseUpdateOne,
+        @inject(SHARED_TYPES.AdapterRabbitMQ) private readonly adapterRabbitMQ: AdapterRabbitMQ,
+        @inject(CONFIG_TYPES.Env) private readonly env: Env,
     ) {
         super()
     }
@@ -76,7 +81,7 @@ export class RootCompanyController extends BaseHttpController {
 
         const validatedBody = await validateCustom(req.body, config.dto, BRE)
         const result = await config.useCase.exec(validatedBody)
-        await initCollections([result])
+        await this.adapterRabbitMQ.publish({ queue: getQueueNameInitializationCollections({ NODE_ENV: this.env.NODE_ENV }), message: [result] })
         res.sendStatus(204)
     }
 
