@@ -1,3 +1,3 @@
 import { collections } from 'logiflowerp-sdk'
 
-export const collection = collections.companies
+export const collection = collections.company

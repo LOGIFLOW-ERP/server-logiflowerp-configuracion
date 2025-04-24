@@ -36,7 +36,7 @@ export class UseCaseInsertOne {
 
     private async searchAndValidateUser(identity: string) { // MISMA VALIDACION SE DEBE HACER EN EDITAR
         const pipeline = [{ $match: { identity } }]
-        const data = await this.repository.select<UserENTITY>(pipeline, collections.users)
+        const data = await this.repository.select<UserENTITY>(pipeline, collections.user)
         if (!data.length) {
             throw new NotFoundException(`Usuario con identificación ${identity} no encontrado`, true)
         }
@@ -51,7 +51,7 @@ export class UseCaseInsertOne {
 
     private createTransactionCreateRootCompany(entity: RootCompanyENTITY) {
         const transaction: ITransaction<RootCompanyENTITY> = {
-            collection: collections.companies,
+            collection: collections.company,
             transaction: 'insertOne',
             doc: entity
         }
@@ -61,7 +61,7 @@ export class UseCaseInsertOne {
     private createTransactionCreateCompany(entity: CompanyENTITY) {
         const transaction: ITransaction<CompanyENTITY> = {
             database: entity.code,
-            collection: collections.companies,
+            collection: collections.company,
             transaction: 'insertOne',
             doc: entity
         }
@@ -72,7 +72,7 @@ export class UseCaseInsertOne {
         const company = new CompanyUserDTO()
         company.set(entity)
         const transaction: ITransaction<UserENTITY> = {
-            collection: collections.users,
+            collection: collections.user,
             transaction: 'updateOne',
             filter: { _id: user._id },
             update: {

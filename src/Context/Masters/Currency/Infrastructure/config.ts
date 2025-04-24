@@ -1,3 +1,3 @@
 import { collections } from 'logiflowerp-sdk'
 
-export const collection = collections.currencies
+export const collection = collections.currency

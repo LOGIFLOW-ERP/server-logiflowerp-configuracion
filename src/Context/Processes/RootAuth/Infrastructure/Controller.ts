@@ -140,7 +140,7 @@ export class RootAuthController extends BaseHttpController {
                 UseCaseGetPersonnel,
                 PersonnelMongoRepository,
                 req.body.companyCode,
-                collections.personnel
+                collections.employee
             )
             const useCaseGetPersonnel = tenantContainerGetPersonnel.get<UseCaseGetPersonnel>(AUTH_TYPES.UseCaseGetPersonnel)
             const { personnel } = await useCaseGetPersonnel.exec(user)
@@ -151,7 +151,7 @@ export class RootAuthController extends BaseHttpController {
                 UseCaseGetProfile,
                 ProfileMongoRepository,
                 req.body.companyCode,
-                collections.profiles
+                collections.profile
             )
             const useCaseGetProfile = tenantContainerGetProfile.get<UseCaseGetProfile>(AUTH_TYPES.UseCaseGetProfile)
             const { profile: profileAux } = await useCaseGetProfile.exec(personnel)

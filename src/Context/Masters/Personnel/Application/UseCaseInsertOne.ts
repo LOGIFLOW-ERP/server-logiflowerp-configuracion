@@ -24,7 +24,7 @@ export class UseCaseInsertOne {
 
     private async searchUser(identity: string) {
         const pipeline = [{ $match: { identity, state: State.ACTIVO } }]
-        const result = await this.repository.select<UserENTITY>(pipeline, collections.users, this.env.DB_ROOT)
+        const result = await this.repository.select<UserENTITY>(pipeline, collections.user, this.env.DB_ROOT)
         if (!result.length) {
             throw new NotFoundException(`Usuario con identificación "${identity}" aún no está registrado o está inactivo`, true)
         }
