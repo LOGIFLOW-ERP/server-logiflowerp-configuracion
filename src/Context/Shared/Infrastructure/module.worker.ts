@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify'
 import { SHARED_TYPES } from './IoC/types';
 import { AdapterRabbitMQ } from './Adapters';
 import { UseCaseSendMailRegisterUser } from '../Application';
-import { getQueueNameInitializationCollections, getQueueNameMailRegisterUser } from 'logiflowerp-sdk';
+import { getExchangeNameInitializationCollections, getQueueNameMailRegisterUser } from 'logiflowerp-sdk';
 import { CONFIG_TYPES } from '@Config/types';
 import { initCollections } from '@Config/collections';
 
@@ -22,8 +22,8 @@ export class Worker {
                 return await this.useCaseSendMailRegisterUser.exec(message)
             }
         })
-        await this.adapterRabbitMQ.subscribe({
-            queue: getQueueNameInitializationCollections({ NODE_ENV: this.env.NODE_ENV }),
+        await this.adapterRabbitMQ.subscribeFanout({
+            exchange: getExchangeNameInitializationCollections({ NODE_ENV: this.env.NODE_ENV }),
             onMessage: async ({ message, user }) => {
                 await initCollections(message)
                 return 'Colecciones inicializadas'

@@ -12,7 +12,7 @@ import {
 import {
     CreateRootCompanyDTO,
     CreateRootCompanyPERDTO,
-    getQueueNameInitializationCollections,
+    getExchangeNameInitializationCollections,
     UpdateRootCompanyDTO,
     validateCustom,
     validateRequestBody as VRB,
@@ -30,7 +30,6 @@ import {
 } from '../Application'
 import { authRootMiddleware } from '@Shared/Infrastructure/Middlewares'
 import { ROOT_COMPANY_TYPES } from './IoC'
-import { initCollections } from '@Config/collections'
 import { AdapterRabbitMQ, SHARED_TYPES } from '@Shared/Infrastructure'
 import { CONFIG_TYPES } from '@Config/types'
 
@@ -81,7 +80,7 @@ export class RootCompanyController extends BaseHttpController {
 
         const validatedBody = await validateCustom(req.body, config.dto, BRE)
         const result = await config.useCase.exec(validatedBody)
-        await this.adapterRabbitMQ.publish({ queue: getQueueNameInitializationCollections({ NODE_ENV: this.env.NODE_ENV }), message: [result] })
+        await this.adapterRabbitMQ.publishFanout({ exchange: getExchangeNameInitializationCollections({ NODE_ENV: this.env.NODE_ENV }), message: [result] })
         res.sendStatus(204)
     }
 
