@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify'
 import { ICompanyMongoRepository } from '../Domain'
 import { UpdateCompanyDTO } from 'logiflowerp-sdk'
 import { COMPANY_TYPES } from '../Infrastructure/IoC'
-import { ConflictException, ForbiddenException } from '@Config/exception'
+import { ForbiddenException } from '@Config/exception'
 
 @injectable()
 export class UseCaseUpdateOne {
@@ -13,13 +13,9 @@ export class UseCaseUpdateOne {
 
     async exec(_id: string, dto: UpdateCompanyDTO, companyCode: string) {
 
-        const entity = await this.repository.select([{ $match: { _id } }])
+        const entity = await this.repository.selectOne([{ $match: { _id } }])
 
-        if (entity.length !== 1) {
-            throw new ConflictException(`¡Hay ${entity.length} resultado(s) para empresa con _id ${_id}!`, true)
-        }
-
-        if (entity[0].code === companyCode) {
+        if (entity.code === companyCode) {
             throw new ForbiddenException(`¡No se puede actualizar la empresa ya que es propia!`, true)
         }
 

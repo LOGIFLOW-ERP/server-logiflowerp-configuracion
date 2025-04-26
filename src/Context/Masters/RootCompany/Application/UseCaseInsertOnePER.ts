@@ -8,7 +8,7 @@ import {
     UserENTITY,
     validateCustom
 } from 'logiflowerp-sdk';
-import { ConflictException, NotFoundException, UnprocessableEntityException } from '@Config/exception';
+import { ConflictException, UnprocessableEntityException } from '@Config/exception';
 import { AdapterApiRequest, SHARED_TYPES } from '@Shared/Infrastructure';
 import { inject, injectable } from 'inversify';
 import { CONFIG_TYPES } from '@Config/types';
@@ -56,17 +56,11 @@ export class UseCaseInsertOnePER {
 
     private async searchAndValidateUser(identity: string) { // MISMA VALIDACION SE DEBE HACER EN EDITAR
         const pipeline = [{ $match: { identity } }]
-        const data = await this.repository.select<UserENTITY>(pipeline, collections.user)
-        if (!data.length) {
-            throw new NotFoundException(`Usuario con identificación ${identity} no encontrado`, true)
-        }
-        if (data.length > 1) {
-            throw new ConflictException(`Hay mas de un resultado para usuario con identificación ${identity}`)
-        }
-        if (data[0].root) {
+        const data = await this.repository.selectOne<UserENTITY>(pipeline, collections.user)
+        if (data.root) {
             throw new ConflictException(`El usuario con identificación ${identity}, ya es root`)
         }
-        return data[0]
+        return data
     }
 
     private createTransactionCreateRootCompany(entity: RootCompanyENTITY) {

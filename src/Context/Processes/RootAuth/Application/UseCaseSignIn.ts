@@ -37,7 +37,7 @@ export class UseCaseSignIn {
             throw new ForbiddenException('Credenciales inválidas', true)
         }
         if (data.length > 1) {
-            throw new ConflictException(`Hay mas de un resultado para usuario con email ${email}.`)
+            throw new ConflictException(`Se encontraron múltiples usuarios con email ${email}.`)
         }
         return data[0]
     }

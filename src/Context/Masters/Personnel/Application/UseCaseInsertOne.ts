@@ -1,6 +1,6 @@
 import { IPersonnelMongoRepository } from '../Domain';
 import { collections, CreateEmployeeDTO, EmployeeENTITY, State, UserENTITY, validateCustom } from 'logiflowerp-sdk';
-import { ConflictException, NotFoundException, UnprocessableEntityException } from '@Config/exception';
+import { UnprocessableEntityException } from '@Config/exception';
 import { inject, injectable } from 'inversify'
 import { PERSONNEL_TYPES } from '../Infrastructure/IoC'
 import { CONFIG_TYPES } from '@Config/types';
@@ -22,16 +22,9 @@ export class UseCaseInsertOne {
         return this.repository.insertOne(entity)
     }
 
-    private async searchUser(identity: string) {
+    private searchUser(identity: string) {
         const pipeline = [{ $match: { identity, state: State.ACTIVO } }]
-        const result = await this.repository.select<UserENTITY>(pipeline, collections.user, this.env.DB_ROOT)
-        if (!result.length) {
-            throw new NotFoundException(`Usuario con identificación "${identity}" aún no está registrado o está inactivo`, true)
-        }
-        if (result.length > 1) {
-            throw new ConflictException(`Hay mas de un resultado para usuario con identificación "${identity}"`)
-        }
-        return result[0]
+        return this.repository.selectOne<UserENTITY>(pipeline, collections.user, this.env.DB_ROOT)
     }
 
 }

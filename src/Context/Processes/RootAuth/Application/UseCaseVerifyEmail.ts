@@ -1,7 +1,7 @@
 import { IRootUserMongoRepository } from '@Masters/RootUser/Domain';
 import { DataVerifyEmailDTO } from '../Domain';
 import { AdapterToken, SHARED_TYPES } from '@Shared/Infrastructure';
-import { BadRequestException, ConflictException, ForbiddenException } from '@Config/exception';
+import { BadRequestException, ForbiddenException } from '@Config/exception';
 import { ROOT_USER_TYPES } from '@Masters/RootUser/Infrastructure/IoC';
 import { inject } from 'inversify';
 import { State } from 'logiflowerp-sdk';
@@ -21,15 +21,13 @@ export class UseCaseVerifyEmail {
         }
 
         const pipeline = [{ $match: { _id: payload.user._id, state: State.ACTIVO } }]
-        const user = await this.repository.select(pipeline)
-        if (user.length !== 1) {
-            throw new ConflictException(`Error al verificar email`)
-        }
-        if (user[0].emailVerified) {
+        const user = await this.repository.selectOne(pipeline)
+
+        if (user.emailVerified) {
             throw new BadRequestException('Email ya se verificó')
         }
 
-        const filter = { _id: user[0]._id }
+        const filter = { _id: user._id }
         const update = { $set: { emailVerified: true } }
         await this.repository.updateOne(filter, update)
     }

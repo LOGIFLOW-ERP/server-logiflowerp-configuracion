@@ -1,4 +1,3 @@
-import { ConflictException, NotFoundException } from '@Config/exception';
 import { AdapterMail, AdapterToken, SHARED_TYPES } from '@Shared/Infrastructure';
 import { State, TokenPayloadDTO, UserENTITY } from 'logiflowerp-sdk';
 import path from 'path'
@@ -33,16 +32,9 @@ export class UseCaseRequestPasswordReset {
         return payload
     }
 
-    private async searchUser(email: string) {
+    private searchUser(email: string) {
         const pipeline = [{ $match: { email, state: State.ACTIVO } }]
-        const data = await this.repository.select(pipeline)
-        if (!data.length) {
-            throw new NotFoundException('Usuario no encontrado')
-        }
-        if (data.length > 1) {
-            throw new ConflictException(`Error al solicitar restablecer contraseña`)
-        }
-        return data[0]
+        return this.repository.selectOne(pipeline)
     }
 
     private prepareHTMLmessage(token: string, user: UserENTITY) {

@@ -154,7 +154,7 @@ export class RootAuthController extends BaseHttpController {
                 collections.profile
             )
             const useCaseGetProfile = tenantContainerGetProfile.get<UseCaseGetProfile>(AUTH_TYPES.UseCaseGetProfile)
-            const { profile: profileAux } = await useCaseGetProfile.exec(personnel)
+            const profileAux = await useCaseGetProfile.exec(personnel)
             const { systemOptions, routesAux } = await this.useCaseGetRootSystemOption.exec(profileAux)
             dataSystemOptions = systemOptions
             routes = routesAux

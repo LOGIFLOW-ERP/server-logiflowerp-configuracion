@@ -35,16 +35,9 @@ export class UseCaseSignInRoot {
         }
     }
 
-    private async searchUser(email: string) {
+    private searchUser(email: string) {
         const pipeline = [{ $match: { email, state: State.ACTIVO } }]
-        const data = await this.repository.select(pipeline)
-        if (!data.length) {
-            throw new ForbiddenException('Credenciales inválidas', true)
-        }
-        if (data.length > 1) {
-            throw new ConflictException(`Hay mas de un resultado para usuario con email ${email}`)
-        }
-        return data[0]
+        return this.repository.selectOne(pipeline)
     }
 
 }
