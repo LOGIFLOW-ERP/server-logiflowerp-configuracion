@@ -1,4 +1,4 @@
-import { ConflictException, ForbiddenException, NotFoundException } from '@Config/exception';
+import { ForbiddenException } from '@Config/exception';
 import { IRootUserMongoRepository } from '@Masters/RootUser/Domain';
 import { ROOT_USER_TYPES } from '@Masters/RootUser/Infrastructure/IoC';
 import { inject, injectable } from 'inversify';
@@ -34,16 +34,9 @@ export class UseCaseChangePassword {
 
     }
 
-    private async searchUser(_id: string) {
+    private searchUser(_id: string) {
         const pipeline = [{ $match: { _id, state: State.ACTIVO } }]
-        const data = await this.repository.select(pipeline)
-        if (!data.length) {
-            throw new NotFoundException('Usuario no encontrado')
-        }
-        if (data.length > 1) {
-            throw new ConflictException(`Error al solicitar restablecer contraseña`)
-        }
-        return data[0]
+        return this.repository.selectOne(pipeline)
     }
 
 }

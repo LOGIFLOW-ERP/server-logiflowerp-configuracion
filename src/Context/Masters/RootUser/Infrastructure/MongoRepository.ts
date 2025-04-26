@@ -1,6 +1,6 @@
 import { MongoRepository } from '@Shared/Infrastructure'
 import { IRootUserMongoRepository } from '../Domain'
-import { UserENTITY } from 'logiflowerp-sdk'
+import { AuthUserDTO, UserENTITY } from 'logiflowerp-sdk'
 import { inject, injectable } from 'inversify'
 import { CONFIG_TYPES } from '@Config/types'
 import { ROOT_USER_TYPES } from './IoC'
@@ -12,7 +12,7 @@ export class RootUserMongoRepository extends MongoRepository<UserENTITY> impleme
         @inject(ROOT_USER_TYPES.Collection) protected readonly collection: string,
         @inject(CONFIG_TYPES.Env) private env: Env,
     ) {
-        super(env.DB_ROOT, collection)
+        super(env.DB_ROOT, collection, new AuthUserDTO())
     }
 
 }

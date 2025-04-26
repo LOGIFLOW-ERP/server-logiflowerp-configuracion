@@ -1,6 +1,6 @@
-import { MongoRepository } from '@Shared/Infrastructure'
+import { MongoRepository, SHARED_TYPES } from '@Shared/Infrastructure'
 import { IProfileMongoRepository } from '../Domain'
-import { ProfileENTITY } from 'logiflowerp-sdk'
+import { AuthUserDTO, ProfileENTITY } from 'logiflowerp-sdk'
 import { inject, injectable } from 'inversify'
 
 @injectable()
@@ -9,8 +9,9 @@ export class ProfileMongoRepository extends MongoRepository<ProfileENTITY> imple
     constructor(
         @inject('collection') protected readonly collection: string,
         @inject('database') protected readonly database: string,
+        @inject(SHARED_TYPES.User) protected readonly user: AuthUserDTO,
     ) {
-        super(database, collection)
+        super(database, collection, user)
     }
 
 }

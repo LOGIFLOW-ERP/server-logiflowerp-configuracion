@@ -9,4 +9,5 @@ export const SHARED_TYPES = {
     UseCaseSendMailRegisterUser: Symbol.for('UseCaseSendMailRegisterUser'),
     Bootstraping: Symbol.for('Bootstraping'),
     BootstrapingDatabaseMongo: Symbol.for('BootstrapingDatabaseMongo'),
+    User: Symbol.for('User'),
 }

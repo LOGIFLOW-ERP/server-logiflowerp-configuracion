@@ -1,7 +1,8 @@
 import { MongoRepository } from '@Shared/Infrastructure/Repositories/Mongo'
 import { IPersonnelMongoRepository } from '../Domain'
-import { EmployeeENTITY } from 'logiflowerp-sdk'
+import { AuthUserDTO, EmployeeENTITY } from 'logiflowerp-sdk'
 import { inject, injectable } from 'inversify'
+import { SHARED_TYPES } from '@Shared/Infrastructure'
 
 @injectable()
 export class PersonnelMongoRepository extends MongoRepository<EmployeeENTITY> implements IPersonnelMongoRepository {
@@ -9,8 +10,9 @@ export class PersonnelMongoRepository extends MongoRepository<EmployeeENTITY> im
     constructor(
         @inject('collection') protected readonly collection: string,
         @inject('database') protected readonly database: string,
+        @inject(SHARED_TYPES.User) protected readonly user: AuthUserDTO,
     ) {
-        super(database, collection)
+        super(database, collection, user)
     }
 
 }
