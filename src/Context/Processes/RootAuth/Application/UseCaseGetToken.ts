@@ -20,7 +20,7 @@ export class UseCaseGetToken {
     private generatePayloadToken(entity: UserENTITY, routes: string[], isSuperAdmin: boolean, profile?: ProfileENTITY, rootCompany?: RootCompanyENTITY, personnel?: EmployeeAuthDTO) {
         const payload = new TokenPayloadDTO()
         payload.user.set(entity)
-        payload.routes = routes
+        // payload.routes = routes
         payload.root = isSuperAdmin
         if (profile) {
             payload.profile.set(profile)

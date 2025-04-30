@@ -3,7 +3,7 @@ import { IMapTransaction, IMongoRepository } from '@Shared/Domain'
 import { AdapterMongoDB, AdapterRedis, SHARED_TYPES } from '@Shared/Infrastructure'
 import { Request, Response } from 'express'
 import { Document, Filter, OptionalUnlessRequiredId, UpdateFilter } from 'mongodb'
-import { _deleteMany, _deleteOne, _find, _insertMany, _insertOne, _select, _selectOne, _updateOne } from './Transactions'
+import { _deleteMany, _deleteOne, _find, _insertMany, _insertOne, _queryMongoWithRedisMemo, _select, _selectOne, _updateOne } from './Transactions'
 import { BadRequestException } from '@Config/exception'
 import { AuthUserDTO } from 'logiflowerp-sdk'
 
@@ -43,6 +43,12 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
         const client = await this.adapterMongo.connection()
         const col = client.db(database).collection(collection)
         return _selectOne<ReturnType>({ collection: col, pipeline })
+    }
+
+    async queryMongoWithRedisMemo<ReturnType extends Document = T>(pipeline: Document[], collection: string = this.collection, database: string = this.database) {
+        const client = await this.adapterMongo.connection()
+        const col = client.db(database).collection(collection)
+        return _queryMongoWithRedisMemo<ReturnType>({ collection: col, pipeline })
     }
 
     async insertOne(doc: OptionalUnlessRequiredId<T>) {
