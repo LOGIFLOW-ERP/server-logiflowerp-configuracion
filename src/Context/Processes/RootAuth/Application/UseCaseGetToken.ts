@@ -11,13 +11,13 @@ export class UseCaseGetToken {
         @inject(CONFIG_TYPES.Env) private readonly env: Env,
     ) { }
 
-    async exec(user: UserENTITY, isSuperAdmin: boolean, routes: string[], profile?: ProfileENTITY, rootCompany?: RootCompanyENTITY, personnel?: EmployeeAuthDTO) {
-        const payload = this.generatePayloadToken(user, routes, isSuperAdmin, profile, rootCompany, personnel)
+    async exec(user: UserENTITY, isSuperAdmin: boolean, profile?: ProfileENTITY, rootCompany?: RootCompanyENTITY, personnel?: EmployeeAuthDTO) {
+        const payload = this.generatePayloadToken(user, isSuperAdmin, profile, rootCompany, personnel)
         const token = await this.adapterToken.create(payload, undefined, 43200) // const expiresIn = 12 * 60 * 60; // = 43200 o '12h'
         return { token, user: payload.user }
     }
 
-    private generatePayloadToken(entity: UserENTITY, routes: string[], isSuperAdmin: boolean, profile?: ProfileENTITY, rootCompany?: RootCompanyENTITY, personnel?: EmployeeAuthDTO) {
+    private generatePayloadToken(entity: UserENTITY, isSuperAdmin: boolean, profile?: ProfileENTITY, rootCompany?: RootCompanyENTITY, personnel?: EmployeeAuthDTO) {
         const payload = new TokenPayloadDTO()
         payload.user.set(entity)
         // payload.routes = routes

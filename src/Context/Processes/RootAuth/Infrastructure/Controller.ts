@@ -102,8 +102,8 @@ export class RootAuthController extends BaseHttpController {
     @httpPost('sign-in-root', VRB.bind(null, SignInRootDTO, BRE))
     async signInRoot(@request() req: Request<{}, {}, SignInRootDTO>, @response() res: Response) {
         const { user } = await this.useCaseSignInRoot.exec(req.body)
-        const { dataSystemOptions, routes } = await this.useCaseGetRootSystemOptionRoot.exec()
-        const { token, user: userResponse } = await this.useCaseGetToken.exec(user, true, routes)
+        const { dataSystemOptions, _tags } = await this.useCaseGetRootSystemOptionRoot.exec()
+        const { token, user: userResponse } = await this.useCaseGetToken.exec(user, true)
         res.cookie(
             'authToken',
             token,
@@ -117,6 +117,7 @@ export class RootAuthController extends BaseHttpController {
             user: userResponse,
             dataSystemOptions,
             root: true,
+            tags: _tags,
             company: new CompanyDTO(),
             profile: new ProfileDTO(),
             personnel: new EmployeeAuthDTO()
@@ -129,7 +130,7 @@ export class RootAuthController extends BaseHttpController {
         const { user } = await this.useCaseSignIn.exec(req.body)
         const { rootCompany, isRoot, companyAuth } = await this.useCaseGetRootCompany.exec(user, req.body)
         let dataSystemOptions: SystemOptionENTITY[]
-        let routes: string[]
+        let tags: string[]
         let profile: ProfileENTITY | undefined
         const profileAuth = new ProfileDTO()
         const personnelAuth = new EmployeeAuthDTO()
@@ -157,18 +158,18 @@ export class RootAuthController extends BaseHttpController {
             )
             const useCaseGetProfile = tenantContainerGetProfile.get<UseCaseGetProfile>(AUTH_TYPES.UseCaseGetProfile)
             const profileAux = await useCaseGetProfile.exec(personnel)
-            const { systemOptions, routesAux } = await this.useCaseGetRootSystemOption.exec(profileAux)
+            const { systemOptions, _tags } = await this.useCaseGetRootSystemOption.exec(profileAux)
             dataSystemOptions = systemOptions
-            routes = routesAux
+            tags = _tags
             profile = profileAux
             profileAuth.set(profileAux)
             personnelAuth.set(personnel)
         } else {
-            const { systemOptions, routesAux } = await this.useCaseGetRootSystemOption.execRoot(rootCompany)
+            const { systemOptions, _tags } = await this.useCaseGetRootSystemOption.execRoot(rootCompany)
             dataSystemOptions = systemOptions
-            routes = routesAux
+            tags = _tags
         }
-        const { token, user: userResponse } = await this.useCaseGetToken.exec(user, false, routes, profile, rootCompany, personnelAuth)
+        const { token, user: userResponse } = await this.useCaseGetToken.exec(user, false, profile, rootCompany, personnelAuth)
         res.cookie(
             'authToken',
             token,
@@ -181,6 +182,7 @@ export class RootAuthController extends BaseHttpController {
         const response: ResponseSignIn = {
             user: userResponse,
             dataSystemOptions,
+            tags,
             root: false,
             company: companyAuth,
             profile: profileAuth,

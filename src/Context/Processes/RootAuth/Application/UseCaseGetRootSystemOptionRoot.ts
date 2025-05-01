@@ -2,6 +2,7 @@ import { SystemOptionENTITY } from 'logiflowerp-sdk'
 import { IRootSystemOptionMongoRepository } from '@Masters/RootSystemOption/Domain'
 import { ROOT_SYSTEM_OPTION_TYPES } from '@Masters/RootSystemOption/Infrastructure/IoC'
 import { inject, injectable } from 'inversify'
+import { normalizePermissionName } from '@Shared/Infrastructure/Utils'
 
 @injectable()
 export class UseCaseGetRootSystemOptionRoot {
@@ -12,8 +13,8 @@ export class UseCaseGetRootSystemOptionRoot {
 
     async exec() {
         const dataSystemOptions = await this.loadSystemOptions()
-        const routes = this.getRoutes(dataSystemOptions)
-        return { dataSystemOptions, routes }
+        const _tags = this.getTags(dataSystemOptions)
+        return { dataSystemOptions, _tags }
     }
 
     private async loadSystemOptions() {
@@ -21,10 +22,12 @@ export class UseCaseGetRootSystemOptionRoot {
         return this.repository.select(pipeline)
     }
 
-    private getRoutes(dataSystemOptions: SystemOptionENTITY[]): string[] {
+    private getTags(dataSystemOptions: SystemOptionENTITY[]): string[] {
         return dataSystemOptions
-            .map(el => el.route)
-            .filter(route => route !== '')
+            .filter(e => e.route)
+            .map(e => {
+                return normalizePermissionName(e)
+            })
     }
 
 }
