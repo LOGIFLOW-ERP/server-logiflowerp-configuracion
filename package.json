@@ -8,7 +8,7 @@
     "prebuild": "npm run copy-html-once",
     "copy-html-once": "copyfiles -u 1 public/*.html build/public",
     "start": "node build/server.js",
-    "dev": "ts-node-dev --files -r tsconfig-paths/register --respawn server.ts"
+    "dev": "ts-node-dev --env-file=.env --files -r tsconfig-paths/register --respawn server.ts"
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,6 @@
     "compression": "^1.7.5",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
     "env-var": "^7.5.0",
     "express": "^4.21.2",
     "helmet": "^8.0.0",

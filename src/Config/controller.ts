@@ -5,9 +5,9 @@ import { join, resolve, sep } from 'path'
 async function initManger(paths: Dirent[]) {
     for (const rute of paths) {
 
-        const filePath = join('../', `${rute.parentPath.split('src')[1]}/${rute.name}`)
+        const filePath = join('../', `${rute.parentPath.split('src').pop()}/${rute.name}`)
         const controllerModule = await import(filePath)
-        
+
         const controllerClass = controllerModule[Object.keys(controllerModule)[0]]
 
         const fn = rute.parentPath.split(sep)

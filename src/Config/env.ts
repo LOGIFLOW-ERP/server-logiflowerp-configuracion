@@ -1,3 +1,4 @@
+// process.loadEnvFile()
 import { get } from 'env-var'
 
 export const env = {
