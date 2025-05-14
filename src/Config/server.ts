@@ -42,10 +42,7 @@ export async function serverConfig(app: Application, rootPath: string) {
 
     app.use(cors({
         origin: (origin, callback) => {
-            console.log(env.NODE_ENV)
-            console.log(origin)
-            console.log(whitelist)
-            if (!origin && env.NODE_ENV !== 'production') {
+            if (!origin) {
                 return callback(null, true)
             }
             if (whitelist.some(org => org.toLowerCase() === origin?.toLowerCase())) {
@@ -56,9 +53,7 @@ export async function serverConfig(app: Application, rootPath: string) {
         credentials: true
     }))
 
-    if (env.REQUIRE_AUTH) {
-        authMiddleware(app, rootPath)
-    }
+    authMiddleware(app, rootPath)
 
     app.use(json({ limit: '10mb' }))
     app.use(text({ limit: '10mb' }))
@@ -143,7 +138,7 @@ function authMiddleware(app: Application, rootPath: string) {
 
             if (!serviceNoAuth) return next()
 
-            const token = req.cookies.authToken
+            const token = req.cookies.authToken || req.headers['authorization']
 
             if (!token) {
                 return next(new UnauthorizedException('No autorizado, token faltante'))
