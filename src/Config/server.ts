@@ -42,6 +42,9 @@ export async function serverConfig(app: Application, rootPath: string) {
 
     app.use(cors({
         origin: (origin, callback) => {
+            console.log(env.NODE_ENV)
+            console.log(origin)
+            console.log(whitelist)
             if (!origin && env.NODE_ENV !== 'production') {
                 return callback(null, true)
             }
