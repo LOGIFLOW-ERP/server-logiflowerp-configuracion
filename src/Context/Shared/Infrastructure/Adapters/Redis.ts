@@ -27,7 +27,6 @@ export class AdapterRedis {
 
     async deleteKeysCollection<T extends Document>(col: Collection<T>) {
         const keys = await this.getKeysCollection(col)
-        console.log(keys)        
         if (keys.length) {
             await this._client.del(keys)
         }
