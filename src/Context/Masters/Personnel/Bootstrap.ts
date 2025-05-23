@@ -10,12 +10,20 @@ export class ManagerEntity {
 
     private indexes: IndexEntity<EmployeeENTITY>[] = [
         {
-            campos: { identity: 1 },
-            opciones: { name: 'idx_identity', unique: true }
+            campos: { identity: 1, isDeleted: 1 },
+            opciones: {
+                name: 'idx_identity_unique_not_deleted',
+                unique: true,
+                partialFilterExpression: { isDeleted: false }
+            }
         },
         {
-            campos: { email: 1 },
-            opciones: { name: 'idx_email', unique: true }
+            campos: { email: 1, isDeleted: 1 },
+            opciones: {
+                name: 'idx_email_unique_not_deleted',
+                unique: true,
+                partialFilterExpression: { isDeleted: false }
+            }
         }
     ]
 
