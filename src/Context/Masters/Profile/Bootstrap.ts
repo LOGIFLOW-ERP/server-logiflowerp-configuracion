@@ -8,7 +8,16 @@ import { SHARED_TYPES } from '@Shared/Infrastructure'
 @injectable()
 export class ManagerEntity {
 
-    private indexes: IndexEntity<ProfileENTITY>[] = []
+    private indexes: IndexEntity<ProfileENTITY>[] = [
+        {
+            campos: { name: 1, isDeleted: 1 },
+            opciones: {
+                name: 'idx_name_unique_not_deleted',
+                unique: true,
+                partialFilterExpression: { isDeleted: false }
+            }
+        }
+    ]
 
     constructor(
         @inject(SHARED_TYPES.Bootstraping) private bootstrap: Bootstraping

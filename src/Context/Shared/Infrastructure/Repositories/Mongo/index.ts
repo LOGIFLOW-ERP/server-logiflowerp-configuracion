@@ -25,30 +25,38 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
 
     async find(pipeline: Document[], req: Request, res: Response) {
         try {
+            const baseMatch = { $match: { isDeleted: { $ne: true } } }
+            const finalPipeline = [baseMatch, ...pipeline]
             const client = await this.adapterMongo.connection()
             const col = client.db(this.database).collection(this.collection)
-            await _find({ collection: col, pipeline, req, res })
+            await _find({ collection: col, pipeline: finalPipeline, req, res })
         } catch (error) {
             throw error
         }
     }
 
     async select<ReturnType extends Document = T>(pipeline: Document[], collection: string = this.collection, database: string = this.database) {
+        const baseMatch = { $match: { isDeleted: { $ne: true } } }
+        const finalPipeline = [baseMatch, ...pipeline]
         const client = await this.adapterMongo.connection()
         const col = client.db(database).collection(collection)
-        return await _select<ReturnType>({ collection: col, pipeline })
+        return await _select<ReturnType>({ collection: col, pipeline: finalPipeline })
     }
 
     async selectOne<ReturnType extends Document = T>(pipeline: Document[], collection: string = this.collection, database: string = this.database) {
+        const baseMatch = { $match: { isDeleted: { $ne: true } } }
+        const finalPipeline = [baseMatch, ...pipeline]
         const client = await this.adapterMongo.connection()
         const col = client.db(database).collection(collection)
-        return await _selectOne<ReturnType>({ collection: col, pipeline })
+        return await _selectOne<ReturnType>({ collection: col, pipeline: finalPipeline })
     }
 
     async queryMongoWithRedisMemo<ReturnType extends Document = T>(pipeline: Document[], collection: string = this.collection, database: string = this.database) {
+        const baseMatch = { $match: { isDeleted: { $ne: true } } }
+        const finalPipeline = [baseMatch, ...pipeline]
         const client = await this.adapterMongo.connection()
         const col = client.db(database).collection(collection)
-        return await _queryMongoWithRedisMemo<ReturnType>({ collection: col, pipeline })
+        return await _queryMongoWithRedisMemo<ReturnType>({ collection: col, pipeline: finalPipeline })
     }
 
     async insertOne(doc: OptionalUnlessRequiredId<T>) {
@@ -88,12 +96,13 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
     }
 
     async deleteMany(filter: Filter<T>) {
+        const filterWithDeleted = { ...filter, isDeleted: false }
         const client = await this.adapterMongo.connection()
         const session = await this.adapterMongo.openSession(client)
         try {
             const col = client.db(this.database).collection<T>(this.collection)
             await this.adapterMongo.openTransaction(session)
-            const result = await _deleteMany<T>({ client, col, session, filter, adapterMongo: this.adapterMongo, user: this.user })
+            const result = await _deleteMany<T>({ client, col, session, filter: filterWithDeleted, adapterMongo: this.adapterMongo, user: this.user })
             await this.adapterRedis.deleteKeysCollection(col)
             await this.adapterMongo.commitTransaction(session)
             return result
@@ -106,12 +115,13 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
     }
 
     async updateOne(filter: Filter<T>, update: T[] | UpdateFilter<T>) {
+        const filterWithDeleted = { ...filter, isDeleted: false }
         const client = await this.adapterMongo.connection()
         const session = await this.adapterMongo.openSession(client)
         try {
             const col = client.db(this.database).collection<T>(this.collection)
             await this.adapterMongo.openTransaction(session)
-            const result = await _updateOne<T>({ client, col, session, filter, update, adapterMongo: this.adapterMongo, user: this.user })
+            const result = await _updateOne<T>({ client, col, session, filter: filterWithDeleted, update, adapterMongo: this.adapterMongo, user: this.user })
             await this.adapterRedis.deleteKeysCollection(col)
             await this.adapterMongo.commitTransaction(session)
             return result
@@ -124,12 +134,13 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
     }
 
     async deleteOne(filter: Filter<T>) {
+        const filterWithDeleted = { ...filter, isDeleted: false }
         const client = await this.adapterMongo.connection()
         const session = await this.adapterMongo.openSession(client)
         try {
             const col = client.db(this.database).collection<T>(this.collection)
             await this.adapterMongo.openTransaction(session)
-            const result = await _deleteOne<T>({ client, col, session, filter, adapterMongo: this.adapterMongo, user: this.user })
+            const result = await _deleteOne<T>({ client, col, session, filter: filterWithDeleted, adapterMongo: this.adapterMongo, user: this.user })
             await this.adapterRedis.deleteKeysCollection(col)
             await this.adapterMongo.commitTransaction(session)
             return result
@@ -160,13 +171,14 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
                 const database = transaction.database ? transaction.database : this.database
                 const collection = transaction.collection ? transaction.collection : this.collection
                 const col = client.db(database).collection<T>(collection)
+                const filterWithDeleted = transaction.filter ? { ...transaction.filter, isDeleted: false } : undefined
                 const result = await mapTransaction[transaction.transaction]({
                     adapterMongo: this.adapterMongo,
                     client,
                     col,
                     session,
                     doc: transaction.doc,
-                    filter: transaction.filter,
+                    filter: filterWithDeleted,
                     update: transaction.update,
                     user: this.user
                 })
