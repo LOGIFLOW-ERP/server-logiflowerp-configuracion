@@ -13,7 +13,7 @@ export class UseCaseUpdateOne {
 
     async exec(_id: string, dto: UpdateCompanyDTO, companyCode: string) {
 
-        const entity = await this.repository.selectOne([{ $match: { _id } }])
+        const entity = await this.repository.selectOne([{ $match: { _id, isDeleted: false } }])
 
         if (entity.code === companyCode) {
             throw new ForbiddenException(`¡No se puede actualizar la empresa ya que es propia!`, true)

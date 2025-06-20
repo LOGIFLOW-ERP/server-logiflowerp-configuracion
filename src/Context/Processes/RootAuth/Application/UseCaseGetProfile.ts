@@ -11,7 +11,7 @@ export class UseCaseGetProfile {
     ) { }
 
     exec(personnel: EmployeeENTITY) {
-        const pipeline = [{ $match: { _id: personnel._idprofile, state: State.ACTIVO } }]
+        const pipeline = [{ $match: { _id: personnel._idprofile, state: State.ACTIVO, isDeleted: false } }]
         return this.repository.selectOne(pipeline)
     }
 

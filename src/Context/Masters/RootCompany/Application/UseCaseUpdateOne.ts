@@ -34,13 +34,13 @@ export class UseCaseUpdateOne {
     }
 
     private async changedManager(_id: string, dto: UpdateRootCompanyDTO) {
-        const pipeline = [{ $match: { _id } }]
+        const pipeline = [{ $match: { _id, isDeleted: false } }]
         const data = await this.repository.selectOne(pipeline)
         return { changedManager: data.identityManager !== dto.identityManager, rootCompany: data }
     }
 
     private async searchAndValidateUser(identity: string) { // MISMA VALIDACION SE DEBE HACER EN CREAR
-        const pipeline = [{ $match: { identity } }]
+        const pipeline = [{ $match: { identity, isDeleted: false } }]
         const data = await this.repository.selectOne<UserENTITY>(pipeline, collections.user)
         if (data.root) {
             throw new ConflictException(`El usuario con identificación ${identity}, ya es root`)

@@ -19,7 +19,7 @@ export class UseCaseGetRootCompany {
     }
 
     private searchRootCompany(dto: SignInDTO) {
-        const pipeline = [{ $match: { code: dto.companyCode, state: State.ACTIVO } }]
+        const pipeline = [{ $match: { code: dto.companyCode, state: State.ACTIVO, isDeleted: false } }]
         return this.repository.selectOne(pipeline)
     }
 

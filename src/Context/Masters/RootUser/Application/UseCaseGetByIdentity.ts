@@ -11,7 +11,7 @@ export class UseCaseGetByIdentity {
 	) { }
 
 	async exec(identity: string) {
-		const pipeline = [{ $match: { identity, state: State.ACTIVO } }]
+		const pipeline = [{ $match: { identity, state: State.ACTIVO, isDeleted: false } }]
 		const result = await this.repository.selectOne(pipeline)
 		const { password, root, emailVerified, state, _id, ...user } = result
 		return user

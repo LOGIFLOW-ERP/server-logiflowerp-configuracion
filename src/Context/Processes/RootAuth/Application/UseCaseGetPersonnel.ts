@@ -20,7 +20,7 @@ export class UseCaseGetPersonnel {
     }
 
     private searchPersonnel(identity: string) {
-        const pipeline = [{ $match: { identity } }]
+        const pipeline = [{ $match: { identity, isDeleted: false } }]
         return this.repository.selectOne(pipeline)
     }
 

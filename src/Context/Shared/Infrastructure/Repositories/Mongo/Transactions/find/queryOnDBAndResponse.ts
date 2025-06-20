@@ -25,7 +25,7 @@ export function queryOnDBAndResponse<T extends Document>(params: IFind) {
         stream.end()
     })
     cursor.on('error', async (err: any) => {
-        console.error('Error leyendo del cursor:', err)
+        console.error('Error leyendo del cursor (0):', err)
         stream.end(']')
         res.end(JSON.stringify(new InternalServerException('Error leyendo del cursor')))
     })

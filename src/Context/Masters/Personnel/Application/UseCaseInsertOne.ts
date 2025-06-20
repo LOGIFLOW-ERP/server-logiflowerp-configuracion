@@ -23,7 +23,7 @@ export class UseCaseInsertOne {
     }
 
     private searchUser(identity: string) {
-        const pipeline = [{ $match: { identity, state: State.ACTIVO } }]
+        const pipeline = [{ $match: { identity, state: State.ACTIVO, isDeleted: false } }]
         return this.repository.selectOne<UserENTITY>(pipeline, collections.user, this.env.DB_ROOT)
     }
 

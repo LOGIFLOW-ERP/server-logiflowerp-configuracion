@@ -31,7 +31,7 @@ export class UseCaseSignIn {
     }
 
     private async searchUser(email: string) {
-        const pipeline = [{ $match: { email, state: State.ACTIVO } }]
+        const pipeline = [{ $match: { email, state: State.ACTIVO, isDeleted: false } }]
         const data = await this.repository.select(pipeline)
         if (!data.length) {
             throw new ForbiddenException('Credenciales inválidas', true)
