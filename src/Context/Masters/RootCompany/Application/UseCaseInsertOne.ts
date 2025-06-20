@@ -35,7 +35,7 @@ export class UseCaseInsertOne {
     }
 
     private async searchAndValidateUser(identity: string) { // MISMA VALIDACION SE DEBE HACER EN EDITAR
-        const pipeline = [{ $match: { identity } }]
+        const pipeline = [{ $match: { identity, isDeleted: false } }]
         const data = await this.repository.selectOne<UserENTITY>(pipeline, collections.user)
         if (data.root) {
             throw new ConflictException(`El usuario con identificación ${identity}, ya es root`)

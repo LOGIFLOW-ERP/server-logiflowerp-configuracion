@@ -20,7 +20,7 @@ export class UseCaseVerifyEmail {
             throw new ForbiddenException('Token no válido o expirado')
         }
 
-        const pipeline = [{ $match: { _id: payload.user._id, state: State.ACTIVO } }]
+        const pipeline = [{ $match: { _id: payload.user._id, state: State.ACTIVO, isDeleted: false } }]
         const user = await this.repository.selectOne(pipeline)
 
         if (user.emailVerified) {

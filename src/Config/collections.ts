@@ -7,7 +7,7 @@ import { ROOT_COMPANY_TYPES } from '@Masters/RootCompany/Infrastructure/IoC'
 
 async function getRootCompanies() {
     const repository = ContainerGlobal.get<RootCompanyMongoRepository>(ROOT_COMPANY_TYPES.RepositoryMongo)
-    const pipeline = [{ $match: { state: State.ACTIVO } }]
+    const pipeline = [{ $match: { state: State.ACTIVO, isDeleted: false } }]
     return repository.select(pipeline)
 }
 

@@ -35,7 +35,7 @@ export class UseCaseChangePassword {
     }
 
     private searchUser(_id: string) {
-        const pipeline = [{ $match: { _id, state: State.ACTIVO } }]
+        const pipeline = [{ $match: { _id, state: State.ACTIVO, isDeleted: false } }]
         return this.repository.selectOne(pipeline)
     }
 

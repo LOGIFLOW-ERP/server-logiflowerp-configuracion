@@ -33,7 +33,7 @@ export class UseCaseRequestPasswordReset {
     }
 
     private searchUser(email: string) {
-        const pipeline = [{ $match: { email, state: State.ACTIVO } }]
+        const pipeline = [{ $match: { email, state: State.ACTIVO, isDeleted: false } }]
         return this.repository.selectOne(pipeline)
     }
 

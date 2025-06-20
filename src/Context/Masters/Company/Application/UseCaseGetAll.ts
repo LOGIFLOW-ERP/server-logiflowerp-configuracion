@@ -11,7 +11,7 @@ export class UseCaseGetAll {
 	) { }
 
 	async exec(req: Request, res: Response) {
-		await this.repositoryMongo.find([], req, res)
+		await this.repositoryMongo.find([{ $match: { isDeleted: false } }], req, res)
 	}
 
 }

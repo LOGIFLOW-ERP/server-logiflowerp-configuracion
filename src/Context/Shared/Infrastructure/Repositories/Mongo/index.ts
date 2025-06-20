@@ -25,8 +25,9 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
 
     async find(pipeline: Document[], req: Request, res: Response) {
         try {
-            const baseMatch = { $match: { isDeleted: { $ne: true } } }
-            const finalPipeline = [baseMatch, ...pipeline]
+            // const baseMatch = { $match: { isDeleted: { $ne: true } } }
+            // const finalPipeline = [baseMatch, ...pipeline]
+            const finalPipeline = pipeline
             const client = await this.adapterMongo.connection()
             const col = client.db(this.database).collection(this.collection)
             await _find({ collection: col, pipeline: finalPipeline, req, res })
@@ -36,24 +37,27 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
     }
 
     async select<ReturnType extends Document = T>(pipeline: Document[], collection: string = this.collection, database: string = this.database) {
-        const baseMatch = { $match: { isDeleted: { $ne: true } } }
-        const finalPipeline = [baseMatch, ...pipeline]
+        // const baseMatch = { $match: { isDeleted: { $ne: true } } }
+        // const finalPipeline = [baseMatch, ...pipeline]
+        const finalPipeline = pipeline
         const client = await this.adapterMongo.connection()
         const col = client.db(database).collection(collection)
         return await _select<ReturnType>({ collection: col, pipeline: finalPipeline })
     }
 
     async selectOne<ReturnType extends Document = T>(pipeline: Document[], collection: string = this.collection, database: string = this.database) {
-        const baseMatch = { $match: { isDeleted: { $ne: true } } }
-        const finalPipeline = [baseMatch, ...pipeline]
+        // const baseMatch = { $match: { isDeleted: { $ne: true } } }
+        // const finalPipeline = [baseMatch, ...pipeline]
+        const finalPipeline = pipeline
         const client = await this.adapterMongo.connection()
         const col = client.db(database).collection(collection)
         return await _selectOne<ReturnType>({ collection: col, pipeline: finalPipeline })
     }
 
     async queryMongoWithRedisMemo<ReturnType extends Document = T>(pipeline: Document[], collection: string = this.collection, database: string = this.database) {
-        const baseMatch = { $match: { isDeleted: { $ne: true } } }
-        const finalPipeline = [baseMatch, ...pipeline]
+        // const baseMatch = { $match: { isDeleted: { $ne: true } } }
+        // const finalPipeline = [baseMatch, ...pipeline]
+        const finalPipeline = pipeline
         const client = await this.adapterMongo.connection()
         const col = client.db(database).collection(collection)
         return await _queryMongoWithRedisMemo<ReturnType>({ collection: col, pipeline: finalPipeline })

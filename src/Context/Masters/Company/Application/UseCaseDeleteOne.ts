@@ -12,7 +12,7 @@ export class UseCaseDeleteOne {
 
     async exec(_id: string, companyCode: string) {
 
-        const entity = await this.repository.select([{ $match: { _id } }])
+        const entity = await this.repository.select([{ $match: { _id, isDeleted: false } }])
 
         if (entity.length !== 1) {
             throw new ConflictException(`¡Hay ${entity.length} resultado(s) para empresa con _id ${_id}!`, true)
