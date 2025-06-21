@@ -129,6 +129,7 @@ function authMiddleware(app: Application, rootPath: string) {
                 `${rootPath}/processes/rootauth/request-password-reset`,
                 `${rootPath}/processes/rootauth/reset-password`,
                 `${rootPath}/masters/rootcompany/get-active`,
+                `${rootPath}/processes/rootauth/resend-mail-register-user`,
             ]
             const url = req.originalUrl.toLowerCase()
 

@@ -7,6 +7,7 @@ import {
     UseCaseGetRootSystemOptionRoot,
     UseCaseGetToken,
     UseCaseRequestPasswordReset,
+    UseCaseResendMailRegisterUser,
     UseCaseResetPassword,
     UseCaseSignIn,
     UseCaseSignInRoot,
@@ -26,4 +27,5 @@ export const containerModule = new ContainerModule(bind => {
     bind(AUTH_TYPES.UseCaseGetRootCompany).to(UseCaseGetRootCompany)
     bind(AUTH_TYPES.UseCaseGetRootSystemOption).to(UseCaseGetRootSystemOption)
     bind(AUTH_TYPES.UseCaseChangePassword).to(UseCaseChangePassword)
+    bind(AUTH_TYPES.UseCaseResendMailRegisterUser).to(UseCaseResendMailRegisterUser)
 })
