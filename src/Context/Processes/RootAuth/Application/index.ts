@@ -11,3 +11,4 @@ export * from './UseCaseSignInRoot';
 export * from './UseCaseSignUp';
 export * from './UseCaseVerifyEmail';
 export * from './UseCaseChangePassword';
+export * from './UseCaseResendMailRegisterUser';

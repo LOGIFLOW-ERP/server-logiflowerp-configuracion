@@ -16,6 +16,7 @@ import {
     UseCaseGetRootSystemOptionRoot,
     UseCaseGetToken,
     UseCaseRequestPasswordReset,
+    UseCaseResendMailRegisterUser,
     UseCaseResetPassword,
     UseCaseSignIn,
     UseCaseSignInRoot,
@@ -39,7 +40,7 @@ import {
     validateRequestBody as VRB
 } from 'logiflowerp-sdk'
 import { AdapterRabbitMQ, createTenantScopedContainer, SHARED_TYPES } from '@Shared/Infrastructure'
-import { DataRequestPasswordResetDTO, DataVerifyEmailDTO } from '../Domain'
+import { DataRequestPasswordResetDTO, DataRequestResendMailRegisterUser, DataVerifyEmailDTO } from '../Domain'
 import { ProfileMongoRepository } from '@Masters/Profile/Infrastructure/MongoRepository'
 import { PersonnelMongoRepository } from '@Masters/Personnel/Infrastructure/MongoRepository'
 import { AUTH_TYPES } from './IoC'
@@ -63,6 +64,7 @@ export class RootAuthController extends BaseHttpController {
         @inject(AUTH_TYPES.UseCaseGetRootCompany) private readonly useCaseGetRootCompany: UseCaseGetRootCompany,
         @inject(AUTH_TYPES.UseCaseGetRootSystemOption) private readonly useCaseGetRootSystemOption: UseCaseGetRootSystemOption,
         @inject(AUTH_TYPES.UseCaseChangePassword) private readonly useCaseChangePassword: UseCaseChangePassword,
+        @inject(AUTH_TYPES.UseCaseResendMailRegisterUser) private readonly useCaseResendMailRegisterUser: UseCaseResendMailRegisterUser,
         @inject(CONFIG_TYPES.Env) private readonly env: Env,
     ) {
         super()
@@ -195,6 +197,13 @@ export class RootAuthController extends BaseHttpController {
     async signOut(@request() _req: Request, @response() res: Response) {
         res.clearCookie('authToken')
         res.sendStatus(204)
+    }
+
+    @httpPost('resend-mail-register-user', VRB.bind(null, DataRequestResendMailRegisterUser, BRE))
+    async resendMailRegisterUser(@request() req: Request<{}, {}, DataRequestResendMailRegisterUser>, @response() res: Response) {
+        const newDoc = await this.useCaseResendMailRegisterUser.exec(req.body)
+        await this.adapterRabbitMQ.publish({ queue: getQueueNameMailRegisterUser({ NODE_ENV: this.env.NODE_ENV }), message: newDoc })
+        res.status(201).json(newDoc)
     }
 
 }
