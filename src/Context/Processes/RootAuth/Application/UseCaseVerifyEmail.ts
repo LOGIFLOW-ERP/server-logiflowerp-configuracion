@@ -1,8 +1,8 @@
-import { IRootUserMongoRepository } from '@Masters/RootUser/Domain';
+import { IRootUserMongoRepository } from '@Masters/User/Domain';
 import { DataVerifyEmailDTO } from '../Domain';
 import { AdapterToken, SHARED_TYPES } from '@Shared/Infrastructure';
 import { BadRequestException, ForbiddenException } from '@Config/exception';
-import { ROOT_USER_TYPES } from '@Masters/RootUser/Infrastructure/IoC';
+import { ROOT_USER_TYPES } from '@Masters/User/Infrastructure/IoC';
 import { inject } from 'inversify';
 import { State } from 'logiflowerp-sdk';
 

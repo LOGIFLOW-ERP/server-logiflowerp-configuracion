@@ -1,6 +1,6 @@
 import { ForbiddenException } from '@Config/exception';
-import { IRootUserMongoRepository } from '@Masters/RootUser/Domain';
-import { ROOT_USER_TYPES } from '@Masters/RootUser/Infrastructure/IoC';
+import { IRootUserMongoRepository } from '@Masters/User/Domain';
+import { ROOT_USER_TYPES } from '@Masters/User/Infrastructure/IoC';
 import { inject, injectable } from 'inversify';
 import { AuthUserDTO, ChangePasswordDTO, State } from 'logiflowerp-sdk';
 

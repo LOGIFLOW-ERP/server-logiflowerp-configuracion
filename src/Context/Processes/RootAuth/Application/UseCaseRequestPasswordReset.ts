@@ -2,10 +2,10 @@ import { AdapterMail, AdapterToken, SHARED_TYPES } from '@Shared/Infrastructure'
 import { State, TokenPayloadDTO, UserENTITY } from 'logiflowerp-sdk';
 import path from 'path'
 import fs from 'fs'
-import { IRootUserMongoRepository } from '@Masters/RootUser/Domain';
+import { IRootUserMongoRepository } from '@Masters/User/Domain';
 import { inject, injectable } from 'inversify';
 import { CONFIG_TYPES } from '@Config/types';
-import { ROOT_USER_TYPES } from '@Masters/RootUser/Infrastructure/IoC';
+import { ROOT_USER_TYPES } from '@Masters/User/Infrastructure/IoC';
 
 @injectable()
 export class UseCaseRequestPasswordReset {

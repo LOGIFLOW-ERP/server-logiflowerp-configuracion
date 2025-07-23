@@ -1,9 +1,9 @@
-import { ConflictException, ForbiddenException } from '@Config/exception'
+import { ForbiddenException } from '@Config/exception'
 import { SignInRootDTO, State, UserENTITY } from 'logiflowerp-sdk'
-import { IRootUserMongoRepository } from '@Masters/RootUser/Domain'
+import { IRootUserMongoRepository } from '@Masters/User/Domain'
 import { CONFIG_TYPES } from '@Config/types'
 import { inject, injectable } from 'inversify'
-import { ROOT_USER_TYPES } from '@Masters/RootUser/Infrastructure/IoC'
+import { ROOT_USER_TYPES } from '@Masters/User/Infrastructure/IoC'
 
 @injectable()
 export class UseCaseSignInRoot {
