@@ -11,30 +11,27 @@ import {
     UseCaseFind,
     UseCaseGetByIdentity,
 } from '../Application'
-import {
-    authRootCompanyMiddleware,
-    authRootMiddleware
-} from '@Shared/Infrastructure/Middlewares'
-import { ROOT_USER_TYPES } from './IoC'
+import { authRootCompanyMiddleware } from '@Shared/Infrastructure/Middlewares'
+import { USER_TYPES } from './IoC'
 
-export class RootUserController extends BaseHttpController {
+export class UserController extends BaseHttpController {
 
-    constructor(
-        @inject(ROOT_USER_TYPES.UseCaseFind) private readonly useCaseFind: UseCaseFind,
-        @inject(ROOT_USER_TYPES.UseCaseGetByIdentity) private readonly useCaseGetByIdentity: UseCaseGetByIdentity,
-    ) {
-        super()
-    }
+    // constructor(
+    //     @inject(USER_TYPES.UseCaseFind) private readonly useCaseFind: UseCaseFind,
+    //     @inject(USER_TYPES.UseCaseGetByIdentity) private readonly useCaseGetByIdentity: UseCaseGetByIdentity,
+    // ) {
+    //     super()
+    // }
 
-    @httpPost('find', authRootMiddleware)
+    @httpPost('find')
     async find(@request() req: Request, @response() res: Response) {
-        await this.useCaseFind.exec(req, res)
+        // await this.useCaseFind.exec(req, res)
     }
 
     @httpGet(':identity', authRootCompanyMiddleware)
     async getByIdentity(@request() req: Request<{ identity: string }>, @response() res: Response) {
-        const doc = await this.useCaseGetByIdentity.exec(req.params.identity)
-        res.status(200).json(doc)
+        // const doc = await this.useCaseGetByIdentity.exec(req.params.identity)
+        // res.status(200).json(doc)
     }
 
 }

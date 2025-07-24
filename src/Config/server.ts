@@ -31,6 +31,7 @@ const SECRET_KEY = Buffer.from(env.ENCRYPTION_KEY, 'utf8')
 
 export async function serverConfig(app: Application, rootPath: string) {
 
+    app.use(resolveTenantBySubdomain)
     app.use(customLogger)
     app.use(cookieParser())
     app.use(helmet())
@@ -65,34 +66,6 @@ export async function serverConfig(app: Application, rootPath: string) {
     }
 
     app.use(convertDatesMiddleware)
-
-}
-
-export function serverErrorConfig(app: Application) {
-
-    const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
-
-        console.error(err)
-
-        if (err instanceof MongoServerError) {
-            if (err.code === 11000) {
-                delete err.errorResponse.keyValue.isDeleted
-                const msg = `El recurso ya existe (clave duplicada: ${JSON.stringify(err.errorResponse.keyValue)})`
-                res.status(409).send(new ConflictException(msg, true))
-                return
-            }
-        }
-
-        if (err instanceof BaseException) {
-            res.status(err.statusCode).json(err)
-            return
-        }
-
-        res.status(500).json(new InternalServerException('Ocurrió un error inesperado'))
-
-    }
-
-    app.use(errorHandler)
 
 }
 
@@ -154,7 +127,6 @@ function authMiddleware(app: Application, rootPath: string) {
 
             req.payloadToken = decoded
             req.user = decoded.user
-            req.userRoot = decoded.root
             req.rootCompany = decoded.rootCompany
 
             next()
@@ -162,6 +134,16 @@ function authMiddleware(app: Application, rootPath: string) {
             next(error)
         }
     })
+}
+
+function resolveTenantBySubdomain(req: Request, _res: Response, next: NextFunction) {
+    const hostname = req.hostname
+    const subdomain = req.headers.host?.split('.')[0]
+    if (!subdomain) {
+        return next(new BadRequestException('Subdominio no encontrado'))
+    }
+    req.tenant = subdomain
+    next()
 }
 
 function convertDatesMiddleware(req: Request, _res: Response, next: NextFunction) {

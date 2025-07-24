@@ -1,18 +1,19 @@
 import { Response, Request } from 'express'
-import { IRootUserMongoRepository } from '../Domain'
+import { IUserMongoRepository } from '../Domain'
 import { inject, injectable } from 'inversify'
-import { ROOT_USER_TYPES } from '../Infrastructure/IoC'
+import { USER_TYPES } from '../Infrastructure/IoC/types'
 
 @injectable()
 export class UseCaseFind {
 
 	constructor(
-		@inject(ROOT_USER_TYPES.RepositoryMongo) private readonly repository: IRootUserMongoRepository,
+		@inject(USER_TYPES.RepositoryMongo) private readonly repository: IUserMongoRepository,
 	) { }
 
 	async exec(req: Request, res: Response) {
 		const pipeline = req.body
-		await this.repository.find(pipeline, req, res)
+		const _pipeline = [...pipeline, { $project: { password: 0 } }]
+		await this.repository.find(_pipeline, req, res)
 	}
 
 }

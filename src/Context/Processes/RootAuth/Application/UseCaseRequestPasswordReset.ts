@@ -1,24 +1,21 @@
-import { AdapterMail, AdapterToken, SHARED_TYPES } from '@Shared/Infrastructure';
-import { State, TokenPayloadDTO, UserENTITY } from 'logiflowerp-sdk';
+import { AdapterMail, AdapterToken, MongoRepository, SHARED_TYPES } from '@Shared/Infrastructure';
+import { AuthUserDTO, collections, State, TokenPayloadDTO, UserENTITY } from 'logiflowerp-sdk';
 import path from 'path'
 import fs from 'fs'
-import { IRootUserMongoRepository } from '@Masters/User/Domain';
 import { inject, injectable } from 'inversify';
 import { CONFIG_TYPES } from '@Config/types';
-import { ROOT_USER_TYPES } from '@Masters/User/Infrastructure/IoC';
 
 @injectable()
 export class UseCaseRequestPasswordReset {
 
     constructor(
-        @inject(ROOT_USER_TYPES.RepositoryMongo) private readonly repository: IRootUserMongoRepository,
         @inject(SHARED_TYPES.AdapterToken) private readonly adapterToken: AdapterToken,
         @inject(SHARED_TYPES.AdapterMail) private readonly adapterMail: AdapterMail,
         @inject(CONFIG_TYPES.Env) private readonly env: Env,
     ) { }
 
-    async exec(email: string) {
-        const user = await this.searchUser(email)
+    async exec(email: string, tenant: string) {
+        const user = await this.searchUser(email, tenant)
         const payload = this.generatePayloadToken(user)
         const token = await this.adapterToken.create(payload, undefined, 180)
         const HTMLMessage = this.prepareHTMLmessage(token, user)
@@ -32,9 +29,10 @@ export class UseCaseRequestPasswordReset {
         return payload
     }
 
-    private searchUser(email: string) {
+    private searchUser(email: string, tenant: string) {
+        const repository = new MongoRepository<UserENTITY>(tenant, collections.user, new AuthUserDTO())
         const pipeline = [{ $match: { email, state: State.ACTIVO, isDeleted: false } }]
-        return this.repository.selectOne(pipeline)
+        return repository.selectOne(pipeline)
     }
 
     private prepareHTMLmessage(token: string, user: UserENTITY) {

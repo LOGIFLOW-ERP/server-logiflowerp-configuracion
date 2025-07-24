@@ -1,1 +1,1 @@
-export { ROOT_USER_TYPES } from './types';
+export { USER_TYPES } from './types';

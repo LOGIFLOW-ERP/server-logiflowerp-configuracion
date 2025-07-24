@@ -1,16 +1,13 @@
 import { IndexEntity } from '@Shared/Domain'
 import { collection } from './Infrastructure'
 import { Bootstraping } from '@Shared/Bootstraping'
-import { UserENTITY } from 'logiflowerp-sdk'
+import { RootCompanyENTITY, UserENTITY } from 'logiflowerp-sdk'
 import { inject, injectable } from 'inversify'
 import { SHARED_TYPES } from '@Shared/Infrastructure'
 import { CONFIG_TYPES } from '@Config/types'
 
 @injectable()
 export class ManagerEntity {
-
-    private database = this.env.DB_ROOT
-    private collection = collection
     private indexes: IndexEntity<UserENTITY>[] = [
         {
             campos: { identity: 1, isDeleted: 1 },
@@ -35,10 +32,14 @@ export class ManagerEntity {
         @inject(CONFIG_TYPES.Env) private env: Env,
     ) { }
 
-    async exec() {
-        console.info(`➽  Configurando ${this.collection} en ${this.database} ...`)
-        await this.bootstrap.exec(this.database, this.collection, this.indexes)
-        console.info(`➽  Configuración de ${this.collection} en ${this.database} completada`)
+    async exec(rootCompanies: RootCompanyENTITY[]) {
+        for (const company of rootCompanies) {
+            const db = company.code
+            const col = collection
+            console.info(`➽  Configurando ${col} en ${db} ...`)
+            await this.bootstrap.exec(db, col, this.indexes)
+            console.info(`➽  Configuración de ${col} en ${db} completada`)
+        }
     }
 
 }

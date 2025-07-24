@@ -1,13 +1,13 @@
 import { State } from 'logiflowerp-sdk'
-import { IRootUserMongoRepository } from '../Domain'
+import { IUserMongoRepository } from '../Domain'
 import { inject, injectable } from 'inversify'
-import { ROOT_USER_TYPES } from '../Infrastructure/IoC'
+import { USER_TYPES } from '../Infrastructure/IoC/types'
 
 @injectable()
 export class UseCaseGetByIdentity {
 
 	constructor(
-		@inject(ROOT_USER_TYPES.RepositoryMongo) private readonly repository: IRootUserMongoRepository,
+		@inject(USER_TYPES.RepositoryMongo) private readonly repository: IUserMongoRepository,
 	) { }
 
 	async exec(identity: string) {

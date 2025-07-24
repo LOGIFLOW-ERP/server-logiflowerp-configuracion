@@ -10,7 +10,7 @@ declare global {
         interface Request {
             payloadToken: TokenPayloadDTO
             user: AuthUserDTO
-            userRoot: boolean
+            tenant: string
             rootCompany: CompanyUserDTO
             useCase: any
         }

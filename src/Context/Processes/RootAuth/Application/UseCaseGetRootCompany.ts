@@ -1,26 +1,29 @@
-import { CompanyDTO, SignInDTO, State, UserENTITY, validateCustom } from 'logiflowerp-sdk'
-import { IRootCompanyMongoRepository } from '@Masters/RootCompany/Domain'
+import {
+    AuthUserDTO,
+    collections,
+    CompanyDTO,
+    db_root,
+    RootCompanyENTITY,
+    State,
+    UserENTITY,
+    validateCustom
+} from 'logiflowerp-sdk'
 import { UnprocessableEntityException } from '@Config/exception'
-import { inject, injectable } from 'inversify'
-import { ROOT_COMPANY_TYPES } from '@Masters/RootCompany/Infrastructure/IoC'
+import { injectable } from 'inversify'
+import { MongoRepository } from '@Shared/Infrastructure'
 
 @injectable()
 export class UseCaseGetRootCompany {
-
-    constructor(
-        @inject(ROOT_COMPANY_TYPES.RepositoryMongo) private readonly repository: IRootCompanyMongoRepository,
-    ) { }
-
-    async exec(user: UserENTITY, dto: SignInDTO) {
-        const rootCompany = await this.searchRootCompany(dto)
+    async exec(user: UserENTITY, tenant: string) {
+        const rootCompany = await this.searchRootCompany(tenant)
         const isRoot = rootCompany.identityManager === user.identity
         const companyAuth = await validateCustom(rootCompany, CompanyDTO, UnprocessableEntityException)
         return { rootCompany, isRoot, companyAuth }
     }
 
-    private searchRootCompany(dto: SignInDTO) {
-        const pipeline = [{ $match: { code: dto.companyCode, state: State.ACTIVO, isDeleted: false } }]
-        return this.repository.selectOne(pipeline)
+    private searchRootCompany(tenant: string) {
+        const adapterMongoDB = new MongoRepository<RootCompanyENTITY>(db_root, collections.company, new AuthUserDTO())
+        const pipeline = [{ $match: { code: tenant, state: State.ACTIVO, isDeleted: false } }]
+        return adapterMongoDB.selectOne(pipeline)
     }
-
 }

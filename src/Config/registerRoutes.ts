@@ -1,14 +1,54 @@
 import { ContainerGlobal } from './inversify'
-import { getRouteInfo } from 'inversify-express-utils'
+import { getRouteInfo, RouteInfo } from 'inversify-express-utils'
+import { AuthUserDTO, builSystemOption, collections, db_root, SystemOptionENTITY } from 'logiflowerp-sdk'
+import { UnprocessableEntityException } from './exception'
 import { env } from './env'
-import { UseCaseSave } from '@Masters/RootSystemOption/Application'
-import { ROOT_SYSTEM_OPTION_TYPES } from '@Masters/RootSystemOption/Infrastructure/IoC'
+import { MongoRepository } from '@Shared/Infrastructure'
 
 export async function registerRoutes(rootPath: string) {
     const routes = getRouteInfo(ContainerGlobal)
     try {
-        const useCaseSave = ContainerGlobal.get<UseCaseSave>(ROOT_SYSTEM_OPTION_TYPES.UseCaseSave)
-        await useCaseSave.exec(routes, rootPath, env.PREFIX)
+        const repositoryMongoSystemOption = new MongoRepository<SystemOptionENTITY>(db_root, collections.systemOption, new AuthUserDTO())
+
+        const execRoot = async (rawData: RouteInfo[], rootPath: string, prefix: string) => {
+            const dataDB = await repositoryMongoSystemOption.select([{ $match: { prefix, root: true } }])
+            const rawDataAux = rawData.filter(e => e.controller.startsWith('Root'))
+            const { _ids, newData } = await builSystemOption({
+                dataDB,
+                prefix,
+                rawData: rawDataAux,
+                rootPath,
+                UnprocessableEntityException,
+                root: true
+            })
+            if (_ids.length) {
+                await repositoryMongoSystemOption.deleteMany({ _id: { $in: _ids } })
+            }
+            if (newData.length) {
+                await repositoryMongoSystemOption.insertMany(newData)
+            }
+        }
+
+        const execNoRoot = async (rawData: RouteInfo[], rootPath: string, prefix: string) => {
+            const dataDB = await repositoryMongoSystemOption.select([{ $match: { prefix, root: false } }])
+            const rawDataAux = rawData.filter(e => !e.controller.startsWith('Root'))
+            const { _ids, newData } = await builSystemOption({
+                dataDB,
+                prefix,
+                rawData: rawDataAux,
+                rootPath,
+                UnprocessableEntityException
+            })
+            if (_ids.length) {
+                await repositoryMongoSystemOption.deleteMany({ _id: { $in: _ids } })
+            }
+            if (newData.length) {
+                await repositoryMongoSystemOption.insertMany(newData)
+            }
+        }
+
+        await execRoot(routes, rootPath, env.PREFIX)
+        await execNoRoot(routes, rootPath, env.PREFIX)
     } catch (error) {
         console.error(error)
         process.exit(1)
