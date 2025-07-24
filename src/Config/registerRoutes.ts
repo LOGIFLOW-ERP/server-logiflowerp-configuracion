@@ -4,6 +4,7 @@ import { AuthUserDTO, builSystemOption, collections, db_root, SystemOptionENTITY
 import { UnprocessableEntityException } from './exception'
 import { env } from './env'
 import { MongoRepository } from '@Shared/Infrastructure'
+import { styleText } from 'util'
 
 export async function registerRoutes(rootPath: string) {
     const routes = getRouteInfo(ContainerGlobal)
@@ -49,6 +50,7 @@ export async function registerRoutes(rootPath: string) {
 
         await execRoot(routes, rootPath, env.PREFIX)
         await execNoRoot(routes, rootPath, env.PREFIX)
+        console.log(styleText('yellow', '>>> Routes registered successfully.'))
     } catch (error) {
         console.error(error)
         process.exit(1)

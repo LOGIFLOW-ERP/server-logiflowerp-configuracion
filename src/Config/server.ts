@@ -1,6 +1,5 @@
 import {
     Application,
-    ErrorRequestHandler,
     json,
     NextFunction,
     Request,
@@ -15,16 +14,12 @@ import compression from 'compression'
 import cors from 'cors'
 import {
     BadRequestException,
-    BaseException,
-    ConflictException,
-    InternalServerException,
     UnauthorizedException
 } from './exception'
 import { ContainerGlobal } from './inversify'
 import { AdapterToken, SHARED_TYPES } from '@Shared/Infrastructure'
 import crypto from 'crypto'
-import { convertDates } from 'logiflowerp-sdk'
-import { MongoServerError } from 'mongodb'
+import { convertDates, db_default } from 'logiflowerp-sdk'
 
 const ALGORITHM = 'aes-256-cbc'
 const SECRET_KEY = Buffer.from(env.ENCRYPTION_KEY, 'utf8')
@@ -137,8 +132,10 @@ function authMiddleware(app: Application, rootPath: string) {
 }
 
 function resolveTenantBySubdomain(req: Request, _res: Response, next: NextFunction) {
-    const hostname = req.hostname
-    const subdomain = req.headers.host?.split('.')[0]
+    console.log(req.headers.host)
+    const subdomain = req.headers.host && req.headers.host.includes('.')
+        ? req.headers.host.split('.')[0]
+        : db_default
     if (!subdomain) {
         return next(new BadRequestException('Subdominio no encontrado'))
     }
