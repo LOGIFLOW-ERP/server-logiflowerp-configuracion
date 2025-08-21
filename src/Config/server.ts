@@ -43,6 +43,10 @@ export async function serverConfig(app: Application, rootPath: string) {
             // if (whitelist.some(org => org.toLowerCase() === origin?.toLowerCase())) {
             //     return callback(null, true)
             // }
+            console.log(env.NODE_ENV)
+            console.log(origin)
+            console.log(allowedInProd)
+            console.log(allowedInProd.test(origin))
             if (env.NODE_ENV === 'production') {
                 if (allowedInProd.test(origin)) {
                     return callback(null, true)
