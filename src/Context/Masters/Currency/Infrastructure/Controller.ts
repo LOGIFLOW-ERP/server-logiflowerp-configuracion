@@ -1,16 +1,11 @@
 import { Request, Response } from 'express'
 import {
     BaseHttpController,
-    httpDelete,
     httpGet,
     httpPost,
     request,
     response
 } from 'inversify-express-utils'
-import {
-    validateUUIDv4Param as VUUID,
-} from 'logiflowerp-sdk'
-import { BadRequestException as BRE } from '@Config/exception'
 import { authorizeRoute } from '@Shared/Infrastructure/Middlewares'
 import {
     resolveCompanyFind,

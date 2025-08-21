@@ -1,17 +1,14 @@
 import { ConflictException } from '@Config/exception';
-import { IRootUserMongoRepository } from '@Masters/RootUser/Domain';
-import { ROOT_USER_TYPES } from '@Masters/RootUser/Infrastructure/IoC';
-import { inject, injectable } from 'inversify';
+import { injectable } from 'inversify';
 import { DataRequestResendMailRegisterUser } from '../Domain';
+import { MongoRepository } from '@Shared/Infrastructure';
+import { AuthUserDTO, collections, UserENTITY } from 'logiflowerp-sdk';
 
 @injectable()
 export class UseCaseResendMailRegisterUser {
-    constructor(
-        @inject(ROOT_USER_TYPES.RepositoryMongo) private readonly repository: IRootUserMongoRepository,
-    ) { }
-
-    async exec(data: DataRequestResendMailRegisterUser) {
-        const user = await this.repository.selectOne([{ $match: { email: data.email, isDeleted: false } }])
+    async exec(data: DataRequestResendMailRegisterUser, tenant: string) {
+        const repository = new MongoRepository<UserENTITY>(tenant, collections.user, new AuthUserDTO())
+        const user = await repository.selectOne([{ $match: { email: data.email, isDeleted: false } }])
         if (user.emailVerified) {
             throw new ConflictException('El correo ya ha sido verificado')
         }

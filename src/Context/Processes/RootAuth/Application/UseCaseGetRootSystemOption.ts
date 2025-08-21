@@ -1,26 +1,29 @@
-import { ProfileENTITY, RootCompanyENTITY, SystemOptionENTITY } from 'logiflowerp-sdk'
-import { IRootSystemOptionMongoRepository } from '@Masters/RootSystemOption/Domain'
-import { inject, injectable } from 'inversify'
-import { ROOT_SYSTEM_OPTION_TYPES } from '@Masters/RootSystemOption/Infrastructure/IoC'
+import {
+    AuthUserDTO,
+    collections,
+    db_root,
+    ProfileENTITY,
+    RootCompanyENTITY,
+    SystemOptionENTITY
+} from 'logiflowerp-sdk'
+import { injectable } from 'inversify'
 import { normalizePermissionName } from '@Shared/Infrastructure/Utils'
+import { MongoRepository } from '@Shared/Infrastructure'
 
 @injectable()
 export class UseCaseGetRootSystemOption {
-
-    constructor(
-        @inject(ROOT_SYSTEM_OPTION_TYPES.RepositoryMongo) private readonly repository: IRootSystemOptionMongoRepository
-    ) { }
+    private repositoryRootSystemOption = new MongoRepository<SystemOptionENTITY>(db_root, collections.systemOption, new AuthUserDTO())
 
     async exec(profile: ProfileENTITY) {
         const pipeline = [{ $match: { _id: { $in: profile.systemOptions } } }]
-        const systemOptions = await this.repository.select(pipeline)
+        const systemOptions = await this.repositoryRootSystemOption.select(pipeline)
         const _tags = this.getTags(systemOptions)
         return { systemOptions, _tags }
     }
 
     async execRoot(rootCompany: RootCompanyENTITY) {
         const pipeline = [{ $match: { _id: { $in: rootCompany.systemOptions } } }]
-        const systemOptions = await this.repository.select(pipeline)
+        const systemOptions = await this.repositoryRootSystemOption.select(pipeline)
         const _tags = this.getTags(systemOptions)
         return { systemOptions, _tags }
     }

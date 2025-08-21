@@ -1,6 +1,5 @@
 import {
     Application,
-    ErrorRequestHandler,
     json,
     NextFunction,
     Request,
@@ -15,22 +14,19 @@ import compression from 'compression'
 import cors from 'cors'
 import {
     BadRequestException,
-    BaseException,
-    ConflictException,
-    InternalServerException,
     UnauthorizedException
 } from './exception'
 import { ContainerGlobal } from './inversify'
 import { AdapterToken, SHARED_TYPES } from '@Shared/Infrastructure'
 import crypto from 'crypto'
-import { convertDates } from 'logiflowerp-sdk'
-import { MongoServerError } from 'mongodb'
+import { convertDates, db_default, getEmpresa } from 'logiflowerp-sdk'
 
 const ALGORITHM = 'aes-256-cbc'
 const SECRET_KEY = Buffer.from(env.ENCRYPTION_KEY, 'utf8')
 
 export async function serverConfig(app: Application, rootPath: string) {
 
+    app.use(resolveTenantBySubdomain)
     app.use(customLogger)
     app.use(cookieParser())
     app.use(helmet())
@@ -68,34 +64,6 @@ export async function serverConfig(app: Application, rootPath: string) {
 
 }
 
-export function serverErrorConfig(app: Application) {
-
-    const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
-
-        console.error(err)
-
-        if (err instanceof MongoServerError) {
-            if (err.code === 11000) {
-                delete err.errorResponse.keyValue.isDeleted
-                const msg = `El recurso ya existe (clave duplicada: ${JSON.stringify(err.errorResponse.keyValue)})`
-                res.status(409).send(new ConflictException(msg, true))
-                return
-            }
-        }
-
-        if (err instanceof BaseException) {
-            res.status(err.statusCode).json(err)
-            return
-        }
-
-        res.status(500).json(new InternalServerException('Ocurrió un error inesperado'))
-
-    }
-
-    app.use(errorHandler)
-
-}
-
 function customLogger(req: Request, res: Response, next: NextFunction) {
 
     const start = Date.now()
@@ -122,13 +90,11 @@ function authMiddleware(app: Application, rootPath: string) {
 
             const publicRoutes = [
                 `${rootPath}/processes/rootauth/sign-in`,
-                `${rootPath}/processes/rootauth/sign-in-root`,
                 `${rootPath}/processes/rootauth/sign-up`,
                 `${rootPath}/processes/rootauth/sign-out`,
                 `${rootPath}/processes/rootauth/verify-email`,
                 `${rootPath}/processes/rootauth/request-password-reset`,
                 `${rootPath}/processes/rootauth/reset-password`,
-                `${rootPath}/masters/rootcompany/get-active`,
                 `${rootPath}/processes/rootauth/resend-mail-register-user`,
             ]
             const url = req.originalUrl.toLowerCase()
@@ -154,7 +120,6 @@ function authMiddleware(app: Application, rootPath: string) {
 
             req.payloadToken = decoded
             req.user = decoded.user
-            req.userRoot = decoded.root
             req.rootCompany = decoded.rootCompany
 
             next()
@@ -162,6 +127,20 @@ function authMiddleware(app: Application, rootPath: string) {
             next(error)
         }
     })
+}
+
+function resolveTenantBySubdomain(req: Request, _res: Response, next: NextFunction) {
+    console.log(req.headers)
+    console.log(req.subdomains)
+    const subdomain = env.NODE_ENV === 'development'
+        ? db_default
+        : getEmpresa(req.headers.host)
+    if (!subdomain) {
+        return next(new BadRequestException('Subdominio no encontrado'))
+    }
+    console.log(subdomain)
+    req.tenant = subdomain
+    next()
 }
 
 function convertDatesMiddleware(req: Request, _res: Response, next: NextFunction) {

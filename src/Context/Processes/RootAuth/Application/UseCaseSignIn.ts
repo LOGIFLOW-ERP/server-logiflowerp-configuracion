@@ -1,18 +1,12 @@
 import { ConflictException, ForbiddenException } from '@Config/exception'
-import { SignInDTO, State, UserENTITY } from 'logiflowerp-sdk'
-import { IRootUserMongoRepository } from '@Masters/RootUser/Domain'
-import { inject, injectable } from 'inversify'
-import { ROOT_USER_TYPES } from '@Masters/RootUser/Infrastructure/IoC'
+import { AuthUserDTO, collections, SignInDTO, State, UserENTITY } from 'logiflowerp-sdk'
+import { injectable } from 'inversify'
+import { MongoRepository } from '@Shared/Infrastructure'
 
 @injectable()
 export class UseCaseSignIn {
-
-    constructor(
-        @inject(ROOT_USER_TYPES.RepositoryMongo) private readonly repository: IRootUserMongoRepository,
-    ) { }
-
-    async exec(dto: SignInDTO) {
-        const user = await this.searchUser(dto.email)
+    async exec(dto: SignInDTO, tenant: string) {
+        const user = await this.searchUser(dto.email, tenant)
         if (!user.state) {
             throw new ForbiddenException('El usuario está inactivo', true)
         }
@@ -30,9 +24,10 @@ export class UseCaseSignIn {
         }
     }
 
-    private async searchUser(email: string) {
+    private async searchUser(email: string, tenant: string) {
         const pipeline = [{ $match: { email, state: State.ACTIVO, isDeleted: false } }]
-        const data = await this.repository.select(pipeline)
+        const repository = new MongoRepository<UserENTITY>(tenant, collections.user, new AuthUserDTO())
+        const data = await repository.select(pipeline)
         if (!data.length) {
             throw new ForbiddenException('Credenciales inválidas', true)
         }

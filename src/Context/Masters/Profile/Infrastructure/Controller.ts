@@ -34,7 +34,7 @@ export class ProfileController extends BaseHttpController {
 
     @httpGet('', authorizeRoute)
     @resolveCompanyGetAll
-    async findAll(@request() req: Request, @response() res: Response) {
+    async findAll(@request() req: Request, @response() res: Response) {       
         await req.useCase.exec(req, res)
     }
 

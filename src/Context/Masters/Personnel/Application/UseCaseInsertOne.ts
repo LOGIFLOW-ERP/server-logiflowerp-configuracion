@@ -3,14 +3,12 @@ import { collections, CreateEmployeeDTO, EmployeeENTITY, State, UserENTITY, vali
 import { UnprocessableEntityException } from '@Config/exception';
 import { inject, injectable } from 'inversify'
 import { PERSONNEL_TYPES } from '../Infrastructure/IoC'
-import { CONFIG_TYPES } from '@Config/types';
 
 @injectable()
 export class UseCaseInsertOne {
 
     constructor(
         @inject(PERSONNEL_TYPES.RepositoryMongo) private readonly repository: IPersonnelMongoRepository,
-        @inject(CONFIG_TYPES.Env) private readonly env: Env,
     ) { }
 
     async exec(dto: CreateEmployeeDTO) {
@@ -24,7 +22,7 @@ export class UseCaseInsertOne {
 
     private searchUser(identity: string) {
         const pipeline = [{ $match: { identity, state: State.ACTIVO, isDeleted: false } }]
-        return this.repository.selectOne<UserENTITY>(pipeline, collections.user, this.env.DB_ROOT)
+        return this.repository.selectOne<UserENTITY>(pipeline, collections.user)
     }
 
 }
