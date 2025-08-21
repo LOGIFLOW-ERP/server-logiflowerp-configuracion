@@ -40,13 +40,6 @@ export async function serverConfig(app: Application, rootPath: string) {
             if (!origin) {
                 return callback(null, true)
             }
-            // if (whitelist.some(org => org.toLowerCase() === origin?.toLowerCase())) {
-            //     return callback(null, true)
-            // }
-            console.log(env.NODE_ENV)
-            console.log(origin)
-            console.log(allowedInProd)
-            console.log(allowedInProd.test(origin))
             if (env.NODE_ENV === 'production') {
                 if (allowedInProd.test(origin)) {
                     return callback(null, true)
@@ -112,6 +105,7 @@ function authMiddleware(app: Application, rootPath: string) {
                 `${rootPath}/processes/rootauth/reset-password`,
                 `${rootPath}/processes/rootauth/resend-mail-register-user`,
             ]
+            console.log(req.originalUrl)
             const url = req.originalUrl.toLowerCase()
 
             if (publicRoutes.some(route => route.toLowerCase() === url)) {
