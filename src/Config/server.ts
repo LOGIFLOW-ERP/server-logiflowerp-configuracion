@@ -35,6 +35,7 @@ export async function serverConfig(app: Application, rootPath: string) {
 
     app.disable('x-powered-by')
 
+    app.options('*', cors())
     app.use(cors({
         origin: (origin, callback) => {
             if (!origin) {
