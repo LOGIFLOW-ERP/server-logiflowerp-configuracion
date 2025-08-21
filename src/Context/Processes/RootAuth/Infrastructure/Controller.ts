@@ -45,8 +45,6 @@ import { PROFILE_TYPES } from '@Masters/Profile/Infrastructure/IoC'
 import { CONFIG_TYPES } from '@Config/types'
 
 export class RootAuthController extends BaseHttpController {
-
-
     constructor(
         @inject(SHARED_TYPES.AdapterRabbitMQ) private readonly adapterRabbitMQ: AdapterRabbitMQ,
         @inject(AUTH_TYPES.UseCaseSignUp) private readonly useCaseSignUp: UseCaseSignUp,
@@ -67,7 +65,11 @@ export class RootAuthController extends BaseHttpController {
     @httpPost('sign-up', VRB.bind(null, CreateUserDTO, BRE))
     async saveOne(@request() req: Request<{}, {}, CreateUserDTO>, @response() res: Response) {
         const newDoc = await this.useCaseSignUp.exec(req.body, req.tenant)
-        await this.adapterRabbitMQ.publish({ queue: getQueueNameMailRegisterUser({ NODE_ENV: this.env.NODE_ENV }), message: newDoc })
+        const message = {
+            entity: newDoc,
+            origin: req.headers.origin || '',
+        }
+        await this.adapterRabbitMQ.publish({ queue: getQueueNameMailRegisterUser({ NODE_ENV: this.env.NODE_ENV }), message })
         res.status(201).json(newDoc)
     }
 
@@ -79,7 +81,7 @@ export class RootAuthController extends BaseHttpController {
 
     @httpPost('request-password-reset', VRB.bind(null, DataRequestPasswordResetDTO, BRE))
     async requestPasswordReset(@request() req: Request<{}, {}, DataRequestPasswordResetDTO>, @response() res: Response) {
-        await this.useCaseRequestPasswordReset.exec(req.body.email, req.tenant)
+        await this.useCaseRequestPasswordReset.exec(req.body.email, req.tenant, req.headers.origin || '')
         res.sendStatus(204)
     }
 
@@ -139,7 +141,7 @@ export class RootAuthController extends BaseHttpController {
             dataSystemOptions = systemOptions
             tags = _tags
         }
-        const { token, user: userResponse } = await this.useCaseGetToken.exec(user, profile, rootCompany, personnelAuth)
+        const { token, user: userResponse } = await this.useCaseGetToken.exec(user, rootCompany, profile, personnelAuth)
         res.cookie(
             'authToken',
             token,
@@ -153,7 +155,6 @@ export class RootAuthController extends BaseHttpController {
             user: userResponse,
             dataSystemOptions,
             tags,
-            root: false,
             company: companyAuth,
             profile: profileAuth,
             personnel: personnelAuth

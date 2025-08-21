@@ -9,7 +9,7 @@ export class UseCaseGetToken {
         @inject(SHARED_TYPES.AdapterToken) private readonly adapterToken: AdapterToken,
     ) { }
 
-    async exec(user: UserENTITY, profile?: ProfileENTITY, rootCompany?: RootCompanyENTITY, personnel?: EmployeeAuthDTO) {
+    async exec(user: UserENTITY, rootCompany: RootCompanyENTITY, profile?: ProfileENTITY, personnel?: EmployeeAuthDTO) {
         const payload = this.generatePayloadToken(user, profile, rootCompany, personnel)
         const token = await this.adapterToken.create(payload, undefined, 43200) // const expiresIn = 12 * 60 * 60; // = 43200 o '12h'
         return { token, user: payload.user }
@@ -24,9 +24,6 @@ export class UseCaseGetToken {
         if (rootCompany) {
             payload.rootCompany.set(rootCompany)
         }
-        // if (isSuperAdmin) {
-        //     payload.rootCompany.code = this.env.DB_ROOT
-        // }
         if (personnel) {
             payload.personnel.set(personnel)
         }
