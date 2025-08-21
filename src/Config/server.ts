@@ -35,7 +35,7 @@ export async function serverConfig(app: Application, rootPath: string) {
 
     app.disable('x-powered-by')
 
-    app.use('*', cors({
+    app.use(cors({
         origin: (origin, callback) => {
             if (!origin) {
                 return callback(null, true)
@@ -58,6 +58,7 @@ export async function serverConfig(app: Application, rootPath: string) {
         methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization"]
     }))
+    app.options("*", cors())
 
     authMiddleware(app, rootPath)
 
