@@ -94,6 +94,10 @@ function customLogger(req: Request, res: Response, next: NextFunction) {
 function authMiddleware(app: Application, rootPath: string) {
     app.use(async (req, _res, next) => {
         try {
+            if (req.method === 'OPTIONS') {
+                return next()
+            }
+
             let serviceNoAuth: boolean = true
 
             const publicRoutes = [
