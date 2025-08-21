@@ -1,5 +1,5 @@
-import { ICompanyMongoRepository, ISUNATCompanyData } from '../Domain';
-import { CreateCompanyPERDTO, CompanyENTITY, validateCustom } from 'logiflowerp-sdk';
+import { ICompanyMongoRepository } from '../Domain';
+import { CreateCompanyPERDTO, CompanyENTITY, validateCustom, SUNATCompanyDataDTO } from 'logiflowerp-sdk';
 import { BadRequestException, UnprocessableEntityException } from '@Config/exception';
 import { AdapterApiRequest, SHARED_TYPES } from '@Shared/Infrastructure';
 import { inject, injectable } from 'inversify';
@@ -34,9 +34,10 @@ export class UseCaseInsertOnePER {
         const url = `${this.env.DNI_LOOKUP_API_URL}/v2/sunat/ruc/full?numero=${ruc}`
         const headers = { Authorization: `Bearer ${this.env.DNI_LOOKUP_API_TOKEN}` }
         try {
-            const result = await this.adapterApiRequest.get<ISUNATCompanyData>(url, { headers })
-            return await validateCustom(result, ISUNATCompanyData, UnprocessableEntityException)
+            const result = await this.adapterApiRequest.get<SUNATCompanyDataDTO>(url, { headers })
+            return await validateCustom(result, SUNATCompanyDataDTO, UnprocessableEntityException)
         } catch (error) {
+            console.error(error)
             let message = 'Error al consultar la SUNAT'
             if (error instanceof AxiosError) {
                 message = error.response?.data?.message || message
@@ -45,7 +46,7 @@ export class UseCaseInsertOnePER {
         }
     }
 
-    private completeDataPER(entity: CompanyENTITY, SUNATCompanyData: ISUNATCompanyData) {
+    private completeDataPER(entity: CompanyENTITY, SUNATCompanyData: SUNATCompanyDataDTO) {
         entity.address = SUNATCompanyData.direccion
         entity.companyname = SUNATCompanyData.razonSocial
         entity.sector = SUNATCompanyData.actividadEconomica

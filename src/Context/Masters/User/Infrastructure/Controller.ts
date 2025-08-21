@@ -1,4 +1,3 @@
-import { inject } from 'inversify'
 import { Request, Response } from 'express'
 import {
     BaseHttpController,
@@ -7,31 +6,19 @@ import {
     request,
     response
 } from 'inversify-express-utils'
-import {
-    UseCaseFind,
-    UseCaseGetByIdentity,
-} from '../Application'
 import { authRootCompanyMiddleware } from '@Shared/Infrastructure/Middlewares'
-import { USER_TYPES } from './IoC'
+import { resolveCompanyGetByIdentity } from './decorators'
 
 export class UserController extends BaseHttpController {
-
-    // constructor(
-    //     @inject(USER_TYPES.UseCaseFind) private readonly useCaseFind: UseCaseFind,
-    //     @inject(USER_TYPES.UseCaseGetByIdentity) private readonly useCaseGetByIdentity: UseCaseGetByIdentity,
-    // ) {
-    //     super()
-    // }
-
     @httpPost('find')
     async find(@request() req: Request, @response() res: Response) {
         // await this.useCaseFind.exec(req, res)
     }
 
     @httpGet(':identity', authRootCompanyMiddleware)
+    @resolveCompanyGetByIdentity
     async getByIdentity(@request() req: Request<{ identity: string }>, @response() res: Response) {
-        // const doc = await this.useCaseGetByIdentity.exec(req.params.identity)
-        // res.status(200).json(doc)
+        const doc = await req.useCase.exec(req.params.identity)
+        res.status(200).json(doc)
     }
-
 }

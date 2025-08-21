@@ -69,7 +69,7 @@ export class RootAuthController extends BaseHttpController {
             entity: newDoc,
             origin: req.headers.origin || '',
         }
-        await this.adapterRabbitMQ.publish({ queue: getQueueNameMailRegisterUser({ NODE_ENV: this.env.NODE_ENV }), message })
+        await this.adapterRabbitMQ.publish({ queue: getQueueNameMailRegisterUser({ NODE_ENV: this.env.NODE_ENV, PREFIX: this.env.PREFIX }), message })
         res.status(201).json(newDoc)
     }
 
@@ -101,8 +101,9 @@ export class RootAuthController extends BaseHttpController {
     async signIn(@request() req: Request<{}, {}, SignInDTO>, @response() res: Response) {
         const { user } = await this.useCaseSignIn.exec(req.body, req.tenant)
         const { rootCompany, isRoot, companyAuth } = await this.useCaseGetRootCompany.exec(user, req.tenant)
-        let dataSystemOptions: SystemOptionENTITY[]
-        let tags: string[]
+        user.root = isRoot
+        let dataSystemOptions: SystemOptionENTITY[] = []
+        let tags: string[] = []
         let profile: ProfileENTITY | undefined
         const profileAuth = new ProfileDTO()
         const personnelAuth = new EmployeeAuthDTO()
@@ -118,24 +119,25 @@ export class RootAuthController extends BaseHttpController {
             )
             const useCaseGetPersonnel = tenantContainerGetPersonnel.get<UseCaseGetPersonnel>(AUTH_TYPES.UseCaseGetPersonnel)
             const { personnel } = await useCaseGetPersonnel.exec(user)
-
-            const tenantContainerGetProfile = createTenantScopedContainer(
-                AUTH_TYPES.UseCaseGetProfile,
-                PROFILE_TYPES.RepositoryMongo,
-                UseCaseGetProfile,
-                ProfileMongoRepository,
-                req.tenant,
-                collections.profile,
-                user
-            )
-            const useCaseGetProfile = tenantContainerGetProfile.get<UseCaseGetProfile>(AUTH_TYPES.UseCaseGetProfile)
-            const profileAux = await useCaseGetProfile.exec(personnel)
-            const { systemOptions, _tags } = await this.useCaseGetRootSystemOption.exec(profileAux)
-            dataSystemOptions = systemOptions
-            tags = _tags
-            profile = profileAux
-            profileAuth.set(profileAux)
-            personnelAuth.set(personnel)
+            if (personnel) {
+                const tenantContainerGetProfile = createTenantScopedContainer(
+                    AUTH_TYPES.UseCaseGetProfile,
+                    PROFILE_TYPES.RepositoryMongo,
+                    UseCaseGetProfile,
+                    ProfileMongoRepository,
+                    req.tenant,
+                    collections.profile,
+                    user
+                )
+                const useCaseGetProfile = tenantContainerGetProfile.get<UseCaseGetProfile>(AUTH_TYPES.UseCaseGetProfile)
+                const profileAux = await useCaseGetProfile.exec(personnel)
+                const { systemOptions, _tags } = await this.useCaseGetRootSystemOption.exec(profileAux)
+                dataSystemOptions = systemOptions
+                tags = _tags
+                profile = profileAux
+                profileAuth.set(profileAux)
+                personnelAuth.set(personnel)
+            }
         } else {
             const { systemOptions, _tags } = await this.useCaseGetRootSystemOption.execRoot(rootCompany)
             dataSystemOptions = systemOptions
@@ -171,7 +173,11 @@ export class RootAuthController extends BaseHttpController {
     @httpPost('resend-mail-register-user', VRB.bind(null, DataRequestResendMailRegisterUser, BRE))
     async resendMailRegisterUser(@request() req: Request<{}, {}, DataRequestResendMailRegisterUser>, @response() res: Response) {
         const newDoc = await this.useCaseResendMailRegisterUser.exec(req.body, req.tenant)
-        await this.adapterRabbitMQ.publish({ queue: getQueueNameMailRegisterUser({ NODE_ENV: this.env.NODE_ENV }), message: newDoc })
+        const message = {
+            entity: newDoc,
+            origin: req.headers.origin || '',
+        }
+        await this.adapterRabbitMQ.publish({ queue: getQueueNameMailRegisterUser({ NODE_ENV: this.env.NODE_ENV, PREFIX: this.env.PREFIX }), message })
         res.status(201).json(newDoc)
     }
 

@@ -17,7 +17,7 @@ export class Worker {
 
     async exec() {
         await this.adapterRabbitMQ.subscribe({
-            queue: getQueueNameMailRegisterUser({ NODE_ENV: this.env.NODE_ENV }),
+            queue: getQueueNameMailRegisterUser({ NODE_ENV: this.env.NODE_ENV, PREFIX: this.env.PREFIX }),
             onMessage: async ({ message, user }) => {
                 return await this.useCaseSendMailRegisterUser.exec(message)
             }
