@@ -139,7 +139,7 @@ function resolveTenantBySubdomain(req: Request, _res: Response, next: NextFuncti
         return next(new BadRequestException('Subdominio no encontrado'))
     }
     console.log(subdomain)
-    req.tenant = subdomain
+    req.tenant = subdomain.toUpperCase()
     next()
 }
 
