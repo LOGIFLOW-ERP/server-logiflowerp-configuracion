@@ -26,7 +26,7 @@ export async function resolveTenantBySubdomain(req: Request, _res: Response, nex
     const rootCompany = await repository.queryMongoWithRedisMemo(pipeline)
 
     if (rootCompany.length !== 1) {
-        return next(new NotFoundException('Subdominio no válido'))
+        return next(new NotFoundException('Subdominio no válido', true))
     }
 
     req.tenant = tenant
