@@ -58,7 +58,7 @@ export async function serverConfig(app: Application, rootPath: string) {
         methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization"]
     }))
-    app.options("*", cors())
+    // app.options("*", cors())
 
     authMiddleware(app, rootPath)
 
@@ -97,10 +97,6 @@ function customLogger(req: Request, res: Response, next: NextFunction) {
 function authMiddleware(app: Application, rootPath: string) {
     app.use(async (req, _res, next) => {
         try {
-            if (req.method === 'OPTIONS') {
-                return next()
-            }
-
             let serviceNoAuth: boolean = true
 
             const publicRoutes = [
@@ -112,7 +108,7 @@ function authMiddleware(app: Application, rootPath: string) {
                 `${rootPath}/processes/rootauth/reset-password`,
                 `${rootPath}/processes/rootauth/resend-mail-register-user`,
             ]
-            console.log(req.originalUrl)
+
             const url = req.originalUrl.toLowerCase()
 
             if (publicRoutes.some(route => route.toLowerCase() === url)) {
@@ -146,11 +142,9 @@ function authMiddleware(app: Application, rootPath: string) {
 }
 
 function resolveTenantBySubdomain(req: Request, _res: Response, next: NextFunction) {
-    console.log(req.headers)
-    console.log(req.subdomains)
     const subdomain = env.NODE_ENV === 'development'
         ? db_default
-        : getEmpresa(req.headers.host)
+        : getEmpresa(req.headers.origin)
     if (!subdomain) {
         return next(new BadRequestException('Subdominio no encontrado'))
     }
