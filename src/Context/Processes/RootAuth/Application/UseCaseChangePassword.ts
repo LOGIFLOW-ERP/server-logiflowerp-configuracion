@@ -1,6 +1,6 @@
 import { ForbiddenException } from '@Config/exception';
-import { MongoRepository } from '@Shared/Infrastructure';
-import { injectable } from 'inversify';
+import { AdapterEncryption, MongoRepository, SHARED_TYPES } from '@Shared/Infrastructure';
+import { inject, injectable } from 'inversify';
 import {
     AuthUserDTO,
     ChangePasswordDTO,
@@ -11,12 +11,17 @@ import {
 
 @injectable()
 export class UseCaseChangePassword {
+    constructor(
+        @inject(SHARED_TYPES.AdapterEncryption) private readonly adapterEncryption: AdapterEncryption,
+    ) { }
+
     async exec(userAuth: AuthUserDTO, data: ChangePasswordDTO, tenant: string) {
         const repository = new MongoRepository<UserENTITY>(tenant, collections.user, userAuth)
 
         const user = await this.searchUser(userAuth._id, repository)
 
-        if (user.password !== data.password) {
+        const isValid = await this.adapterEncryption.verifyPassword(data.password, user.password)
+        if (!isValid) {
             throw new ForbiddenException('Contraseña actual inválida', true)
         }
 
@@ -24,13 +29,16 @@ export class UseCaseChangePassword {
             throw new ForbiddenException('Nueva contraseña y confirmación no coinciden', true)
         }
 
-        if (user.password === data.newPassword) {
+        const _isValid = await this.adapterEncryption.verifyPassword(data.newPassword, user.password)
+        if (_isValid) {
             throw new ForbiddenException('La nueva contraseña no puede ser igual a la anterior', true)
         }
 
+        const newPasswordHash = await this.adapterEncryption.hashPassword(data.newPassword)
+
         await repository.updateOne(
             { _id: user._id },
-            { $set: { password: data.newPassword } }
+            { $set: { password: newPasswordHash } }
         )
 
     }

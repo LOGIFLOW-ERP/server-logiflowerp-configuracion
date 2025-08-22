@@ -1,10 +1,14 @@
 import { ConflictException, ForbiddenException } from '@Config/exception'
 import { AuthUserDTO, collections, SignInDTO, State, UserENTITY } from 'logiflowerp-sdk'
-import { injectable } from 'inversify'
-import { MongoRepository } from '@Shared/Infrastructure'
+import { inject, injectable } from 'inversify'
+import { AdapterEncryption, MongoRepository, SHARED_TYPES } from '@Shared/Infrastructure'
 
 @injectable()
 export class UseCaseSignIn {
+    constructor(
+        @inject(SHARED_TYPES.AdapterEncryption) private readonly adapterEncryption: AdapterEncryption,
+    ) { }
+
     async exec(dto: SignInDTO, tenant: string) {
         const user = await this.searchUser(dto.email, tenant)
         if (!user.state) {
@@ -13,12 +17,12 @@ export class UseCaseSignIn {
         if (!user.emailVerified) {
             throw new ForbiddenException('Correo no verificado', true)
         }
-        this.verifyPassword(dto, user)
+        await this.verifyPassword(dto, user)
         return { user }
     }
 
-    private verifyPassword(dto: SignInDTO, user: UserENTITY) {
-        const isValid = dto.password === user.password
+    private async verifyPassword(dto: SignInDTO, user: UserENTITY) {
+        const isValid = await this.adapterEncryption.verifyPassword(dto.password, user.password)
         if (!isValid) {
             throw new ForbiddenException('Credenciales inválidas', true)
         }
