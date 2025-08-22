@@ -12,14 +12,9 @@ import { env } from './env'
 import helmet from 'helmet'
 import compression from 'compression'
 import cors from 'cors'
-import {
-    BadRequestException,
-    UnauthorizedException
-} from './exception'
-import { ContainerGlobal } from './inversify'
-import { AdapterToken, SHARED_TYPES } from '@Shared/Infrastructure'
+import { BadRequestException } from './exception'
 import crypto from 'crypto'
-import { convertDates, db_default, getEmpresa } from 'logiflowerp-sdk'
+import { auth, convertDatesMiddleware, customLogger, resolveTenantBySubdomain } from '../Middlewares'
 
 const ALGORITHM = 'aes-256-cbc'
 const SECRET_KEY = Buffer.from(env.ENCRYPTION_KEY, 'utf8')
@@ -58,9 +53,8 @@ export async function serverConfig(app: Application, rootPath: string) {
         methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization"]
     }))
-    // app.options("*", cors())
 
-    authMiddleware(app, rootPath)
+    auth(app, rootPath)
 
     app.use(json({ limit: '10mb' }))
     app.use(text({ limit: '10mb' }))
@@ -73,89 +67,6 @@ export async function serverConfig(app: Application, rootPath: string) {
 
     app.use(convertDatesMiddleware)
 
-}
-
-function customLogger(req: Request, res: Response, next: NextFunction) {
-
-    const start = Date.now()
-
-    res.on('finish', () => {
-        const duration = Date.now() - start
-        const status = res.statusCode;
-
-        let color = '\x1b[32m%s\x1b[0m'
-        if (status >= 400 && status < 500) color = '\x1b[33m%s\x1b[0m'
-        if (status >= 500) color = '\x1b[31m%s\x1b[0m'
-
-        console.log(color, `[${new Date().toISOString()}] ${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`)
-    })
-
-    next()
-
-}
-
-function authMiddleware(app: Application, rootPath: string) {
-    app.use(async (req, _res, next) => {
-        try {
-            let serviceNoAuth: boolean = true
-
-            const publicRoutes = [
-                `${rootPath}/processes/rootauth/sign-in`,
-                `${rootPath}/processes/rootauth/sign-up`,
-                `${rootPath}/processes/rootauth/sign-out`,
-                `${rootPath}/processes/rootauth/verify-email`,
-                `${rootPath}/processes/rootauth/request-password-reset`,
-                `${rootPath}/processes/rootauth/reset-password`,
-                `${rootPath}/processes/rootauth/resend-mail-register-user`,
-            ]
-
-            const url = req.originalUrl.toLowerCase()
-
-            if (publicRoutes.some(route => route.toLowerCase() === url)) {
-                serviceNoAuth = false
-            }
-
-            if (!serviceNoAuth) return next()
-
-            const token = req.cookies.authToken || req.headers['authorization']
-
-            if (!token) {
-                return next(new UnauthorizedException('No autorizado, token faltante'))
-            }
-
-            const adapterToken = ContainerGlobal.get<AdapterToken>(SHARED_TYPES.AdapterToken)
-            const decoded = await adapterToken.verify(token)
-
-            if (!decoded) {
-                return next(new UnauthorizedException('Token inválido o expirado'))
-            }
-
-            req.payloadToken = decoded
-            req.user = decoded.user
-            req.rootCompany = decoded.rootCompany
-
-            next()
-        } catch (error) {
-            next(error)
-        }
-    })
-}
-
-function resolveTenantBySubdomain(req: Request, _res: Response, next: NextFunction) {
-    const subdomain = env.NODE_ENV === 'development'
-        ? db_default
-        : getEmpresa(req.headers.origin)
-    if (!subdomain) {
-        return next(new BadRequestException('Subdominio no encontrado'))
-    }
-    console.log(subdomain)
-    req.tenant = subdomain.toUpperCase()
-    next()
-}
-
-function convertDatesMiddleware(req: Request, _res: Response, next: NextFunction) {
-    convertDates(req.body)
-    next()
 }
 
 function decryptMiddleware(req: Request, _res: Response, next: NextFunction) {
