@@ -16,7 +16,6 @@ export const env = {
     DNI_LOOKUP_API_URL: get('DNI_LOOKUP_API_URL').required().asUrlString(),
     DNI_LOOKUP_API_TOKEN: get('DNI_LOOKUP_API_TOKEN').required().asString(),
     DEVELOPERS_MAILS: get('DEVELOPERS_MAILS').required().asArray(),
-    ADMINISTRATOR_EMAILS: get('ADMINISTRATOR_EMAILS').required().asArray(),
 }
 
 export type typeEnv = typeof env

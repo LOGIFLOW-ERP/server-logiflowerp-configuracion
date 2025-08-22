@@ -1,0 +1,250 @@
+[
+    {
+        "uomCode": "4A",
+        "uomName": "BOBINAS"
+    },
+    {
+        "uomCode": "BJ",
+        "uomName": "BALDE"
+    },
+    {
+        "uomCode": "BLL",
+        "uomName": "BARRILES"
+    },
+    {
+        "uomCode": "BG",
+        "uomName": "BOLSA"
+    },
+    {
+        "uomCode": "BO",
+        "uomName": "BOTELLAS"
+    },
+    {
+        "uomCode": "BX",
+        "uomName": "CAJA"
+    },
+    {
+        "uomCode": "CT",
+        "uomName": "CARTONES"
+    },
+    {
+        "uomCode": "CMK",
+        "uomName": "CENTIMETRO CUADRADO"
+    },
+    {
+        "uomCode": "CMQ",
+        "uomName": "CENTIMETRO CUBICO"
+    },
+    {
+        "uomCode": "CMT",
+        "uomName": "CENTIMETRO LINEAL"
+    },
+    {
+        "uomCode": "CEN",
+        "uomName": "CIENTO DE UNIDADES"
+    },
+    {
+        "uomCode": "CY",
+        "uomName": "CILINDRO"
+    },
+    {
+        "uomCode": "CJ",
+        "uomName": "CONOS"
+    },
+    {
+        "uomCode": "DZN",
+        "uomName": "DOCENA"
+    },
+    {
+        "uomCode": "DZP",
+        "uomName": "DOCENA POR 10**6"
+    },
+    {
+        "uomCode": "BE",
+        "uomName": "FARDO"
+    },
+    {
+        "uomCode": "GLI",
+        "uomName": "GALON INGLES (4,545956L)"
+    },
+    {
+        "uomCode": "GRM",
+        "uomName": "GRAMO"
+    },
+    {
+        "uomCode": "GRO",
+        "uomName": "GRUESA"
+    },
+    {
+        "uomCode": "HLT",
+        "uomName": "HECTOLITRO"
+    },
+    {
+        "uomCode": "LEF",
+        "uomName": "HOJA"
+    },
+    {
+        "uomCode": "SET",
+        "uomName": "JUEGO"
+    },
+    {
+        "uomCode": "KGM",
+        "uomName": "KILOGRAMO"
+    },
+    {
+        "uomCode": "KTM",
+        "uomName": "KILOMETRO"
+    },
+    {
+        "uomCode": "KWH",
+        "uomName": "KILOVATIO HORA"
+    },
+    {
+        "uomCode": "KT",
+        "uomName": "KIT"
+    },
+    {
+        "uomCode": "CA",
+        "uomName": "LATAS"
+    },
+    {
+        "uomCode": "LBR",
+        "uomName": "LIBRAS"
+    },
+    {
+        "uomCode": "LTR",
+        "uomName": "LITRO"
+    },
+    {
+        "uomCode": "MWH",
+        "uomName": "MEGAWATT HORA"
+    },
+    {
+        "uomCode": "MTR",
+        "uomName": "METRO"
+    },
+    {
+        "uomCode": "MTK",
+        "uomName": "METRO CUADRADO"
+    },
+    {
+        "uomCode": "MTQ",
+        "uomName": "METRO CUBICO"
+    },
+    {
+        "uomCode": "MGM",
+        "uomName": "MILIGRAMOS"
+    },
+    {
+        "uomCode": "MLT",
+        "uomName": "MILILITRO"
+    },
+    {
+        "uomCode": "MMT",
+        "uomName": "MILIMETRO"
+    },
+    {
+        "uomCode": "MMK",
+        "uomName": "MILIMETRO CUADRADO"
+    },
+    {
+        "uomCode": "MMQ",
+        "uomName": "MILIMETRO CUBICO"
+    },
+    {
+        "uomCode": "MLL",
+        "uomName": "MILLARES"
+    },
+    {
+        "uomCode": "UM",
+        "uomName": "MILLON DE UNIDADES"
+    },
+    {
+        "uomCode": "ONZ",
+        "uomName": "ONZAS"
+    },
+    {
+        "uomCode": "PF",
+        "uomName": "PALETAS"
+    },
+    {
+        "uomCode": "PK",
+        "uomName": "PAQUETE"
+    },
+    {
+        "uomCode": "PR",
+        "uomName": "PAR"
+    },
+    {
+        "uomCode": "FOT",
+        "uomName": "PIES"
+    },
+    {
+        "uomCode": "FTK",
+        "uomName": "PIES CUADRADOS"
+    },
+    {
+        "uomCode": "FTQ",
+        "uomName": "PIES CUBICOS"
+    },
+    {
+        "uomCode": "C62",
+        "uomName": "PIEZAS"
+    },
+    {
+        "uomCode": "PG",
+        "uomName": "PLACAS"
+    },
+    {
+        "uomCode": "ST",
+        "uomName": "PLIEGO"
+    },
+    {
+        "uomCode": "INH",
+        "uomName": "PULGADAS"
+    },
+    {
+        "uomCode": "RM",
+        "uomName": "RESMA"
+    },
+    {
+        "uomCode": "DR",
+        "uomName": "TAMBOR"
+    },
+    {
+        "uomCode": "STN",
+        "uomName": "TONELADA CORTA"
+    },
+    {
+        "uomCode": "LTN",
+        "uomName": "TONELADA LARGA"
+    },
+    {
+        "uomCode": "TNE",
+        "uomName": "TONELADAS"
+    },
+    {
+        "uomCode": "TU",
+        "uomName": "TUBOS"
+    },
+    {
+        "uomCode": "NIU",
+        "uomName": "UNIDAD (BIENES)"
+    },
+    {
+        "uomCode": "ZZ",
+        "uomName": "UNIDAD (SERVICIOS)"
+    },
+    {
+        "uomCode": "GLL",
+        "uomName": "US GALON (3,7843 L)"
+    },
+    {
+        "uomCode": "YRD",
+        "uomName": "YARDA"
+    },
+    {
+        "uomCode": "YDK",
+        "uomName": "YARDA CUADRADA"
+    }
+]
