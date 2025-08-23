@@ -3,7 +3,7 @@ import { IMapTransaction, IMongoRepository } from '@Shared/Domain'
 import { AdapterMongoDB, AdapterRedis, SHARED_TYPES } from '@Shared/Infrastructure'
 import { Request, Response } from 'express'
 import { Document, Filter, OptionalUnlessRequiredId, UpdateFilter } from 'mongodb'
-import { _deleteMany, _deleteOne, _find, _insertMany, _insertOne, _queryMongoWithRedisMemo, _select, _selectOne, _updateOne } from './Transactions'
+import { _deleteMany, _deleteManyReal, _deleteOne, _find, _insertMany, _insertOne, _queryMongoWithRedisMemo, _select, _selectOne, _updateOne } from './Transactions'
 import { BadRequestException } from '@Config/exception'
 import { AuthUserDTO } from 'logiflowerp-sdk'
 
@@ -107,6 +107,24 @@ export class MongoRepository<T extends Document> implements IMongoRepository<T> 
             const col = client.db(this.database).collection<T>(this.collection)
             await this.adapterMongo.openTransaction(session)
             const result = await _deleteMany<T>({ client, col, session, filter: filterWithDeleted, adapterMongo: this.adapterMongo, user: this.user })
+            await this.adapterRedis.deleteKeysCollection(col)
+            await this.adapterMongo.commitTransaction(session)
+            return result
+        } catch (error) {
+            await this.adapterMongo.rollbackTransaction(session)
+            throw error
+        } finally {
+            await this.adapterMongo.closeSession(session)
+        }
+    }
+
+    async deleteManyReal(filter: Filter<T>) {
+        const client = await this.adapterMongo.connection()
+        const session = await this.adapterMongo.openSession(client)
+        try {
+            const col = client.db(this.database).collection<T>(this.collection)
+            await this.adapterMongo.openTransaction(session)
+            const result = await _deleteManyReal<T>({ client, col, session, filter, adapterMongo: this.adapterMongo, user: this.user })
             await this.adapterRedis.deleteKeysCollection(col)
             await this.adapterMongo.commitTransaction(session)
             return result
