@@ -26,6 +26,7 @@ import {
     collections,
     CreateUserDTO,
     EmployeeAuthDTO,
+    EmployeeENTITY,
     getQueueNameMailRegisterUser,
     ProfileDTO,
     ProfileENTITY,
@@ -107,6 +108,7 @@ export class RootAuthController extends BaseHttpController {
         let profile: ProfileENTITY | undefined
         const profileAuth = new ProfileDTO()
         const personnelAuth = new EmployeeAuthDTO()
+        const _personnel = new EmployeeENTITY()
         if (!isRoot) {
             const tenantContainerGetPersonnel = createTenantScopedContainer(
                 AUTH_TYPES.UseCaseGetPersonnel,
@@ -120,6 +122,7 @@ export class RootAuthController extends BaseHttpController {
             const useCaseGetPersonnel = tenantContainerGetPersonnel.get<UseCaseGetPersonnel>(AUTH_TYPES.UseCaseGetPersonnel)
             const { personnel } = await useCaseGetPersonnel.exec(user)
             if (personnel) {
+                _personnel.set(personnel)
                 const tenantContainerGetProfile = createTenantScopedContainer(
                     AUTH_TYPES.UseCaseGetProfile,
                     PROFILE_TYPES.RepositoryMongo,
@@ -153,11 +156,12 @@ export class RootAuthController extends BaseHttpController {
                 sameSite: 'strict'
             }
         )
+        const company = user.root ? companyAuth : _personnel.company
         const response: ResponseSignIn = {
             user: userResponse,
             dataSystemOptions,
             tags,
-            company: companyAuth,
+            company,
             profile: profileAuth,
             personnel: personnelAuth
         }

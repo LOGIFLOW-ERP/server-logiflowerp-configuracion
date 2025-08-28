@@ -5,6 +5,7 @@ import { UseCaseSendMailRegisterUser } from '../Application';
 import { getExchangeNameInitializationCollections, getQueueNameMailRegisterUser } from 'logiflowerp-sdk';
 import { CONFIG_TYPES } from '@Config/types';
 import { initCollections } from '@Config/collections';
+import { runSeed } from '@Config/seed';
 
 @injectable()
 export class Worker {
@@ -26,6 +27,7 @@ export class Worker {
             exchange: getExchangeNameInitializationCollections({ NODE_ENV: this.env.NODE_ENV }),
             onMessage: async ({ message, user }) => {
                 await initCollections(message)
+                await runSeed(message)
                 return 'Colecciones inicializadas'
             }
         })

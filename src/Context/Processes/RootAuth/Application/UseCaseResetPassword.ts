@@ -1,5 +1,5 @@
 import { ForbiddenException } from '@Config/exception';
-import { AdapterToken, MongoRepository, SHARED_TYPES } from '@Shared/Infrastructure';
+import { AdapterEncryption, AdapterToken, MongoRepository, SHARED_TYPES } from '@Shared/Infrastructure';
 import { inject, injectable } from 'inversify';
 import { AuthUserDTO, collections, UserENTITY } from 'logiflowerp-sdk';
 
@@ -8,6 +8,7 @@ export class UseCaseResetPassword {
 
     constructor(
         @inject(SHARED_TYPES.AdapterToken) private readonly adapterToken: AdapterToken,
+        @inject(SHARED_TYPES.AdapterEncryption) private readonly adapterEncryption: AdapterEncryption,
     ) { }
 
     async exec(token: string, newPassword: string, tenant: string) {
@@ -19,9 +20,11 @@ export class UseCaseResetPassword {
 
         const repository = new MongoRepository<UserENTITY>(tenant, collections.user, new AuthUserDTO())
 
+        const password = await this.adapterEncryption.hashPassword(newPassword)
+
         await repository.updateOne(
             { _id: payload.user._id },
-            { $set: { password: newPassword } }
+            { $set: { password } }
         )
 
     }
