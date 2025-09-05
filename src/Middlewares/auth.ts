@@ -16,6 +16,7 @@ export function auth(app: Application, rootPath: string) {
                 `${rootPath}/processes/rootauth/request-password-reset`,
                 `${rootPath}/processes/rootauth/reset-password`,
                 `${rootPath}/processes/rootauth/resend-mail-register-user`,
+                `${rootPath}/processes/rootauth/check-tenant`,
             ]
 
             const url = req.originalUrl.toLowerCase()
