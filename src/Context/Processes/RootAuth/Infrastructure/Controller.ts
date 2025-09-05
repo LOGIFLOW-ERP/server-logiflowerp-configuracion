@@ -3,12 +3,14 @@ import { Request, Response } from 'express'
 import { BadRequestException as BRE } from '@Config/exception'
 import {
     BaseHttpController,
+    httpGet,
     httpPost,
     request,
     response
 } from 'inversify-express-utils'
 import {
     UseCaseChangePassword,
+    UseCaseCheckTenant,
     UseCaseGetPersonnel,
     UseCaseGetProfile,
     UseCaseGetRootCompany,
@@ -58,6 +60,7 @@ export class RootAuthController extends BaseHttpController {
         @inject(AUTH_TYPES.UseCaseGetRootSystemOption) private readonly useCaseGetRootSystemOption: UseCaseGetRootSystemOption,
         @inject(AUTH_TYPES.UseCaseChangePassword) private readonly useCaseChangePassword: UseCaseChangePassword,
         @inject(AUTH_TYPES.UseCaseResendMailRegisterUser) private readonly useCaseResendMailRegisterUser: UseCaseResendMailRegisterUser,
+        @inject(AUTH_TYPES.UseCaseCheckTenant) private readonly useCaseCheckTenant: UseCaseCheckTenant,
         @inject(CONFIG_TYPES.Env) private readonly env: Env,
     ) {
         super()
@@ -185,4 +188,9 @@ export class RootAuthController extends BaseHttpController {
         res.status(201).json(newDoc)
     }
 
+    @httpGet('check-tenant')
+    async checkTenant(@request() req: Request, @response() res: Response) {
+        const result = await this.useCaseCheckTenant.exec(req.tenant)
+        res.status(200).json(result)
+    }
 }
