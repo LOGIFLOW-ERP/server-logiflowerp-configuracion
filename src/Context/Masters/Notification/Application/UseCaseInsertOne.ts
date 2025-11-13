@@ -13,6 +13,7 @@ export class UseCaseInsertOne {
 
     async exec(dto: CreateNotificationDTO) {
         const _entity = mapJsonToClass(dto, NotificationENTITY)
+        _entity._id = crypto.randomUUID()
         const entity = await validateCustom(_entity, NotificationENTITY, UnprocessableEntityException)
         return this.repository.insertOne(entity)
     }

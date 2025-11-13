@@ -10,12 +10,8 @@ export class ManagerEntity {
 
     private indexes: IndexEntity<NotificationENTITY>[] = [
         {
-            campos: { name: 1, isDeleted: 1 },
-            opciones: {
-                name: 'idx_name_unique_not_deleted',
-                unique: true,
-                partialFilterExpression: { isDeleted: false }
-            }
+            campos: { usuarioId: 1 },
+            opciones: { name: 'idx_usuarioId' }
         }
     ]
 
