@@ -12,6 +12,13 @@ export class ManagerEntity {
         {
             campos: { usuarioId: 1 },
             opciones: { name: 'idx_usuarioId' }
+        },
+        {
+            campos: { fechaCreacion: 1 },
+            opciones: {
+                name: 'idx_fechaCreacion',
+                expireAfterSeconds: 60 * 60 * 24 * 7 // 7 días
+            }
         }
     ]
 

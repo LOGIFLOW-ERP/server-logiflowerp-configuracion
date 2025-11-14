@@ -11,7 +11,13 @@ export class UseCaseGetAll {
 	) { }
 
 	async exec(req: Request, res: Response) {
-		await this.repository.find([{ $match: { } }], req, res)
+		await this.repository.find(
+			[
+				{ $match: { usuarioId: req.user._id } },
+				{ $sort: { fechaCreacion: -1 } }
+			],
+			req,
+			res
+		)
 	}
-
 }
