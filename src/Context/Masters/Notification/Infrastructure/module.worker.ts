@@ -1,10 +1,17 @@
-import { AdapterMail, AdapterRabbitMQ, AdapterSocket, createTenantScopedContainer, SHARED_TYPES } from '@Shared/Infrastructure';
+import {
+    AdapterMail,
+    AdapterRabbitMQ,
+    AdapterSocket,
+    createTenantScopedContainer,
+    SHARED_TYPES
+} from '@Shared/Infrastructure';
 import { inject, injectable } from 'inversify'
 import { NOTIFICATION_TYPES } from './IoC';
 import { UseCaseInsertOne } from '../Application';
 import { NotificationMongoRepository } from './MongoRepository';
 import { collection } from './config';
-import { env } from '@Config/env';
+import { CONFIG_TYPES } from '@Config/types';
+import { getQueueNameSaveOneNotification } from 'logiflowerp-sdk';
 
 @injectable()
 export class Worker {
@@ -12,6 +19,7 @@ export class Worker {
         @inject(SHARED_TYPES.AdapterRabbitMQ) private readonly rabbitMQ: AdapterRabbitMQ,
         @inject(SHARED_TYPES.AdapterMail) private readonly adapterMail: AdapterMail,
         @inject(SHARED_TYPES.AdapterSocket) private readonly adapterSocket: AdapterSocket,
+        @inject(CONFIG_TYPES.Env) private readonly env: Env,
     ) { }
 
     async exec() {
@@ -19,7 +27,7 @@ export class Worker {
     }
 
     private async resolveCountryChangeStateBaremos() {
-        const queue = 'Notification_UseCaseInsertOne'
+        const queue = getQueueNameSaveOneNotification({ NODE_ENV: this.env.NODE_ENV })
         await this.rabbitMQ.subscribe({
             queue,
             onMessage: async ({ message, user }) => {
@@ -43,7 +51,7 @@ export class Worker {
                     console.log(`>> Se creó notificación ${not._id}`)
                 } catch (error) {
                     const subject = `¡Error al crear notificación!`
-                    await this.adapterMail.send(env.DEVELOPERS_MAILS, subject, (error as Error).message, undefined)
+                    await this.adapterMail.send(this.env.DEVELOPERS_MAILS, subject, (error as Error).message, undefined)
                 }
             }
         })
