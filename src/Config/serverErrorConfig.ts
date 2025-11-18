@@ -1,6 +1,7 @@
 import { Application, ErrorRequestHandler } from 'express'
 import { MongoServerError } from 'mongodb'
 import { BaseException, ConflictException, InternalServerException } from './exception'
+import { parseDuplicateKeyError } from 'logiflowerp-sdk'
 
 export function serverErrorConfig(app: Application) {
 
@@ -10,8 +11,8 @@ export function serverErrorConfig(app: Application) {
 
         if (err instanceof MongoServerError) {
             if (err.code === 11000) {
-                delete err.errorResponse.keyValue.isDeleted
-                const msg = `El recurso ya existe (clave duplicada: ${JSON.stringify(err.errorResponse.keyValue)})`
+                const msgDup = parseDuplicateKeyError(err.errorResponse.message ?? '')
+                const msg = `El recurso ya existe (${msgDup})`
                 res.status(409).send(new ConflictException(msg, true))
                 return
             }
