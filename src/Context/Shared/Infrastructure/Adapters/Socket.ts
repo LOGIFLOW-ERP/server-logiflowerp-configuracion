@@ -1,11 +1,21 @@
 import { inject, injectable } from 'inversify';
 import { Server as HttpServer } from 'http';
 import { Server, Socket } from 'socket.io';
-import { InternalServerException, UnauthorizedException } from '@Config/exception';
+import {
+    InternalServerException,
+    UnauthorizedException
+} from '@Config/exception';
 import { SHARED_TYPES } from '../IoC/types';
 import { AdapterToken } from './Token';
 import * as cookie from 'cookie'
-
+import {
+    AuthUserDTO,
+    collections,
+    TokenPayloadDTO,
+    UserENTITY,
+    WarehouseExitENTITY
+} from 'logiflowerp-sdk';
+import { MongoRepository } from '../Repositories';
 
 @injectable()
 export class AdapterSocket {
@@ -46,27 +56,48 @@ export class AdapterSocket {
                 // Guardar info del usuario autenticado
                 const user = payload.user;
                 socket.data.user = user;
+                socket.data.payload = payload;
 
                 // 🔹 unir el socket a una sala única del usuario
-                socket.join(`user:${user._id}`);
+                socket.join(`user:${payload.rootCompany.code}:${user._id}`)
 
-                next();
+                next()
             } catch (err) {
-                console.error('❌ Socket auth error:', err);
-                next(new UnauthorizedException('Invalid socket authentication'));
+                console.error('❌ Socket auth error:', err)
+                next(new UnauthorizedException('Invalid socket authentication'))
             }
-        });
+        })
 
         // Evento de conexión
         this.io.on('connection', (socket: Socket) => {
-            const user = socket.data.user;
+            const user = socket.data.user as AuthUserDTO
+            const payload = socket.data.payload as TokenPayloadDTO
             console.log(`🟢 Cliente conectado: ${socket.id}`);
             console.log(`👤 Usuario autenticado: ${user.identity} (${user.email})`);
 
             socket.on('disconnect', () => {
                 console.log(`🔴 Usuario desconectado: ${user.identity}`);
-            });
-        });
+            })
+
+            socket.on('warehouseExit:requestTechApproval', async ({ document }: { document: WarehouseExitENTITY }) => {
+                const carrier = await this.getUserByIdentity(document.carrier.identity, payload.rootCompany.code, user)
+                console.log(carrier)
+                this.io
+                    .to(`user:${payload.rootCompany.code}:${carrier._id}`)
+                    .emit('warehouseExit:techApprovalRequest', {
+                        document,
+                        requesterId: user._id
+                    })
+            })
+            socket.on('warehouseExit:techApprovalSubmit', ({ approved, document, requesterId }) => {
+                this.io
+                    .to(`user:${payload.rootCompany.code}:${requesterId}`)
+                    .emit('warehouseExit:techApprovalResult', {
+                        document,
+                        approved
+                    })
+            })
+        })
     }
 
     getIO() {
@@ -74,5 +105,11 @@ export class AdapterSocket {
             throw new InternalServerException('Socket.IO no ha sido inicializado.');
         }
         return this.io;
+    }
+
+    private getUserByIdentity(identity: string, rootCompanyCode: string, user: AuthUserDTO) {
+        const pipeline = [{ $match: { identity } }]
+        const repository = new MongoRepository<UserENTITY>(rootCompanyCode, collections.user, user)
+        return repository.selectOne(pipeline)
     }
 }

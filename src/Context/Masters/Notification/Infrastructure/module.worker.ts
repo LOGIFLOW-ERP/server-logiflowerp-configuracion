@@ -46,8 +46,7 @@ export class Worker {
                     )
                     const useCase = tenantContainer.get<UseCaseInsertOne>(NOTIFICATION_TYPES.UseCaseInsertOne)
                     const not = await useCase.exec(message)
-                    // this.adapterSocket.getIO().to(`user:${not._id}`).emit('order:completed', { _id });
-                    this.adapterSocket.getIO().to(`user:${not.usuarioId}`).emit('notification:insertOne', not);
+                    this.adapterSocket.getIO().to(`user:${user.rootCompany.code}:${not.usuarioId}`).emit('notification:insertOne', not);
                     console.log(`>> Se creó notificación ${not._id}`)
                 } catch (error) {
                     const subject = `¡Error al crear notificación!`
