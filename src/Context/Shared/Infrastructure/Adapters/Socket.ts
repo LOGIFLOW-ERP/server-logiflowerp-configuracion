@@ -81,7 +81,6 @@ export class AdapterSocket {
 
             socket.on('warehouseExit:requestTechApproval', async ({ document }: { document: WarehouseExitENTITY }) => {
                 const carrier = await this.getUserByIdentity(document.carrier.identity, payload.rootCompany.code, user)
-                console.log(carrier)
                 this.io
                     .to(`user:${payload.rootCompany.code}:${carrier._id}`)
                     .emit('warehouseExit:techApprovalRequest', {
