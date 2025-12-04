@@ -5,4 +5,5 @@ export const PERSONNEL_TYPES = {
     UseCaseUpdateOne: Symbol.for('UseCaseUpdateOne'),
     UseCaseDeleteOne: Symbol.for('UseCaseDeleteOne'),
     UseCaseInsertOne: Symbol.for('UseCaseInsertOne'),
+    UseCaseFindIndividual: Symbol.for('UseCaseFindIndividual'),
 }
