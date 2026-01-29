@@ -2,11 +2,13 @@ import { ConflictException, ForbiddenException } from '@Config/exception'
 import { AuthUserDTO, collections, SignInDTO, State, UserENTITY } from 'logiflowerp-sdk'
 import { inject, injectable } from 'inversify'
 import { AdapterEncryption, MongoRepository, SHARED_TYPES } from '@Shared/Infrastructure'
+import { CONFIG_TYPES } from '@Config/types'
 
 @injectable()
 export class UseCaseSignIn {
     constructor(
         @inject(SHARED_TYPES.AdapterEncryption) private readonly adapterEncryption: AdapterEncryption,
+        @inject(CONFIG_TYPES.Env) private readonly env: Env,
     ) { }
 
     async exec(dto: SignInDTO, tenant: string) {
@@ -18,7 +20,8 @@ export class UseCaseSignIn {
             throw new ForbiddenException('Correo no verificado', true)
         }
         await this.verifyPassword(dto, user)
-        return { user }
+        const isRoot = this.env.DEVELOPERS_MAILS.includes(user.email)
+        return { user, isRoot }
     }
 
     private async verifyPassword(dto: SignInDTO, user: UserENTITY) {

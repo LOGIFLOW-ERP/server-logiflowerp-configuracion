@@ -5,7 +5,6 @@ import {
     db_root,
     RootCompanyENTITY,
     State,
-    UserENTITY,
     validateCustom
 } from 'logiflowerp-sdk'
 import { UnprocessableEntityException } from '@Config/exception'
@@ -14,11 +13,13 @@ import { MongoRepository } from '@Shared/Infrastructure'
 
 @injectable()
 export class UseCaseGetRootCompany {
-    async exec(user: UserENTITY, tenant: string) {
+    // async exec(user: UserENTITY, tenant: string) {
+    async exec(tenant: string) {
         const rootCompany = await this.searchRootCompany(tenant)
-        const isRoot = rootCompany.identityManager === user.identity
+        // const isRoot = rootCompany.identityManager === user.identity
         const companyAuth = await validateCustom(rootCompany, CompanyDTO, UnprocessableEntityException)
-        return { rootCompany, isRoot, companyAuth }
+        // return { rootCompany, isRoot, companyAuth }
+        return { rootCompany, companyAuth }
     }
 
     private searchRootCompany(tenant: string) {

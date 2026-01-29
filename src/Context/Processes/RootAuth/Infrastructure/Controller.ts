@@ -103,8 +103,8 @@ export class RootAuthController extends BaseHttpController {
 
     @httpPost('sign-in', VRB.bind(null, SignInDTO, BRE))
     async signIn(@request() req: Request<{}, {}, SignInDTO>, @response() res: Response) {
-        const { user } = await this.useCaseSignIn.exec(req.body, req.tenant)
-        const { rootCompany, isRoot, companyAuth } = await this.useCaseGetRootCompany.exec(user, req.tenant)
+        const { user, isRoot } = await this.useCaseSignIn.exec(req.body, req.tenant)
+        const { rootCompany, companyAuth } = await this.useCaseGetRootCompany.exec(req.tenant)
         user.root = isRoot
         let dataSystemOptions: SystemOptionENTITY[] = []
         let tags: string[] = []
